@@ -89,14 +89,15 @@ One **global grain overlay** unifies mixed sources better than any filter. It pu
 In order of preference:
 
 1. **Real assets**: the client's work, product, people, places. Always first; treatment (§1) makes even average photography cohesive.
-2. **Generated on-brief**, with any capable image model (Flux/SDXL-class local checkpoints or a hosted generator). The standard when real assets don't exist. Treat each prompt as an art-direction document, not a subject description, and generate the whole set in one session with the same model and settings so it reads as one shoot. Prompt for the *page's* grade, not per-image whims:
+2. **Struq's beeldbank**: real, graded, CC0 sector packs from struq.nl, one pack per site so the grade stays single, downloaded into the project and credited. The first stop when the client has no photos, or not enough. How to pick, fetch and credit: [struq-imagery.md](struq-imagery.md).
+3. **Generated on-brief**, with any capable image model (Flux/SDXL-class local checkpoints or a hosted generator). The standard when real assets don't exist and no beeldbank pack fits. Treat each prompt as an art-direction document, not a subject description, and generate the whole set in one session with the same model and settings so it reads as one shoot. Prompt for the *page's* grade, not per-image whims:
    - State the grade in every prompt: light temperature ("warm late-afternoon window light" / "cool overcast studio light"), palette bias matching the preset's neutrals, film character ("35mm film grain, muted colors" vs "clean digital").
    - Keep **one lighting world** across the set. Consistent light does more for coherence than consistent subjects.
    - Compose for the crop: prompt the ratio you'll place (§2), and leave dead space where type will sit if it's a lockup image ([composition.md](composition.md) §3).
    - Avoid the AI-render look: no glossy 3D blobs, no purple-glow gradients, no hyperdetailed-everything. The §1 grade pass over generated output hides most remaining tells.
-3. **Treated stock**: last resort, and only *through* the grade layer. Untreated stock (beaming laptop people, handshake photos) is below the floor.
+4. **Treated stock**: last resort, and only *through* the grade layer. Untreated stock (beaming laptop people, handshake photos) is below the floor.
 
-**Stock and generated images show context, never the client's product.** The city, the canal, a rider, a room, a material: yes. A stranger's e-bike, a generated bottle or a stock ceramic presented as the product: never, because the visitor reads it as the thing they would buy. Until the real product is shot, it is a placeholder frame (§4b), a declared 3D stand-in ([webgl-scenes.md](webgl-scenes.md) §4, "No model file yet"), or type.
+**Beeldbank, stock and generated images show context, never the client's product.** The city, the canal, a rider, a room, a material: yes. A stranger's e-bike, a generated bottle or a stock ceramic presented as the product: never, because the visitor reads it as the thing they would buy. Until the real product is shot, it is a placeholder frame (§4b), a declared 3D stand-in ([webgl-scenes.md](webgl-scenes.md) §4, "No model file yet"), or type.
 
 **Never:** browser-chrome screenshot mockups tilted in perspective, generic "dashboard glow" renders, or watermark-adjacent placeholder imagery. If a section has no honest image, the strongest move is **no image**: type, space, and surface carry it (same logic as the no-icon rule, [iconography.md](iconography.md) §1).
 
