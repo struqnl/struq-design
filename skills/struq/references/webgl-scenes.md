@@ -103,15 +103,19 @@ import { EffectComposer, Noise, Vignette, ChromaticAberration, ToneMapping } fro
 import { BlendFunction, ToneMappingMode } from "postprocessing";
 import * as THREE from "three";
 
-export function Grade({ tier, caOffset }: { tier: "high" | "mid"; caOffset: THREE.Vector2 }) {
+export function Grade({ tier, caOffset, fullBleed = true }: {
+  tier: "high" | "mid";
+  caOffset: THREE.Vector2;   // owned by the canvas component with useState (§4, product-rig)
+  fullBleed?: boolean;       // false when the canvas sits in a column, not the whole viewport
+}) {
   return (
     <EffectComposer multisampling={tier === "high" ? 4 : 0}>
       {/* Only when the subject has emissive parts (rule below); add Bloom to the import:
           <Bloom mipmapBlur luminanceThreshold={0.9} luminanceSmoothing={0.2} intensity={0.6} /> */}
       <Noise opacity={0.035} blendFunction={BlendFunction.OVERLAY} />
-      <Vignette offset={0.3} darkness={0.55} />
+      {fullBleed ? <Vignette offset={0.3} darkness={0.55} /> : <></>}
       {tier === "high" ? <ChromaticAberration offset={caOffset} radialModulation modulationOffset={0.3} /> : <></>}
-      <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
+      {fullBleed ? <ToneMapping mode={ToneMappingMode.ACES_FILMIC} /> : <></>}
     </EffectComposer>
   );
 }
@@ -120,8 +124,9 @@ export function Grade({ tier, caOffset }: { tier: "high" | "mid"; caOffset: THRE
 **The restraint rule:**
 
 - **Default stack: grain and vignette.** `Noise` at 0.03 to 0.05 opacity with an overlay blend ties the 3D to the photographic grade of the page ([imagery.md](imagery.md)); `Vignette` focuses the frame. That is the whole look most of the time.
+- **Vignette and tone mapping are for full-bleed canvases only.** On a canvas that fills one column of a split layout, the vignette draws a visible dark rectangle and the ACES pass (plus R3F's default renderer tone mapping) shifts the background off the page colour, so the canvas reads as a box. There: `fullBleed={false}` (grain and CA only), `<Canvas flat>`, and the page surface as the background (transparent canvas, or a `<color attach="background">` set to the exact surface token, checked by eye against the DOM next to it).
 - **`Bloom` only with emissive subjects.** `luminanceThreshold` around 0.9, `luminanceSmoothing` 0.1 to 0.3, `intensity` 0.4 to 1, `mipmapBlur`. Bloom on a non-emissive scene washes everything into a haze; bloom on everything is the 2019 crypto look.
-- **`ChromaticAberration`: tiny, and tied to scroll velocity.** At rest the offset is zero. Pass a memoised `THREE.Vector2` as `offset` and mutate it from velocity in `useFrame` (§3, product-rig); a static offset is just blur on the edges.
+- **`ChromaticAberration`: tiny, and tied to scroll velocity.** At rest the offset is zero. Pass one `THREE.Vector2` as `offset` (owned with `useState(() => new THREE.Vector2())`) and update it with `.set()` from velocity in `useFrame` (§4, product-rig); a static offset is just blur on the edges.
 - **`DepthOfField`** (`focusDistance`, `focalLength`, `bokehScale`) is expensive and fights text legibility. Use it for one macro shot, never as an always-on look.
 - **`ToneMapping` last.** With a composer, put the tone-mapping pass at the end so the grade is applied once. If colours look washed out or double-graded, compare with `<Canvas flat>` (no renderer tone mapping) and keep only one.
 - **Composer off on low tier.** Every pass is a full-screen draw. Below high tier, drop CA; on low tier, no composer at all, the scene renders straight.
@@ -194,9 +199,11 @@ export function ProductRig({ rig, velocity, caOffset, tilt }: {
     // pointer writer: inner group only, damped, small
     p.rotation.y = damp(p.rotation.y, pointer.current.x * 0.25, 4, dt);
     p.rotation.x = damp(p.rotation.x, pointer.current.y * 0.15, 4, dt);
-    // velocity into a tiny chromatic aberration, zero at rest
+    // velocity into a tiny chromatic aberration, zero at rest. Mutate through .set(): assigning
+    // to a prop's fields is a React Compiler lint error (react-hooks/immutability).
     const target = Math.min(Math.abs(velocity.current) / 4000, 1) * 0.0015;
-    caOffset.x = caOffset.y = damp(caOffset.x, target, 6, dt);
+    const v = damp(caOffset.x, target, 6, dt);
+    caOffset.set(v, v);
   });
 
   return (
@@ -217,12 +224,26 @@ export function ProductRig({ rig, velocity, caOffset, tilt }: {
 useGLTF.setDecoderPath("/draco/"); // self-hosted; fetched only if the GLB is Draco-compressed
 ```
 
-The section side builds the shot timeline and velocity inside the §0 `useGSAP` branch. It pins `wrap`; the `active` trigger stays on `outer` (§0):
+The canvas component owns the vector and hands the same instance to the rig and to `Grade`:
+
+```tsx
+// in the island component that renders <Canvas>: one Vector2 for the life of the canvas.
+// useState(() => ...), not useMemo: the React Compiler lint rejects mutating a memo value
+// that is passed on as a prop, and useState's lazy initialiser runs exactly once.
+const [caOffset] = useState(() => new THREE.Vector2(0, 0));
+// <ProductRig rig={rig} velocity={velocity} caOffset={caOffset} tilt={tilt} />
+// <Grade tier={tier} caOffset={caOffset} fullBleed={false} />
+```
+
+The section side builds the shot timeline and velocity inside the §0 `useGSAP` branch. It pins `wrap`; the `active` trigger stays on `outer` (§0). Use **one `GATE` string** for the island's import gate ([webgl-r3f.md](webgl-r3f.md) §1) and for this `mm.add`, so the canvas and the pin can never disagree on a tablet with a fine pointer:
 
 ```ts
+// shared by the island gate and the pin: one query, never two
+export const GATE = "(prefers-reduced-motion: no-preference) and (pointer: fine) and (min-width: 1024px)";
+
 const rig = useRef<Shot>({ ...SHOTS.intro });
 const velocity = useRef(0);
-// inside mm.add(...), alongside the §0 active trigger:
+// inside mm.add(GATE, ...), alongside the §0 active trigger:
 gsap.timeline({
   defaults: { ease: "none" },
   scrollTrigger: {
@@ -237,7 +258,18 @@ gsap.timeline({
 - `ContactShadows` with `frames={1}` is baked once, which holds only because every shot keeps `y`, `s` and `rotX` constant: the scroll group turns the product, the camera dollies, the footprint stays put. A shot that lifts, scales or tilts the subject needs a live shadow: drop `frames` on high tier and keep the mid-tier shots flat.
 - Pin rules (and `anticipatePin` with smooth scroll): [pinning-scrub.md](pinning-scrub.md).
 - Copy for each shot (the feature it shows) is DOM text stepping beside the canvas, not 3D text.
-- Touch: `tilt={false}`, shorter pin. Below the performance floor: the poster, which is a render of `SHOTS.intro`.
+- Touch: `tilt={false}`, shorter pin. Below the performance floor: the poster, which is a render of `SHOTS.intro` captured from this scene (§5, "The poster").
+- In a split layout the canvas fills one column, not the viewport: pass `fullBleed={false}` to `Grade` and set `flat` on the `<Canvas>` (§2), or the vignette draws a dark box and the tone curve pushes the page's background to a different colour.
+
+#### No model file yet
+
+The client wants a 3D moment and there is no GLB or CAD. Walk this ladder in order and record the rung under ASSUMPTIONS in STRUQ.md:
+
+1. **Ask at the gate.** The materials request in the gate message names the file: "a GLB or STEP/CAD export of the product, any polycount". Plan the section as if it will arrive.
+2. **A declared stand-in.** Build the subject from primitives (cylinders, tubes, boxes, `ExtrudeGeometry` from the brand's SVG) as a declared art direction: clay, wire, blueprint or one flat material in the palette, never a fake photoreal product. It lives in one component (`<StandIn />`) mounted where `<primitive object={scene} />` would go, behind the same `Center` and the same `SHOTS`, so the real model drops in by swapping one line. Write it under ASSUMPTIONS: "Product: primitive stand-in, replace with the GLB at `/models/product.glb`".
+3. **Downgrade.** When a stand-in would read as a toy or misrepresent the product: `ambient-hero-scene` with the brand's extruded mark, photography of the real product ([imagery.md](imagery.md)), or a type-led showpiece ([showcase.md](showcase.md)). Say which, and why, in the LOG.
+
+Stock or generated images never stand in for the product itself ([imagery.md](imagery.md) §4). The poster for rungs 2 and 3 is rendered from the scene (§5), never drawn by hand or taken from stock.
 
 ### `hover-distortion-gallery`: a plane per image, a hover uniform
 
@@ -419,7 +451,7 @@ A restrained hero: one object or one field, lit by an environment, with grain an
 ```tsx
 // components/three/AmbientHero.tsx (inside <Canvas frameloop="never" dpr={dpr} ...>; it mounts its own TickerDriver)
 "use client";
-import { useMemo, useRef } from "react";
+import { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Environment, Float, Lightformer, Preload } from "@react-three/drei";
 import * as THREE from "three";
@@ -434,7 +466,7 @@ export function AmbientHero({ active, progress, velocity, tier, children }: {
   tier: "high" | "mid" | "low"; children: React.ReactNode;
 }) {
   const group = useRef<THREE.Group>(null);
-  const caOffset = useMemo(() => new THREE.Vector2(0, 0), []);
+  const [caOffset] = useState(() => new THREE.Vector2(0, 0)); // useState, not useMemo (product-rig)
 
   useFrame((state, delta) => {
     const dt = Math.min(delta, 1 / 30);
@@ -443,7 +475,8 @@ export function AmbientHero({ active, progress, velocity, tier, children }: {
     group.current!.position.y = p * 0.6;
     // velocity into a tiny chromatic aberration, zero at rest (same as product-rig)
     const target = Math.min(Math.abs(velocity.current) / 4000, 1) * 0.0015;
-    caOffset.x = caOffset.y = damp(caOffset.x, target, 6, dt);
+    const v = damp(caOffset.x, target, 6, dt);
+    caOffset.set(v, v);
   });
 
   return (
@@ -494,11 +527,47 @@ const start = navigator.hardwareConcurrency >= 8 ? "high" : "mid";
 ```
 
 - **Never climb back to high** after a decline: flip-flopping between tiers is more visible than either tier.
-- **Poster always.** Same framing as the first frame of the scene, so the canvas fades in over an identical image ([webgl-r3f.md](webgl-r3f.md) §1). It is also the LCP candidate: sized, compressed, preloaded ([seo.md](seo.md) §6).
+- **Poster always.** Same framing as the first frame of the scene, so the canvas fades in over an identical image ([webgl-r3f.md](webgl-r3f.md) §1). It is also the LCP candidate: sized, compressed, preloaded ([seo.md](seo.md) §6). How to make it without a DCC tool: "The poster" below.
 - **Offscreen pause.** The §0 driver stops advancing when the section leaves the viewport. A canvas rendering below the fold is battery spent on nothing. The trigger lives on the unpinned outer section, so a pin never pauses the scene mid-shot.
 - **Textures** at 2048 maximum on desktop, 1024 for mobile variants, WebP through gltf-transform ([performance.md](performance.md) §5). Textures, not triangles, are usually the weight.
 - **Mobile.** Default is the poster on touch; when a project opts in, it starts at mid tier with half counts and no pointer writer.
 - **Reduced motion is the poster.** Not a slower scene: no scene ([webgl-r3f.md](webgl-r3f.md) §4).
+
+### The poster: rendered from the scene
+
+Without a DCC tool, the only honest poster is the scene itself at its first shot. Build a dev-only route that mounts the island at `SHOTS.intro` with `preserveDrawingBuffer`, and capture it with Playwright:
+
+```tsx
+// app/render-poster/page.tsx: dev only, a 404 in production
+import { notFound } from "next/navigation";
+import { PosterStage } from "./PosterStage"; // "use client": mounts the island (next/dynamic, ssr: false)
+// at SHOTS.intro with frameloop="always", gl={{ preserveDrawingBuffer: true }}, no composer,
+// inside <div id="stage" style={{ position: "fixed", inset: 0, width: 1600, height: 1000 }}>,
+// and sets document.body.dataset.ready = "1" from the scene's first useFrame.
+
+export default function RenderPoster() {
+  if (process.env.NODE_ENV === "production") notFound();
+  return <PosterStage />;
+}
+```
+
+```js
+// scripts/poster.mjs: node scripts/poster.mjs http://localhost:3000 (against `next dev`; the route 404s in production)
+import { chromium } from "playwright";
+
+const base = process.argv[2] ?? "http://localhost:3000";
+const browser = await chromium.launch({ args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] });
+const page = await browser.newPage({ viewport: { width: 1600, height: 1000 }, deviceScaleFactor: 1 });
+await page.goto(`${base}/render-poster`, { waitUntil: "networkidle" });
+await page.waitForSelector("body[data-ready='1']", { state: "attached", timeout: 60000 });
+await page.waitForTimeout(2000); // environment maps and the baked shadow settle
+await page.locator("#stage").screenshot({ path: "public/media/product-poster.png" });
+await browser.close();
+```
+
+- Then compress it like any hero image ([performance.md](performance.md) §4).
+- **Same framing holds at one aspect only.** The poster sits under a canvas whose aspect follows its column. Render the stage at the column's typical aspect (the 1600 x 1000 above is a 16:10 column), show it with `object-cover` at the same anchor the camera centres on, and crossfade the canvas in over it rather than cutting, so a small aspect mismatch reads as a settle, not a jump.
+- This is the poster for a stand-in (product-rig, "No model file yet") too: what the visitor sees before the canvas is what the canvas shows.
 
 ## 6. Real copy stays in the DOM
 
@@ -514,6 +583,9 @@ Text inside a canvas is invisible to search engines, screen readers, translation
 | Permanent chromatic aberration | CA from scroll velocity, zero at rest |
 | `Environment background` with a stock HDR behind the subject | The page surface as background, lightformers for reflections |
 | Photos through ACES tone mapping, looking grey | `flat` on image canvases |
+| A column canvas that reads as a dark box (vignette, tone-mapped background) | `fullBleed={false}`, `flat`, the page surface as background (§2) |
+| `caOffset.x = ...` or a `useMemo` object mutated from a prop | `useState(() => new X())` at the owner, `.set()` in `useFrame` |
+| A primitive "product" passed off as the real thing | A declared stand-in in the palette, labelled in ASSUMPTIONS, or a downgrade (§4, "No model file yet") |
 | Scroll and pointer writing the same rotation | Nested groups: scroll outside, pointer inside |
 | A canvas still rendering two screens below | Offscreen pause |
 | Transmission glass on a phone at 20fps | Tiered: physical material on mid, poster on low |

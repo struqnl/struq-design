@@ -13,6 +13,7 @@ Every preset defines exactly this surface area. Components may use nothing outsi
 | `--color-surface-0…3` | the elevation ladder; 0 = page, each step = one layer closer |
 | `--color-ink / -muted` | the two text steps: ink for everything that must be read, muted for eyebrows, meta, captions. No gray-400/500/600 improvisation |
 | `--color-ink-faint` | **never text.** Hairline emphasis, disabled states, placeholder rules, inactive dots. As text it fails contrast |
+| (inverted surfaces) | On an `ink` panel (the menu, an inverted footer) the ladder flips: `surface-0` is the text, `surface-2` the muted tier (eyebrows, meta), `surface-3` hairlines only. `ink-muted` on `ink` fails contrast. Check surface-2 on ink at 4.5:1 per preset; no new tokens needed |
 | `--color-accent` | the one accent |
 | `--color-line` | hairline borders/dividers (a low-alpha ink, not a gray) |
 | `--font-display / --font-body` | the pairing (one display + one text face, max; one family may fill both) |
@@ -29,7 +30,7 @@ Plus two values that live in JS (per-preset constants, since Lenis/GSAP don't re
 
 **Heroes do not converge.** Each preset names its hero entrance. Two Struq sites with different presets must not open the same way; the masked line rise is a technique, not a default ([typography.md](typography.md) §5).
 
-## Wiring (Tailwind v4 + next/font)
+## Wiring (Tailwind `@theme` + next/font)
 
 ```css
 /* app/globals.css */
@@ -144,7 +145,7 @@ Magazine confidence: cream paper, warm ink, a serif with personality. For studio
 | Spacing bias | generous but bounded: sections 8-14rem; text measure lead 44ch, body 62ch; dense hairline-divided lists ([anti-patterns.md](anti-patterns.md) §2 layout is native here) |
 | Border/shadow | hairlines everywhere, zero shadows; `divide-y divide-line` is the signature texture |
 | Motion personality | *editorial-calm*: `power3.out` entrances 0.7 to 0.9s, stagger 0.1; Lenis lerp **0.1**; scrub 1; no springs anywhere. **Declared deviation:** the baseline entrance ease is `expo.out`; this preset swaps it for the gentler `power3.out` inside the reveal band. A site on this preset records it in STRUQ.md under `Motion: deviations: entrances power3.out 0.7 to 0.9s (Warm Editorial's editorial-calm)` ([direction.md](direction.md) §4) |
-| Hero entrance | **soft-scrub plus line rise**: the h1 rises line by line on load, then softens (`SOFT` 0 to 100) as the reader scrolls away ([typography.md](typography.md) §5) |
+| Hero entrance | **soft-scrub plus line rise**: the h1 rises line by line on load, then softens (`SOFT` 0 to 100) as the reader scrolls away ([typography.md](typography.md) §5). The rise is allowed here because the scrub is the signature: the rise delivers it, it is not the hero's only gesture. The h1 rests at `SOFT 0`; other display lines pin 50 |
 | Signature move | soft-scrub |
 | Distinctive moves | drop caps, a single oversized serif numeral in accent (as a one-off flourish, never a per-section counter), italic opsz pull-quotes at `wide` bleed with oldstyle figures, image frames with 2px radius |
 

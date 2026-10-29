@@ -170,10 +170,13 @@ The origin flip (`origin-right` at rest, `origin-left` on hover) makes the line 
 ```tsx
 export function WorkCard({ p }: { p: { img: string; title: string; tag: string } }) {
   return (
-    // parent <ul> gets: className="group/list", enables sibling dimming
-    <li className="group transition-opacity duration-500
-                   group-hover/list:opacity-40 group-hover/list:hover:opacity-100">
-      <a href="#" className="block">
+    // parent <ul> gets: className="group/list", enables sibling dimming.
+    // The <li> is the scroll-reveal target ([data-reveal], GSAP autoAlpha + y), so it carries
+    // NO transition and no opacity class: the dim lives on the inner <a>. A CSS opacity
+    // transition on a GSAP target leaves it stuck at opacity 0 (pitfalls.md §3.1).
+    <li data-reveal className="group">
+      <a href="#" className="block transition-opacity duration-500
+                             group-hover/list:opacity-40 group-hover/list:hover:opacity-100">
         <div className="overflow-hidden">
           <img src={p.img} alt="" className="aspect-[4/3] w-full object-cover
                                              transition-transform duration-700 ease-out-expo
@@ -194,6 +197,8 @@ export function WorkCard({ p }: { p: { img: string; title: string; tag: string }
 ```
 
 Three timings: image `700ms` (heavy thing, moves slow), tag `400ms` + `delay-75` (responds after), siblings `500ms` dim. **Sibling dimming** (`group/list` named group: list dims everyone, hovered card restores itself) is the single highest-value hover trick. It turns a grid into a spotlight.
+
+**Reveal the wrapper, transition the child.** The rule behind the markup above: an element GSAP animates (here the `li`, revealed by [scroll-reveals.md](scroll-reveals.md) §1) never also carries a CSS `transition-*` on a property GSAP writes (`opacity`, `transform`, `translate`, `scale`). Hover transitions go one level in. The same applies to Tailwind `translate-*`, `scale-*` and `rotate-*` offsets: GSAP sets those properties to `none` on its targets, so they belong on a child or a wrapper ([pitfalls.md](pitfalls.md) §3).
 
 ### c) Text swap (slot-machine label)
 

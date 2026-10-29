@@ -133,23 +133,27 @@ export function StackingCards({ items }: { items: { kicker: string; title: strin
 
   useGSAP(
     () => {
-      gsap.utils.toArray<HTMLElement>("[data-card]").forEach((card, i, all) => {
-        if (i === all.length - 1) return; // last card never gets covered
-        gsap.to(card, {
-          scale: 0.92,
-          yPercent: -4,
-          ease: "none",
-          scrollTrigger: {
-            trigger: all[i + 1],          // driven by the NEXT card's approach
-            start: "top bottom",
-            end: "top top",
-            scrub: true,
-          },
-        });
-        gsap.fromTo(card.querySelector("[data-veil]"), { autoAlpha: 0 }, {
-          autoAlpha: 0.5,
-          ease: "none",
-          scrollTrigger: { trigger: all[i + 1], start: "top bottom", end: "top top", scrub: true },
+      const mm = gsap.matchMedia();
+      // The recede is decoration: reduced motion keeps the plain CSS sticky stack.
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.utils.toArray<HTMLElement>("[data-card]").forEach((card, i, all) => {
+          if (i === all.length - 1) return; // last card never gets covered
+          gsap.to(card, {
+            scale: 0.92,
+            yPercent: -4,
+            ease: "none",
+            scrollTrigger: {
+              trigger: all[i + 1],          // driven by the NEXT card's approach
+              start: "top bottom",
+              end: "top top",
+              scrub: true,
+            },
+          });
+          gsap.fromTo(card.querySelector("[data-veil]"), { autoAlpha: 0 }, {
+            autoAlpha: 0.5,
+            ease: "none",
+            scrollTrigger: { trigger: all[i + 1], start: "top bottom", end: "top top", scrub: true },
+          });
         });
       });
     },
@@ -159,9 +163,11 @@ export function StackingCards({ items }: { items: { kicker: string; title: strin
   return (
     <div ref={container}>
       {items.map((item, i) => (
+        // One screen tall from md up (svh, so mobile browser chrome never resizes it);
+        // content height below md, per mobile-composition.md §1.
         <section key={item.title} data-card
-                 className={`sticky top-0 flex h-screen flex-col justify-between overflow-hidden
-                             px-8 py-12 ${SURFACES[i % SURFACES.length]}`}>
+                 className={`sticky top-0 flex flex-col justify-between gap-16 overflow-hidden
+                             px-8 py-12 md:min-h-[100svh] ${SURFACES[i % SURFACES.length]}`}>
           <span className="eyebrow text-eyebrow text-ink-muted">{item.kicker}</span>
           <div className="max-w-3xl">
             <h3 className="font-display text-h2">{item.title}</h3>

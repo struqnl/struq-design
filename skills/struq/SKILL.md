@@ -1,6 +1,6 @@
 ---
 name: struq
-description: "Award-tier web design for coding agents. Builds cinematic, agency-grade marketing sites, landing pages and portfolios at FWA / Awwwards level: two-face typography with light display weights, curated palettes, Lenis smooth scroll on one GSAP clock, SplitText, DrawSVG and MorphSVG, masked reveals, pinned and horizontal showpieces, hover choreography, full-screen route transitions, Radix overlays, and Three.js / R3F / Drei / postprocessing moments. Use when designing, building, redesigning, animating or auditing a marketing or narrative site, or when a page must feel premium, custom, cinematic or award-winning instead of templated. Stack: Next.js App Router + Tailwind v4 (Vite supported)."
+description: "Award-tier web design for coding agents. Builds cinematic, agency-grade marketing sites, landing pages and portfolios at FWA / Awwwards level: two-face typography with light display weights, curated palettes, Lenis smooth scroll on one GSAP clock, SplitText, DrawSVG and MorphSVG, masked reveals, pinned and horizontal showpieces, hover choreography, full-screen route transitions, Radix overlays, and Three.js / R3F / Drei / postprocessing moments. Use when designing, building, redesigning, animating or auditing a marketing or narrative site, or when a page must feel premium, custom, cinematic or award-winning instead of templated. Stack: Next.js App Router + Tailwind v4 or later (Vite supported), versions detected from the project."
 argument-hint: "[brief] | redesign <path> | audit <path-or-url> | direct <brief>"
 ---
 
@@ -23,7 +23,7 @@ Read the argument and pick one. State the mode in one line, then work.
 
 **Plan everything before the first component.** Build and Redesign always start with [references/direction.md](references/direction.md): intake, brand (name, SVG logo and mark, when there is none), concept (the one idea and its motif), system (two typefaces, palette, icon family, imagery, motion), and the site plan (pages, arc, showpieces, transitions, SEO). It all goes into one file, `STRUQ.md` in the project root, which is the only plan artifact and the contract for the rest of the build. Stop once, at the gate, then build.
 
-**Ask for materials, never invent them.** Use the logo, copy, photos and numbers that exist. With a usable brief, do not stop to ask first: plan with what is there, and put the materials request inside the one gate message ("Veto anything? If you have a logo, photos or real numbers, send them now."). Where something is still missing, write real, specific running copy for the brief and plan imagery as graded placeholders ([references/imagery.md](references/imagery.md) §4b). Never lorem, never "Acme", never invented testimonials, logos or stats.
+**Ask for materials, never invent them.** Use the logo, copy, photos and numbers that exist. With a usable brief, do not stop to ask first: plan with what is there, and put the materials request inside the one gate message ("Veto anything? If you have a logo, photos or real numbers, send them now."). Where something is still missing, write real, specific running copy for the brief and plan imagery as graded placeholders ([references/imagery.md](references/imagery.md) §4b). Never lorem, never "Acme", never invented testimonials, logos or stats. Never write in a real person's or brand's voice: no invented bio, process claims, quotes or catalogue facts; anything the layout needs before the real copy arrives is a labelled draft listed under ASSUMPTIONS ([references/direction.md](references/direction.md) §1).
 
 ## The recipe
 
@@ -33,14 +33,14 @@ This is the stack and the layer each tool owns. It is fixed on purpose: the "wei
 |---|---|---|---|
 | Brand | Name, SVG wordmark and mark, favicon set | Positioning before name; the wordmark is drawn from the display face | [brand.md](references/brand.md) |
 | Typography | Signature first: one pairing id (S1 to S7), one display face and one text face, set through role tokens | Display runs **large and light (300 to 400)**. Hierarchy from scale contrast, not weight. One signature move per site. | [typography.md](references/typography.md) |
-| Palette | Tokens on `:root` via Tailwind v4 `@theme` | Temperature-shifted neutrals do 95% of the work, one accent | [vibe-presets.md](references/vibe-presets.md) |
+| Palette | Tokens on `:root` via Tailwind `@theme` (v4 or later) | Temperature-shifted neutrals do 95% of the work, one accent | [vibe-presets.md](references/vibe-presets.md) |
 | Scale | One fluid root-rem knob | Everything in rem; breakpoints change layout, never size | [scaling.md](references/scaling.md) |
 | Smooth scroll | Lenis, driven by `gsap.ticker` | One requestAnimationFrame for the whole page | [setup.md](references/setup.md), [feel-layer.md](references/feel-layer.md) |
 | Scroll motion | GSAP + ScrollTrigger | Scrub for scroll-tied values; masked reveals over fades | [scroll-reveals.md](references/scroll-reveals.md) |
 | Text motion | SplitText | Masked line rise, char stagger, scroll color fill | [typography.md](references/typography.md) |
 | SVG motion | DrawSVG, MorphSVG, MotionPath | Draw-on-scroll paths, logo morphs, signature marks | [svg-motion.md](references/svg-motion.md) |
 | Showpieces | Pinned scrub, horizontal galleries, sticky stacks | One or two per site, placed at act breaks | [showcase.md](references/showcase.md), [pinning-scrub.md](references/pinning-scrub.md) |
-| Icons | Phosphor (light) by default, else Iconoir or Tabler; Struq Icons is coming soon, do not install it yet | One icon family per site, never Lucide by reflex | [iconography.md](references/iconography.md) |
+| Icons | Struq Icons (`@deckdot/struq-icons`) by default, after the brand's own set; else Phosphor (light), else Iconoir or Tabler | One icon family per site, never mixed, never Lucide by reflex | [iconography.md](references/iconography.md) |
 | Hover and pointer | GSAP `quickTo` (magnetic, cursor), CSS + GSAP hover scenes | Garnish, applied last | [micro-interactions.md](references/micro-interactions.md) |
 | React lifecycle | Motion (`motion/react`) | Mount/unmount, `layoutId`, gesture state | GSAP vs Motion below |
 | Overlays | Radix primitives (Dialog for menus and modals) | Focus trap, Escape, scroll lock paired with `lenis.stop()` | [nav-header.md](references/nav-header.md) |
@@ -49,7 +49,7 @@ This is the stack and the layer each tool owns. It is fixed on purpose: the "wei
 | Findability | Metadata API, an OG image per route, sitemap, robots, JSON-LD | One h1 per page; loaders and reveals never hide content from the HTML | [seo.md](references/seo.md) |
 | Performance | ffmpeg, next/image, gltf-transform, next/font | Assets first: budgets per role, posters always, WebGL never in the first-load bundle | [performance.md](references/performance.md) |
 
-Install line and provider wiring: [references/setup.md](references/setup.md). All GSAP plugins are free on npm since 3.13; no token, no club.
+Install line and provider wiring: [references/setup.md](references/setup.md). All GSAP plugins are free on npm from GSAP 3.13 on (the minimum version); no token, no club. No other version is assumed: the installed project decides ([references/setup.md](references/setup.md) §0).
 
 ## The baseline (applies to everything)
 
@@ -73,7 +73,8 @@ emphasis 500, never 700. Hierarchy from scale contrast, not medium sizes.
 ROLES: every string takes a role token, never text-xs, text-lg or text-5xl:
 font-display text-display, font-display text-h2, type-h3 text-h3,
 text-lead, text-body, text-small, eyebrow text-eyebrow, font-ui text-ui,
-stat text-stat. Eyebrows: uppercase 0.75rem (the 12px floor), tracked 0.12
+stat text-stat, and font-display text-statement for the one Orient line
+or manifesto. Eyebrows: uppercase 0.75rem (the 12px floor), tracked 0.12
 to 0.18em per face, ink-muted, one per section, never ink-faint.
 FLOOR: body at least 1rem, muted at least 0.875rem, nothing under 12px.
 CONTRAST: body at least 4.5:1, large text at least 3:1. ink-faint is never
@@ -162,6 +163,8 @@ Ordered by visual payoff divided by implementation cost. Do 1 to 7 on every buil
 
 Before and after pairs for every category, the cheap reflex against the agency version: [references/anti-patterns.md](references/anti-patterns.md). **If output drifts generic, read that file first.**
 
+**Something looks wrong in motion?** Read [references/pitfalls.md](references/pitfalls.md) first, before changing any code: the symptom-first bug clinic for the bugs that recur on every GSAP build: clipped descenders, jarring or jumping pins, content stuck invisible after a reveal, utilities that vanish on animated elements, entrances that fire before the image paints. Each entry gives the cause, the fix and the check.
+
 **The page will not scroll at all?** It is one of exactly two bugs. Either nothing drives `lenis.raf()` because the ticker wiring lost a race with the `<ReactLenis>` ref, or an overlay left an unbalanced `lenis.stop()`. Check the `<html>` class list for `lenis-stopped` first; that one glance tells you which. Both fixes are in [references/setup.md](references/setup.md) §2 and §2b. Do not start "fixing" CSS overflow. A pinned section that jerks on engage is almost always `anticipatePin` with smooth scroll: [references/pinning-scrub.md](references/pinning-scrub.md) §2.
 
 ## AI-default blocklist
@@ -188,7 +191,7 @@ These scream "generated". Never ship them:
 
 ## GSAP vs Motion: the decision rule
 
-Both are installed. Never animate the same property on the same element with both. **GSAP owns everything that runs every frame or is tied to scroll; Motion owns React lifecycle, layout and gesture state.** The reason is the single clock: the whole build runs on one requestAnimationFrame (Lenis driven by `gsap.ticker`, [references/setup.md](references/setup.md) §2). High-frequency pointer work belongs on that same ticker via `quickTo`. Pushing it onto a competing spring loop is exactly what makes good motion feel subtly off.
+Both are installed. Never animate the same property on the same element with both, and never with GSAP and a CSS `transition` either: one owner per property per element ([references/pitfalls.md](references/pitfalls.md) §3). **GSAP owns everything that runs every frame or is tied to scroll; Motion owns React lifecycle, layout and gesture state.** The reason is the single clock: the whole build runs on one requestAnimationFrame (Lenis driven by `gsap.ticker`, [references/setup.md](references/setup.md) §2). High-frequency pointer work belongs on that same ticker via `quickTo`. Pushing it onto a competing spring loop is exactly what makes good motion feel subtly off.
 
 | GSAP + ScrollTrigger | Motion |
 |---|---|
@@ -205,14 +208,21 @@ Both are installed. Never animate the same property on the same element with bot
 
 These step names are the one numbering scheme; [references/brief-router.md](references/brief-router.md) §4 keys its load manifest to them.
 
+0. **Detect versions.** Scaffold with `@latest` if the folder is empty, then read the installed `package.json` and record the majors on the `Stack:` line. When unsure of an API, check the installed package's types, `npm view <pkg> version` and the official docs for that major. **When the skill's code disagrees with the installed version's types or docs, the installed version wins:** adapt the code and log the adaptation under LOG in STRUQ.md. Strip the scaffold's starter fonts, page and CSS. The known shifts and how to tell which side a project is on: [references/setup.md](references/setup.md) §0.
 1. **Direction.** Run [references/direction.md](references/direction.md) phases 0 to 4: intake (the brief extracted silently, stack detected and recorded as `Stack:`), brand ([references/brand.md](references/brand.md) when there is none), concept, system, and the site plan via [references/brief-router.md](references/brief-router.md) §2. No usable brief? The router's wizard asks at most three plain-language rounds; that is the only early stop. Write `STRUQ.md`, then send the one gate message: summary, materials request, "Veto anything?" Vite? Every later step translates through [references/stack-targets.md](references/stack-targets.md). Redesigning? First run the asset audit in [references/performance.md](references/performance.md) §2 and read [references/triage.md](references/triage.md).
 2. **Brand files and tokens.** Write the logo, mark and favicon set ([references/brand.md](references/brand.md) §5). Set the root-rem knob, the type system ([references/typography.md](references/typography.md)) and the palette tokens exactly as STRUQ.md records them.
 3. **Structure and SEO.** Routes, metadata, sitemap, robots and JSON-LD from the PLAN's page list ([references/seo.md](references/seo.md)), before any section is styled. Then, with the routes in place, the OG image per shared route ([references/seo.md](references/seo.md) §3).
 4. **Wire providers.** Lenis on the GSAP ticker with the reduced-motion guard ([references/setup.md](references/setup.md)). For multi-page sites, the transition provider ([references/route-transitions.md](references/route-transitions.md)) and optionally a loader ([references/loaders.md](references/loaders.md)).
-5. **Static layout.** Authored in rem, designed at 1440 and 390 at the same time ([references/mobile-composition.md](references/mobile-composition.md)). Type, spacing and surfaces right **before any motion**; motion cannot rescue a flat layout. Nav per [references/nav-header.md](references/nav-header.md), icons per [references/iconography.md](references/iconography.md).
-6. **Motion in layers.** Reveals, then composition, then the one or two showpieces, then text and SVG choreography, then hover and pointer. WebGL last, as a lazy island with a poster.
+5. **Static layout.** Authored in rem, designed at 1440 and 390 at the same time, and checked at 768 wherever a breakpoint changes the column count ([references/mobile-composition.md](references/mobile-composition.md) §4). Type, spacing and surfaces right **before any motion**; motion cannot rescue a flat layout. Nav per [references/nav-header.md](references/nav-header.md), icons per [references/iconography.md](references/iconography.md).
+6. **Motion in layers.** Reveals, then composition, then the one or two showpieces, then text and SVG choreography, then hover and pointer. WebGL last, as a lazy island with a poster. Read [references/pitfalls.md](references/pitfalls.md) before the first tween.
 7. **Optimize and sweep.** Every asset through the budgets in [references/performance.md](references/performance.md); then [references/anti-patterns.md](references/anti-patterns.md) as a checklist and the [references/seo.md](references/seo.md) checklist.
-8. **Verify.** Run it and screenshot at **390, 768, 1440 and 1920** with whatever browser tool the harness has (Playwright or similar). Run the 30-second tell scan ([references/anti-patterns.md](references/anti-patterns.md)) and the 60-second feel audit ([references/feel-layer.md](references/feel-layer.md) §5) against the screenshots, not the code. Scroll the page end to end once: no dead wheel, no pin jerk, no flash on route change. On a production build, record LCP and CLS, plus INP from field data or a manual interaction trace ([references/performance.md](references/performance.md) §8). Fix, re-shoot, and write the score under VERIFY in STRUQ.md.
+8. **Verify.** Against a production server only: `next build && next start` (or `vite build && vite preview`), never the dev server, and confirm the port you shoot is owned by that production process (a leftover dev server on the same port answers silently). Then:
+   - **Layout:** screenshot at **390, 768, 1440 and 1920** with whatever browser tool the harness has (Playwright or similar). Full-page shots do not show a fixed footer-reveal (the viewport becomes the document height); verify the close from the scroll pass.
+   - **Scans:** the 30-second tell scan ([references/anti-patterns.md](references/anti-patterns.md)) and the 60-second feel audit ([references/feel-layer.md](references/feel-layer.md) §5) against the screenshots, not the code.
+   - **Motion:** scroll the page end to end with motion on: no dead wheel, no flash on route change, and **every pinned section** engaged and released at a slow and a fast scroll with no jump or snap. Run the descender test ("Gyp, jq." in every masked component at 390 and 1440) and the pin checks in [references/pitfalls.md](references/pitfalls.md) §1 and §2.
+   - **Timing:** static PNGs cannot show timing bugs. Take a frame trace of the first 3 seconds (a screenshot every 200 to 250ms from navigation) and confirm each entrance does what its recipe says: the hold frame of a match cut is the photo, a split hero is never shown unsplit, nothing stays at opacity 0.
+   - **Vitals:** LCP (with the element it names) and CLS from an in-page `PerformanceObserver` probe under 4x CPU and a throttled network, plus INP from field data or a manual interaction trace, and the first-load JS measured from the served HTML (Turbopack prints no table). Port check, probe, trace and first-load scripts: [references/performance.md](references/performance.md) §8.
+   Fix, re-shoot, and write the score under VERIFY in STRUQ.md.
 
 ## Audit
 

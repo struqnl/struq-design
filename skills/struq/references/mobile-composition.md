@@ -54,9 +54,11 @@ Section padding compresses to roughly **60% of the desktop role values**, keepin
 
 ---
 
-## 4. The two-viewport check
+## 4. The two-viewport check, plus 768 where columns change
 
-Design every section at **1440 and 390 simultaneously**, not desktop-then-shrink. Before moving on, ask of the 390 view:
+Design every section at **1440 and 390 simultaneously**, not desktop-then-shrink. Then check **768** on every section whose column count changes at a breakpoint: `md` is 768px wide, and a 12-column split there gives a 5-column text lane about 280px wide, where an `h2` breaks into one word per line and an email input shrinks to nothing. Rule of thumb: **text-plus-media splits start at `lg`**, not `md`; between 768 and 1023 they stay stacked or go to an asymmetric single column. Offsets on revealed elements use padding or margin (`even:pl-[10vw]`), never a `translate-*` utility, which GSAP erases ([pitfalls.md](pitfalls.md) §3.2).
+
+Before moving on, ask of the 390 view:
 
 1. Is anything overlapping, bleeding, or cropped, or did it collapse to a centered stack?
 2. Do two consecutive sections still have different skeletons?

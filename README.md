@@ -4,10 +4,10 @@
 
 Struq is a design skill for Claude Code, Codex, Cursor and OpenCode. Give it a brief and it builds a cinematic, agency-grade site: the kind with large light type, a restrained palette, smooth scroll, masked reveals, a pinned showpiece, full-screen page transitions and, where it earns its place, a 3D moment. It ships the decisions an award-winning studio makes, in the order they make them, on the stack they use.
 
-Live previews at struq.nl are coming.
+The icon set the skill uses by default, Struq Icons, is browsable at [struq.nl/iconen](https://struq.nl/iconen).
 
 ```bash
-npx skills add deckdot/struq -g
+npx skills add deckdot/struq-design -g
 ```
 
 Then, in your agent:
@@ -40,7 +40,7 @@ Then, in your agent:
 | 3D | Three.js, React Three Fiber, Drei and postprocessing as lazy islands with poster fallbacks |
 | Direction | A directed mode for full WebGL experiences: chapters, camera shots, handoffs, ownership |
 
-Stack: Next.js App Router and Tailwind v4 by default, Vite supported. Every GSAP plugin used is free on npm.
+Stack: Next.js App Router and Tailwind by default, Vite supported. It reads the versions your project has installed and adapts to them; nothing is pinned. Every GSAP plugin used is free on npm. Icons: [Struq Icons](https://struq.nl/iconen) (`@deckdot/struq-icons`, MIT) by default.
 
 ## Commands
 
@@ -64,24 +64,28 @@ In Codex, use `$struq` instead of `/struq`; as a Claude Code plugin the command 
 
 ```bash
 # every supported agent on this machine
-npx skills add deckdot/struq -g
+npx skills add deckdot/struq-design -g
 
 # one agent only
-npx skills add deckdot/struq -g --agent claude-code
+npx skills add deckdot/struq-design -g --agent claude-code
 ```
 
 As a Claude Code plugin (the command is then `/struq:struq`):
 
 ```text
-/plugin marketplace add deckdot/struq
+/plugin marketplace add deckdot/struq-design
 /plugin install struq@struq
 ```
 
 Node 18+ is required. The screenshot step uses whatever browser tool your agent has (Playwright or similar).
 
-## Struq Pro
+## Struq Icons
 
-The skill is complete on its own and stays MIT. Struq Pro, a separate paid product, adds niche packets, a curated media and design-system library over MCP, and starter projects.
+Struq builds use [Struq Icons](https://struq.nl/iconen) by default: 182 two-tone icons, most with their own hover motion, MIT.
+
+```bash
+npm install @deckdot/struq-icons
+```
 
 ## License
 

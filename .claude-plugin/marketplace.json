@@ -8,7 +8,8 @@
     {
       "name": "struq",
       "source": "./",
-      "description": "Award-tier web design for coding agents."
+      "description": "Award-tier web design for coding agents.",
+      "repository": "https://github.com/Deckdot/struq-design"
     }
   ]
 }

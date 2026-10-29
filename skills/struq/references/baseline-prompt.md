@@ -29,7 +29,8 @@ emphasis 500, never 700. Hierarchy from scale contrast, not medium sizes.
 ROLES: every string takes a role token, never text-xs, text-lg or text-5xl:
 font-display text-display, font-display text-h2, type-h3 text-h3,
 text-lead, text-body, text-small, eyebrow text-eyebrow, font-ui text-ui,
-stat text-stat. Eyebrows: uppercase 0.75rem (the 12px floor), tracked 0.12
+stat text-stat, and font-display text-statement for the one Orient line
+or manifesto. Eyebrows: uppercase 0.75rem (the 12px floor), tracked 0.12
 to 0.18em per face, ink-muted, one per section, never ink-faint.
 FLOOR: body at least 1rem, muted at least 0.875rem, nothing under 12px.
 CONTRAST: body at least 4.5:1, large text at least 3:1. ink-faint is never

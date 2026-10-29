@@ -2,6 +2,8 @@
 
 The single highest-payoff motion category. Three techniques, in ascending order of drama: staggered group reveals, masked reveals, and split-text line reveals. All assume the providers from [setup.md](setup.md). Shipping values (durations, eases, staggers) justified in [feel-layer.md](feel-layer.md).
 
+**A reveal misbehaving?** Content stuck invisible, an offset that vanished, clipped descenders: [pitfalls.md](pitfalls.md) first, symptom by symptom.
+
 ---
 
 ## 1. Staggered group reveal
@@ -23,17 +25,21 @@ export function FeatureRow({ children }: { children: React.ReactNode }) {
 
   useGSAP(
     () => {
-      gsap.from("[data-reveal]", {
-        y: 48,
-        autoAlpha: 0,
-        duration: 0.9,
-        ease: "expo.out",
-        stagger: { each: 0.08, from: "start" }, // try "center" or "edges" for non-linear rows
-        scrollTrigger: {
-          trigger: container.current,
-          start: "top 78%",   // fire while approaching, not at the edge; feels anticipatory
-          once: true,          // entrances happen once; re-triggering reads as a glitch
-        },
+      const mm = gsap.matchMedia();
+      // Reduced motion: nothing registers, the server markup is already the final state.
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.from("[data-reveal]", {
+          y: 48,
+          autoAlpha: 0,
+          duration: 0.9,
+          ease: "expo.out",
+          stagger: { each: 0.08, from: "start" }, // try "center" or "edges" for non-linear rows
+          scrollTrigger: {
+            trigger: container.current,
+            start: "top 78%",   // fire while approaching, not at the edge; feels anticipatory
+            once: true,          // entrances happen once; re-triggering reads as a glitch
+          },
+        });
       });
     },
     { scope: container }
@@ -46,6 +52,8 @@ export function FeatureRow({ children }: { children: React.ReactNode }) {
   );
 }
 ```
+
+**Hard rule: one owner per property per element.** A `[data-reveal]` element never carries a CSS `transition-*` on a property this tween writes (`transition-opacity`, `transition-transform`, `transition-all`), and never a Tailwind `translate-*`, `scale-*` or `rotate-*` utility. The transition fights the inline values GSAP writes and can leave the element at `opacity: 0; visibility: hidden` with the tween at progress 1; GSAP sets the individual `translate`, `scale` and `rotate` properties to `none`, which erases the utility. Reveal the wrapper, put hover transitions and offsets on a child. Symptoms and checks: [pitfalls.md](pitfalls.md) §3.
 
 Notes that separate this from the reflex version:
 - `start: "top 78%"`: content is already moving as it enters the eye line. `"top bottom"` fires too early (animates off-screen), `"top top"` too late.
@@ -235,10 +243,10 @@ export function SplitHeadline({
 
 Details that matter:
 - `mask: "lines"` + `yPercent: 110` is the whole effect. Without the mask it's just a stagger fade; with it, each line is born at its own baseline.
-- `autoSplit: true` + returning the tween from `onSplit` makes the split responsive and font-safe: GSAP reverts and re-runs on reflow. This is the GSAP 3.13+ API; do not use the old `new SplitText()` + manual resize listeners.
+- `autoSplit: true` + returning the tween from `onSplit` makes the split responsive and font-safe: GSAP reverts and re-runs on reflow. This API needs GSAP 3.13 or later; do not use the old `new SplitText()` + manual resize listeners.
 - Set the headline with its role token (`text-display`, `text-h2`) *before* splitting: the token carries the pairing's tight leading, and masks clip to line boxes, so loose leading shows gaps.
-- Descenders: the `.split-line-mask` rule above pads each mask and pulls the margin back, so g/y/p are never clipped and the layout does not move.
-- Section headlines use this scroll version; the hero has its own load-time variant (`line-rise-hero`, [typography.md](typography.md) §5), and the masked rise is one technique among the presets' named entrances, not every hero.
+- Descenders: the `.split-line-mask` rule above pads each mask and pulls the margin back, so g/y/p are never clipped and the layout does not move. It is not the only place a descender dies: parent overflow, reveal wrappers sized to the line height, clip-path insets and italic overhang all clip too. The full list and the 10-second "Gyp, jq." test: [pitfalls.md](pitfalls.md) §1.
+- Section headlines use this scroll version; the hero has its own load-time variant (`line-rise-hero`, [typography.md](typography.md) §5), and the masked rise is one technique among the presets' named entrances. It is a tell only as the hero's sole gesture, with no signature move and no preset entrance behind it.
 - Reduced motion: the split and the tween exist only in the `no-preference` branch, so the server markup stays the final state.
 - Scrub variant for manifesto paragraphs: split into `words`, set initial `opacity: 0.15`, and `gsap.to(words, { opacity: 1, stagger: 0.05, scrollTrigger: { scrub: true, start: "top 70%", end: "top 20%" } })`, the "reading highlights itself" effect.
 - Motion swap: only if you refuse GSAP. Manually wrap lines and animate `y` with `whileInView`. SplitText's measurement/re-split handling is why GSAP wins here.

@@ -62,7 +62,7 @@ import { readFile } from "node:fs/promises";
 import opentype from "opentype.js";
 
 const [text, fontPath, trackingEm = "-0.02"] = process.argv.slice(2);
-// opentype.js 2.0 removed load(); parse the file buffer instead.
+// Newer opentype.js majors removed load(); parse() works on every version.
 const font = opentype.parse(await readFile(fontPath));
 const escapeAttr = (s) =>
   s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
@@ -97,9 +97,10 @@ console.log(
 );
 ```
 
-Use a **static** TTF or OTF of the chosen weight (the Google Fonts download has them under `static/`). A variable file outlines its default instance, usually 400, not the light weight the site uses. The script applies the font's own pair kerning plus your tracking; for a hand-kerned result, export each glyph as its own `<path>` and adjust `x` per pair, or finish the outline in a vector editor. Apply the one modification from step 3 on the outlined paths.
+Use a **static** file of the chosen weight. A variable file outlines its default instance, usually 400, not the light weight the site uses. The reliable source an agent can fetch without downloading archives is Fontsource on npm, which ships one static file per weight, including for families Google serves as variable only (Sora, for one): `npm i -D @fontsource/<family>`, then use `node_modules/@fontsource/<family>/files/<family>-latin-300-normal.woff`. opentype.js parses WOFF (not WOFF2), and `next/og` reads the same WOFF ([seo.md](seo.md) §3), so copy it once to `assets/fonts/` (outside `public/`) and point both scripts at it. A static TTF or OTF from the foundry works the same way. The script applies the font's own pair kerning plus your tracking; for a hand-kerned result, export each glyph as its own `<path>` and adjust `x` per pair, or finish the outline in a vector editor. Apply the one modification from step 3 on the outlined paths.
 
 5. Use `fill="currentColor"`, so the logo takes the ink color in light and dark surfaces without a second file.
+6. **Test the modification at nav size** (about 1.25 to 1.5rem tall). A thin full-width rule under a word reads as a link underline there, and a cut terminal can vanish. If it fails at nav size, make it thicker, shorter or part of a letter. The modification goes into the SVG as its own element after the outlined path (a `<rect>`, a `<path>`), so it can be tuned without re-outlining.
 
 ## 4. The mark
 

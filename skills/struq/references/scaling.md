@@ -91,7 +91,7 @@ This is the discipline that makes the knob work:
   px is right.
 - **Media:** width in `%`/`rem`/`vw`, height via aspect-ratio (also prevents CLS).
 
-Tailwind v4 cooperates for free: its spacing scale and font sizes are rem-based, so once
+Tailwind (v4 or later) cooperates for free: its spacing scale and font sizes are rem-based, so once
 the root is wired, every utility inherits the scaling. You mostly just *stop reaching for
 arbitrary px values*.
 

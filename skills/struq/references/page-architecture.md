@@ -13,7 +13,7 @@ Every effective marketing/narrative page is the same dramatic shape:
 | Beat | Job | Typical sections | Pacing (spacing role) |
 |---|---|---|---|
 | **Hook** | Stop the scroll; claim a position in one line | Hero | vast: 12 to 20rem, one idea |
-| **Orient** | Who this is, in one breath | Intro / positioning statement | breather: a manifesto line in 16 to 24rem of air |
+| **Orient** | Who this is, in one breath | Intro / positioning statement | breather: a manifesto line (`font-display text-statement`) in 16 to 24rem of air |
 | **Prove** | Evidence: the work, the product, the numbers | Selected work / product walkthrough / capabilities | dense: 6 to 8rem, editorial rows |
 | **Deepen** | How and why, the thing competitors can't copy | Process / principles / about | medium; this is where the showpiece lives |
 | **Invite** | One ask, made unmissable | CTA block + footer | vast again: the close mirrors the open |
@@ -23,6 +23,7 @@ Rules the arc enforces:
 - **5 to 8 sections total.** More is a pacing failure, not thoroughness, so cut or merge. (A section is a distinct visual movement, not every `<section>` tag.)
 - **One idea per beat.** If a section is doing two jobs (proving *and* explaining process), split it or cut half.
 - **Pacing alternates.** Dense, then breather, then dense. Two dense sections back-to-back read as a wall; two breathers as emptiness. This is the page-level version of the spacing-asymmetry rule.
+- **A showpiece is its own density class.** It is neither dense nor breather, even when it is airy on screen (`manifesto-fill`, a pinned single statement). So "breather, showpiece, breather" is legal and is the pattern (§3); it never counts as two breathers in a row. The no-two-breathers rule applies to plain sections only.
 - **The page ends where it started, louder.** The Invite beat re-states the Hook's claim as an action ("Studio for durable brands" becomes "Build something durable. Talk to us.").
 
 **Cheap tell:** Hero → 3-card Features → Stats → Testimonials → Pricing → FAQ → CTA. That is the template stack: every section the same weight, no beat structure. **Instead:** Five beats, alternating density, one showpiece, one ask.
@@ -65,7 +66,7 @@ The 1 to 2 pinned/scrubbed showpieces ([pinning-scrub.md](pinning-scrub.md), cat
 - **Slot A, post-Prove:** after the work/product has earned attention, the showpiece explains *how* (process sequence). The classic studio-site shape.
 - **Slot B, the hero itself:** for campaign/launch pages where the product IS the show. If the hero becomes a WebGL scene, see [webgl-r3f.md](webgl-r3f.md) and [webgl-scenes.md](webgl-scenes.md).
 - **Never back-to-back.** Two consecutive scroll-jacked sections feel like a hostage situation; separate them with at least one natively-scrolling beat.
-- **Breathers flank the showpiece.** A vast, near-empty section before it (anticipation) and after it (recovery). A pin that starts mid-density feels like a malfunction.
+- **Breathers flank the showpiece.** A vast, near-empty section before it (anticipation) and after it (recovery). A pin that starts mid-density feels like a malfunction. The showpiece is its own density class (§1), so its flanking breathers never count as two breathers back to back.
 - **Never in the Invite beat.** By the close, the user has decided; do not make them scrub through theater to reach the CTA.
 
 ---

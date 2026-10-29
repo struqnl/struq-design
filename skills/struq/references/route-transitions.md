@@ -59,7 +59,6 @@ import {
 } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { gsap } from "@/lib/gsap";
-import { cn } from "@/lib/utils";
 
 export type TransitionVariant =
   | "wipe-up" | "wipe-down" | "wipe-left" | "wipe-right" | "columns" | "iris";
@@ -69,6 +68,12 @@ const TransitionCtx = createContext<{ navigate: (href: string, opts?: NavOpts) =
 
 const COLS = 6;
 const DEFAULT_FILL = "bg-ink"; // the overlay lives outside themed wrappers, so use a concrete token
+
+// One timing set, inside the 900ms budget: cover + delay + reveal = 0.40 + 0.05 + 0.45.
+// Curtains and panels take the baseline's quint-in-out (power4.inOut) on every variant.
+const EASE = "power4.inOut";
+const COVER = 0.4, REVEAL = 0.45, PAINT_DELAY = 0.05;
+const BAR = 0.26, BAR_STAGGER = 0.03; // columns: 0.26 + 5 x 0.03 = 0.41 per phase
 
 export function useTransitionRouter() {
   const ctx = useContext(TransitionCtx);
@@ -93,13 +98,13 @@ function prep(variant: TransitionVariant, panel: HTMLElement, colsWrap: HTMLElem
 // COVER: panel comes in, then fires onComplete (which triggers router.push).
 function cover(variant: TransitionVariant, panel: HTMLElement, bars: HTMLElement[], reduce: boolean, onComplete: () => void) {
   if (reduce) return gsap.fromTo(panel, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.2, onComplete });
-  const d = 0.6, ease = "power3.inOut";
+  const d = COVER, ease = EASE;
   switch (variant) {
     case "wipe-down":  return gsap.fromTo(panel, { scaleY: 0, transformOrigin: "top" },    { scaleY: 1, duration: d, ease, onComplete });
     case "wipe-left":  return gsap.fromTo(panel, { scaleX: 0, transformOrigin: "right" },  { scaleX: 1, duration: d, ease, onComplete });
     case "wipe-right": return gsap.fromTo(panel, { scaleX: 0, transformOrigin: "left" },   { scaleX: 1, duration: d, ease, onComplete });
-    case "iris":       return gsap.fromTo(panel, { clipPath: "circle(0% at 50% 50%)" },    { clipPath: "circle(150% at 50% 50%)", duration: 0.7, ease: "power2.inOut", onComplete });
-    case "columns":    return gsap.fromTo(bars,  { scaleY: 0, transformOrigin: "bottom" }, { scaleY: 1, duration: 0.5, ease, stagger: 0.06, onComplete });
+    case "iris":       return gsap.fromTo(panel, { clipPath: "circle(0% at 50% 50%)" },    { clipPath: "circle(150% at 50% 50%)", duration: d, ease, onComplete });
+    case "columns":    return gsap.fromTo(bars,  { scaleY: 0, transformOrigin: "bottom" }, { scaleY: 1, duration: BAR, ease, stagger: BAR_STAGGER, onComplete });
     case "wipe-up": default:
       return gsap.fromTo(panel, { scaleY: 0, transformOrigin: "bottom" }, { scaleY: 1, duration: d, ease, onComplete });
   }
@@ -108,13 +113,13 @@ function cover(variant: TransitionVariant, panel: HTMLElement, bars: HTMLElement
 // REVEAL: cover goes out, uncovering the new page. `delay` lets it paint first.
 function reveal(variant: TransitionVariant, panel: HTMLElement, bars: HTMLElement[], reduce: boolean, onComplete: () => void) {
   if (reduce) return gsap.to(panel, { autoAlpha: 0, duration: 0.2, onComplete });
-  const d = 0.7, ease = "power3.inOut", delay = 0.05;
+  const d = REVEAL, ease = EASE, delay = PAINT_DELAY;
   switch (variant) {
     case "wipe-down":  return gsap.to(panel, { scaleY: 0, transformOrigin: "bottom", duration: d, ease, delay, onComplete });
     case "wipe-left":  return gsap.to(panel, { scaleX: 0, transformOrigin: "left",   duration: d, ease, delay, onComplete });
     case "wipe-right": return gsap.to(panel, { scaleX: 0, transformOrigin: "right",  duration: d, ease, delay, onComplete });
-    case "iris":       return gsap.to(panel, { clipPath: "circle(0% at 50% 50%)",    duration: d, ease: "power2.inOut", delay, onComplete });
-    case "columns":    return gsap.to(bars,  { scaleY: 0, transformOrigin: "top",    duration: 0.5, ease, stagger: 0.05, delay, onComplete });
+    case "iris":       return gsap.to(panel, { clipPath: "circle(0% at 50% 50%)",    duration: d, ease, delay, onComplete });
+    case "columns":    return gsap.to(bars,  { scaleY: 0, transformOrigin: "top",    duration: BAR, ease, stagger: BAR_STAGGER, delay, onComplete });
     case "wipe-up": default:
       return gsap.to(panel, { scaleY: 0, transformOrigin: "top", duration: d, ease, delay, onComplete });
   }
@@ -163,10 +168,11 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
     <TransitionCtx.Provider value={{ navigate }}>
       {children}
       <div aria-hidden className="pointer-events-none fixed inset-0 z-[10000]">
-        <div ref={panel} style={{ transform: "scaleY(0)" }} className={cn("absolute inset-0", fill)} />
+        {/* Plain template strings: a fresh scaffold has no `cn` helper (setup.md §1). */}
+        <div ref={panel} style={{ transform: "scaleY(0)" }} className={`absolute inset-0 ${fill}`} />
         <div ref={cols} style={{ visibility: "hidden" }} className="absolute inset-0 flex">
           {Array.from({ length: COLS }).map((_, i) => (
-            <div key={i} style={{ transform: "scaleY(0)" }} className={cn("h-full flex-1", fill)} />
+            <div key={i} style={{ transform: "scaleY(0)" }} className={`h-full flex-1 ${fill}`} />
           ))}
         </div>
       </div>
@@ -211,8 +217,8 @@ export function TransitionLink({
 ```
 
 **Craft notes**
-- The reveal is *slightly longer* than the cover (0.7s vs 0.6s) and carries a 0.05s `delay`. The incoming page gets a beat to paint before it's uncovered, so the reveal never exposes an empty frame.
-- `power3.inOut` is the right curve here: it's an A→B move with both endpoints visible (the curtain holds, then commits), which is exactly what in-out eases are for ([transitions.md](transitions.md) easing table).
+- The reveal is *slightly longer* than the cover (0.45s vs 0.4s) and carries a 0.05s `delay`. The incoming page gets a beat to paint before it's uncovered, so the reveal never exposes an empty frame. The three numbers add up to exactly the 900ms budget below; change one and re-add them.
+- `power4.inOut` (quint-in-out, the baseline's curtain and panel ease) is the right curve here: it's an A→B move with both endpoints visible (the curtain holds, then commits), which is exactly what in-out eases are for ([transitions.md](transitions.md) easing table). The menu panel ([nav-header.md](nav-header.md) §3) uses the same ease, so the site has one curtain voice.
 - The overlay sits at the **root** layout, outside per-site theme wrappers, so its `fillClass` must be a concrete color token (e.g. `bg-ink`, or a project `.tx-fill-*` class), not a scoped one.
 - `fillClass` is set explicitly on every nav so a per-link color never leaks into the next transition.
 - Keep total cover+reveal **≤ 900ms**. Block longer than that on every click and the site feels slow, not cinematic.
@@ -252,11 +258,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 | Phase | Duration | Ease | Transform | Origin |
 |---|---|---|---|---|
-| Cover: wipe (default) | 0.6s | `power3.inOut` | `scaleY 0→1` | bottom |
-| Cover: columns | 0.5s (stagger 0.06) | `power3.inOut` | `scaleY 0→1` | bottom |
-| Cover: iris | 0.7s | `power2.inOut` | `clipPath circle 0%→150%` | center |
-| Reveal: wipe (default) | 0.7s (delay 0.05) | `power3.inOut` | `scaleY 1→0` | top |
-| Reveal: columns | 0.5s (stagger 0.05) | `power3.inOut` | `scaleY 1→0` | top |
+| Cover: wipe (default) | 0.4s | `power4.inOut` | `scaleY 0→1` | bottom |
+| Cover: columns | 0.26s per bar (stagger 0.03), 0.41s total | `power4.inOut` | `scaleY 0→1` | bottom |
+| Cover: iris | 0.4s | `power4.inOut` | `clipPath circle 0%→150%` | center |
+| Reveal: wipe (default) | 0.45s (delay 0.05) | `power4.inOut` | `scaleY 1→0` | top |
+| Reveal: columns | 0.26s per bar (stagger 0.03, delay 0.05), 0.46s total | `power4.inOut` | `scaleY 1→0` | top |
+| Reveal: iris | 0.45s (delay 0.05) | `power4.inOut` | `clipPath circle 150%→0%` | center |
+| **Total, any variant** | at most 0.9s | | | |
 | **Reduced motion (all)** | 0.2s | none | opacity only | n/a |
 
 ---

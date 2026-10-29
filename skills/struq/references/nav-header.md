@@ -66,7 +66,9 @@ Craft notes:
 
 ## 3. The full-screen overlay menu (the agency staple)
 
-Menu opens = a full-viewport `surface-3` (or inverted) panel wipes in; nav links render as **display type** with masked line staggers; a meta column carries contact/socials. The menu is a *destination*, not a dropdown.
+Menu opens = a full-viewport inverted panel wipes in; nav links render as **display type** with masked line staggers; a meta column carries contact/socials. The menu is a *destination*, not a dropdown.
+
+**Colour: invert the page.** The recipes ship `bg-ink text-surface-0`, which reads on every light preset (Soft Modern, Warm Editorial, Luxury Minimal). On a dark preset (Dark Cinematic), where `ink` is the light colour, use `bg-surface-3 text-ink` instead. Never `bg-surface-3 text-surface-0` on a light preset: that is cream on cream. On the inverted panel, `surface-0` is the text and `surface-2` the muted tier; `ink-muted` on `ink` fails contrast ([vibe-presets.md](vibe-presets.md), token contract).
 
 **Build it on an accessible primitive.** An overlay that covers the page is a modal dialog, and a modal needs a focus trap, Escape to close, `aria-modal` semantics, inert background content, and focus return to the trigger. Hand-rolling all of that is where menus break. Use **Radix Dialog** (`Dialog` from the unified `radix-ui` package that [setup.md](setup.md) installs) or an equivalent primitive (React Aria, Ark UI) and let it own accessibility while GSAP owns the motion. §3a shows the motion; §3b shows it wrapped in Radix, which is the version to ship.
 
@@ -123,7 +125,7 @@ export function OverlayMenu() {
       </button>
 
       <div ref={panel} id="site-menu" role="dialog" aria-modal="true"
-           className="fixed inset-0 z-50 hidden bg-surface-3 text-surface-0">
+           className="fixed inset-0 z-50 hidden bg-ink text-surface-0">
         <nav className="flex h-full flex-col justify-between px-6 pb-10 pt-32">
           <ul>
             {LINKS.map((l) => (
@@ -223,16 +225,20 @@ export function OverlayMenu() {
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Trigger className="font-ui text-ui">Menu</Dialog.Trigger>
+      {/* Mobile-only menu: desktop shows inline links in the header (§4), so the trigger
+          hides from md up. Drop md:hidden for an "editorial minimal" header on every width. */}
+      <Dialog.Trigger className="font-ui text-ui h-12 md:hidden">Menu</Dialog.Trigger>
 
       <Dialog.Portal>
         <Dialog.Content ref={setPanel} aria-describedby={undefined}
-                        className="fixed inset-0 z-50 bg-surface-3 text-surface-0">
+                        className="fixed inset-0 z-50 bg-ink text-surface-0">
           <Dialog.Title className="sr-only">Site menu</Dialog.Title>
 
-          {/* The trigger is inert while the modal is open, so Close lives inside the panel,
-              pinned to the same spot as the header button. */}
-          <Dialog.Close className="font-ui text-ui absolute right-6 top-5">
+          {/* The trigger is inert while the modal is open, so Close lives inside the panel.
+              It must sit EXACTLY over the header's Menu button: same right inset as the header's
+              px-6, same height (h-12) and the same vertical centre as the h-16 header bar, so the
+              label swaps in place instead of jumping. Change one, change both. */}
+          <Dialog.Close className="font-ui text-ui absolute right-6 top-2 h-12">
             Close
           </Dialog.Close>
 
@@ -273,7 +279,7 @@ Notes on the Radix version:
 
 ## 4. Mobile
 
-- **The overlay IS the mobile nav.** One menu system for all widths: desktop may *also* show inline links, mobile shows only wordmark + menu button. Never a separate "mobile hamburger dropdown."
+- **The overlay IS the mobile nav.** One menu system for all widths: desktop may *also* show inline links, mobile shows only wordmark + menu button. Never a separate "mobile hamburger dropdown." The usual split: the inline links carry `max-md:hidden`, the trigger carries `md:hidden` (§3b), and both live in the same header so the Close button can sit over Menu.
 - Touch targets ≥ 48×48px for the menu button and each link row ([iconography.md](iconography.md) §7); the display-type links clear this by default.
 - Hide-on-scroll stays on. It's *more* valuable on small screens where 4rem of chrome is 5% of the viewport. The `backdrop-blur` surface is fine on modern mobile; if the page is effect-heavy, prefer the hard surface swap (blur stacks with everything else on the compositor).
 - The wordmark stays ≤ ~40% of viewport width; long names abbreviate to a mark.

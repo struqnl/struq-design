@@ -76,6 +76,8 @@ gsap.to(target, {
 5. **One trigger per concern**, not per element: stagger ten cards from one trigger on the parent.
 6. **Never pin on touch.** The matchMedia + scroll-snap fallback in [pinning-scrub.md](pinning-scrub.md) §4 is the law.
 
+Pin symptoms (a jerk, a jump, a snap on first engage, a pin that lands in the wrong place), each with cause, fix and check: [pitfalls.md](pitfalls.md) §2.
+
 ---
 
 ## 4. gsap.matchMedia: responsive + reduced-motion, declaratively
@@ -108,7 +110,7 @@ Pre-compiles one reusable tween per property. For anything updating every frame 
 
 ---
 
-## 6. SplitText (3.13+ API)
+## 6. SplitText (GSAP 3.13 or later)
 
 ```ts
 SplitText.create(el, {

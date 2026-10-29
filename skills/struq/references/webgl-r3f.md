@@ -51,20 +51,26 @@ import { useEffect, useState } from "react";
 // happens only after the gate passes. No loading UI: the poster is already there.
 const SceneCanvas = dynamic(() => import("./SceneCanvas"), { ssr: false });
 
+// ONE gate string. If this section also pins or scrubs, its gsap.matchMedia uses the same
+// constant, so the canvas and the pin can never disagree (webgl-scenes.md §4, product-rig).
+// Policy per project: skip touch entirely (default, below), or allow it with a lower dpr.
+export const GATE = "(prefers-reduced-motion: no-preference) and (pointer: fine)";
+
 export function HeroScene() {
   const [webgl, setWebgl] = useState(false);
 
   useEffect(() => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const coarse = window.matchMedia("(pointer: coarse)").matches;
-    // Policy per project: skip entirely on touch (default), or allow it with a lower dpr.
-    setWebgl(!reduced && !coarse);
+    const mq = window.matchMedia(GATE);
+    const sync = () => setWebgl(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
   }, []);
 
   return (
-    <section className="relative min-h-screen overflow-hidden">
+    <section className="relative min-h-[100svh] overflow-hidden">
       {/* Always rendered: the design without WebGL, and the LCP image with it.
-          Next 16 uses `preload`; on Next 15 use `priority` instead. */}
+          `preload` or `priority`, whichever the installed next/image declares (setup.md §0). */}
       <Image src="/media/hero-poster.webp" alt="" fill preload sizes="100vw"
              className="object-cover" />
       {webgl && <SceneCanvas />}

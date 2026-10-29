@@ -186,7 +186,7 @@ All are SSR-safe overlays at `z-[10001]`, reveal on exit, respect reduced-motion
 |---|---|---|---|
 | **Counter** | data / precise | % count tied to real asset load | slide up `yPercent:-100` 0.9s `power4.inOut` |
 | **Mark** | minimal / brand | wordmark fades in, holds, layer fades | `opacity→0` 0.6s `power2.inOut` |
-| **Shutter** | architectural | grid of tiles holds brand, staggered grid-wipe | tiles `scaleY→0` 0.6s `power3.inOut` |
+| **Shutter** | architectural | grid of tiles holds brand, staggered grid-wipe | tiles `scaleY→0` 0.6s `power4.inOut` (the baseline curtain ease) |
 | **Odometer** | mechanical | rolling 0→100 reel | slide up 0.9s `power4.inOut` |
 | **WordCycle** | editorial | masked word reel settles on brand | slide up 0.9s `power4.inOut` |
 | **ProgressBar** | restrained | hairline fills 0→100% under a wordmark | slide up 0.8s `power4.inOut` |
@@ -217,7 +217,7 @@ export function LoaderShutter({ id, brand = "Brand", rows = 3, cols = 4 }: {
     tl.from(".sh-word", { autoAlpha: 0, y: 14, duration: reduce ? 0.2 : 0.5, ease: "power2.out" });
     tl.to(".sh-word", { autoAlpha: 0, duration: reduce ? 0.2 : 0.4, ease: "power2.in" }, "+=" + (reduce ? 0.1 : 0.35));
     tl.to(tiles, {
-      scaleY: 0, transformOrigin: "top", duration: reduce ? 0.3 : 0.6, ease: "power3.inOut",
+      scaleY: 0, transformOrigin: "top", duration: reduce ? 0.3 : 0.6, ease: "power4.inOut", // curtains: quint-in-out
       stagger: { each: reduce ? 0 : 0.04, grid: [rows, cols], from: "start" },
       onComplete: () => {
         markLoaderSeen(id); // persist only after the last tile has cleared

@@ -68,6 +68,8 @@ import { useRef } from "react";
 import Image from "next/image";
 import { gsap, useGSAP } from "@/lib/gsap";
 
+type NetInfo = { effectiveType?: string; saveData?: boolean };
+
 export function MatchCutHero({ src, title, cut = "hard" }: {
   src: string; title: string; cut?: "hard" | "dissolve";
 }) {
@@ -77,10 +79,37 @@ export function MatchCutHero({ src, title, cut = "hard" }: {
     const mm = gsap.matchMedia();
     mm.add("(prefers-reduced-motion: no-preference)", () => {
       const el = root.current!;
-      gsap.timeline({ delay: 1 }) // hold the image for about a second
+      const img = el.querySelector<HTMLImageElement>("[data-cut-image] img");
+
+      // Shorter hold on slow or data-saving connections: the post-cut content is the LCP candidate.
+      const net = (navigator as Navigator & { connection?: NetInfo }).connection;
+      const slow = net?.saveData === true || /2g|3g/.test(net?.effectiveType ?? "");
+      const HOLD = slow ? 0.6 : 1;
+
+      const tl = gsap.timeline({ paused: true })
         .call(() => { el.dataset.cut = "1"; }, [], 0) // the type is there at the cut
         .to("[data-cut-image]", { autoAlpha: 0, duration: cut === "hard" ? 0 : 0.3, ease: "none" }, 0);
-      return () => { delete el.dataset.cut; };
+
+      // The hold starts when the photo has PAINTED, never on mount: a hold over an empty frame
+      // is no match cut at all. Use delayedCall, not tl.delay(): play() ignores a delay set
+      // after the timeline was created.
+      let started = false;
+      let hold: gsap.core.Tween | undefined;
+      const start = (seconds: number) => {
+        if (started) return;
+        started = true;
+        hold = gsap.delayedCall(seconds, () => { tl.play(); });
+      };
+      const onLoad = () => start(HOLD);
+      img?.addEventListener("load", onLoad, { once: true });
+      if (img?.complete && img.naturalWidth > 0) onLoad();      // cached: already painted
+      const fallback = gsap.delayedCall(2.5, () => start(0));  // photo never came: open on the type
+
+      return () => {
+        tl.kill(); hold?.kill(); fallback.kill();
+        img?.removeEventListener("load", onLoad);
+        delete el.dataset.cut;
+      };
     });
   }, { scope: root });
 
@@ -89,6 +118,7 @@ export function MatchCutHero({ src, title, cut = "hard" }: {
              className="relative grid min-h-svh items-end overflow-clip bg-surface-0 px-6 pb-[12svh]">
       <h1 data-cut-type className="font-display text-display max-w-[16ch]">{title}</h1>
       <div data-cut-image aria-hidden className="absolute inset-0">
+        {/* LCP hint: `preload` or `priority`, whichever the installed next/image declares (setup.md §0, Known API shifts) */}
         <Image src={src} alt="" fill preload sizes="100vw" className="object-cover" />
       </div>
     </section>
@@ -96,10 +126,11 @@ export function MatchCutHero({ src, title, cut = "hard" }: {
 }
 ```
 
-- The image is the first paint and the LCP element, so this entrance costs no hydration wait; the h1 is in the HTML from the start, hidden only by CSS while motion is allowed.
+- **The hold is gated on the image.** `img.complete` (cached) or its `load` event starts a `gsap.delayedCall` for the hold, with a 2.5s fallback straight to the type. A timeline with `delay: 1` on mount fires the cut over an empty frame whenever the photo is remote or slow, and a delay set later with `tl.delay()` is ignored by `play()`. Verify it with a frame trace: the hold frame must be the photo ([pitfalls.md](pitfalls.md) §3.3).
+- **LCP is not free here.** The h1 is in the HTML from the start, hidden only by CSS while motion is allowed, and whatever is hidden until the cut (the h1, a product shot) becomes the LCP candidate the moment it appears. So lab LCP lands after hold plus cut, and fails the 2.5s floor ([performance.md](performance.md) §1) whenever the post-cut content paints a larger area than the photo did. Keep the post-cut hero smaller than the photo's painted area, and keep the shorter hold on slow connections (`HOLD` above). Measure it with the LCP probe in [performance.md](performance.md) §8; never assume it.
 - Add `<noscript><style>{"[data-cut-image]{display:none!important}[data-cut-type]{visibility:visible!important}"}</style></noscript>` to the root layout's `<head>`, so a JS failure opens on the type.
 - With a loader, start the hold as the loader exits ([loaders.md](loaders.md)), not on mount, or the cut happens behind the curtain.
-- **When not to:** when the image has no shape the type can land on. A cut with no shared shape is just a slideshow.
+- **When not to:** when the image has no shape the type can land on (a cut with no shared shape is just a slideshow), and when the post-cut hero must be larger than the photo's painted area and LCP under 2.5s is a hard requirement: then open on the type and let the image follow.
 
 ### `clip-line-hero`: the 1.6s single-line clip (Luxury Minimal)
 
@@ -142,7 +173,7 @@ export function ClipLineHero({ children }: { children: string }) {
 }
 ```
 
-- `fromTo` renders its start clip immediately, so `data-ready` can lift the CSS guard in the same tick without a flash. The 0.1em padding pulled back with a negative margin keeps descenders inside the clipped box at leading 0.92.
+- `fromTo` renders its start clip immediately, so `data-ready` can lift the CSS guard in the same tick without a flash. The 0.1em padding pulled back with a negative margin keeps descenders inside the clipped box at leading 0.92. An italic last glyph overhangs its box on the right: add `px-[0.08em] -mx-[0.08em]` too when the line ends in italic ([pitfalls.md](pitfalls.md) §1).
 - `power4.inOut` is the baseline's curtain ease: the wipe is a curtain drawn across one line. 1.6s is the top of the hero band, which Luxury Minimal's motion personality owns.
 - Add `<noscript><style>{"[data-clip-line]{clip-path:none!important}"}</style></noscript>` to the root layout's `<head>`.
 - One line only. If the copy needs two lines at 390px, shorten the copy ([page-architecture.md](page-architecture.md) §5); a two-line clip wipe reads as two reveals.
@@ -155,7 +186,7 @@ export function ClipLineHero({ children }: { children: string }) {
 |---|---|---|---|
 | Marketing entrance | 0.8s | `power3.out` | `y 24→0` + fade |
 | App entrance | 0.25s | `power1.out` | fade |
-| Match cut (Dark Cinematic) | about 1s hold, then 0s or 0.3s | `none` | image `autoAlpha` to 0, type static |
+| Match cut (Dark Cinematic) | 1s hold from image load (0.6s on slow connections, 2.5s fallback), then 0s or 0.3s | `none` | image `autoAlpha` to 0, type static |
 | Single-line clip (Luxury Minimal) | 1.6s | `power4.inOut` | `clip-path` inset wipe |
 | **Reduced motion** | 0.3s | none | opacity only |
 
@@ -163,4 +194,5 @@ export function ClipLineHero({ children }: { children: string }) {
 
 ## Anti-pattern (sweep before shipping)
 
-- **Forgetting `clearProps`/`refresh`** → broken pins on revealed pages. If a pinned section jumps only after navigating (not on hard reload), this is the cause.
+- **Forgetting `clearProps`/`refresh`** → broken pins on revealed pages. If a pinned section jumps only after navigating (not on hard reload), this is the cause ([pitfalls.md](pitfalls.md) §2).
+- **A timed entrance started on mount** while it depends on an image, a font or a loader → it plays behind the curtain or over an empty frame. Start it from the thing it waits for ([pitfalls.md](pitfalls.md) §3.3).

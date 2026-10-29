@@ -6,12 +6,14 @@ Core concept first, because everything here is one idea: **`scrub` ties timeline
 
 All snippets assume [setup.md](setup.md). `scrub: true` vs `scrub: 1` is a feel decision; see [feel-layer.md](feel-layer.md).
 
+**A pin that jerks, jumps, snaps or lands in the wrong place** is one of a short list of causes (`anticipatePin` with Lenis, stale measurements, a transformed ancestor, `vh` on mobile, a pin in a flex or grid parent, nested pins). Work through [pitfalls.md](pitfalls.md) §2 before tuning `scrub`.
+
 ---
 
 ## 1. Pinned scrub timeline (the workhorse)
 
 **Term:** Pinned sequence / scroll-told story.
-**Mechanic:** A `100vh` section pins; the user scrolls "through" an invisible distance (`end: "+=250%"` → 2.5 viewport-heights of scroll) while a timeline scrubs across phases: text swaps, media transforms, layers move. Scroll distance, not time, is the duration unit.
+**Mechanic:** A one-screen (`100svh`) section pins; the user scrolls "through" an invisible distance (`end: "+=250%"` → 2.5 viewport-heights of scroll) while a timeline scrubs across phases: text swaps, media transforms, layers move. Scroll distance, not time, is the duration unit.
 
 **When:** Product walkthroughs, process steps, one cinematic brand moment.
 **Overkill when:** the content is just three paragraphs. Pinning 3 viewports of scroll to read 40 words is hostage-taking.
@@ -29,55 +31,79 @@ const PHASES = [
   { kicker: "03", title: "Craft", body: "Motion and microcopy get design reviews too." },
 ];
 
+// ONE gate for the layout switch and the pin. Touch, small screens, reduced motion and
+// no-JS all get the stacked list the server rendered.
+const GATE = "(min-width: 768px) and (prefers-reduced-motion: no-preference)";
+
 export function ProcessSequence() {
   const container = useRef<HTMLElement>(null);
 
   useGSAP(
     () => {
-      const phases = gsap.utils.toArray<HTMLElement>("[data-phase]");
+      const mm = gsap.matchMedia();
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: container.current,
-          start: "top top",
-          end: "+=250%",          // 2.5 viewports of scroll-room: ~0.8 per phase
-          pin: true,
-          scrub: 1,                // 1s catch-up smoothing, see feel-layer.md
-          // snap: phases feel like steps? snap to them. Continuous story? omit.
-          snap: { snapTo: 1 / (phases.length - 1), duration: 0.4, ease: "power2.inOut" },
-        },
+      mm.add(GATE, () => {
+        const section = container.current!;
+        const phases = gsap.utils.toArray<HTMLElement>("[data-phase]");
+
+        // Switch the stacked list into a stage, then hide the later phases with GSAP.
+        // matchMedia reverts the gsap.set and runs the returned cleanup when the gate
+        // stops matching, so the list comes back by itself.
+        section.dataset.mode = "rig";
+        gsap.set(phases.slice(1), { yPercent: 30, autoAlpha: 0 });
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: "top top",
+            end: "+=250%",          // 2.5 viewports of scroll-room: ~0.8 per phase
+            pin: true,
+            scrub: 1,                // 1s catch-up smoothing, see feel-layer.md
+            // snap: phases feel like steps? snap to them. Continuous story? omit.
+            snap: { snapTo: 1 / (phases.length - 1), duration: 0.4, ease: "power2.inOut" },
+          },
+        });
+
+        phases.forEach((phase, i) => {
+          if (i === 0) return; // phase 0 is the resting state
+          tl.to(phases[i - 1], { yPercent: -30, autoAlpha: 0, ease: "power2.in", duration: 0.4 })
+            .to(phase,
+              { yPercent: 0, autoAlpha: 1, ease: "power2.out", duration: 0.4 },
+              "<0.15" // overlap: new phase starts before old one is fully gone
+            );
+        });
+
+        // A continuous element that evolves across ALL phases sells the sequence
+        tl.fromTo("[data-dial]", { rotate: 0 }, { rotate: 270, ease: "none", duration: tl.duration() }, 0);
+
+        return () => { delete section.dataset.mode; };
       });
-
-      phases.forEach((phase, i) => {
-        if (i === 0) return; // phase 0 is the resting state
-        tl.to(phases[i - 1], { yPercent: -30, autoAlpha: 0, ease: "power2.in", duration: 0.4 })
-          .fromTo(phase,
-            { yPercent: 30, autoAlpha: 0 },
-            { yPercent: 0, autoAlpha: 1, ease: "power2.out", duration: 0.4 },
-            "<0.15" // overlap: new phase starts before old one is fully gone
-          );
-      });
-
-      // A continuous element that evolves across ALL phases sells the sequence
-      tl.fromTo("[data-dial]", { rotate: 0 }, { rotate: 270, ease: "none", duration: tl.duration() }, 0);
     },
     { scope: container }
   );
 
+  // Server markup = a readable stacked list. data-mode="rig" (motion branch only) turns it
+  // into the pinned stage: the phases stack absolutely and the section takes one screen.
   return (
-    <section ref={container} className="relative h-screen overflow-hidden bg-surface-1">
-      <div className="grid h-full grid-cols-12 items-center px-6">
-        <div className="relative col-span-5 col-start-2">
-          {PHASES.map((p, i) => (
-            <div key={p.kicker} data-phase className="absolute inset-0 flex flex-col justify-center"
-                 style={i === 0 ? {} : { opacity: 0 }}>
+    <section
+      ref={container}
+      className="group/seq relative bg-surface-1 py-[8rem]
+                 data-[mode=rig]:h-[100svh] data-[mode=rig]:overflow-hidden data-[mode=rig]:py-0"
+    >
+      <div className="grid grid-cols-12 items-center gap-y-16 px-6 group-data-[mode=rig]/seq:h-full">
+        <ol className="relative col-span-12 space-y-16 md:col-span-5 md:col-start-2
+                       group-data-[mode=rig]/seq:h-full group-data-[mode=rig]/seq:space-y-0">
+          {PHASES.map((p) => (
+            <li key={p.kicker} data-phase
+                className="flex flex-col justify-center group-data-[mode=rig]/seq:absolute group-data-[mode=rig]/seq:inset-0">
               <span className="eyebrow text-eyebrow text-ink-muted">{p.kicker}</span>
               <h3 className="font-display text-h2 mt-4">{p.title}</h3>
               <p className="text-body mt-6 max-w-[36ch] text-ink-muted">{p.body}</p>
-            </div>
+            </li>
           ))}
-        </div>
-        <div data-dial className="col-span-4 col-start-8 aspect-square rounded-full border border-line" />
+        </ol>
+        <div data-dial aria-hidden
+             className="col-span-4 col-start-8 aspect-square rounded-full border border-line max-md:hidden" />
       </div>
     </section>
   );
@@ -90,7 +116,8 @@ Craft notes:
 - **`"<0.15"` overlap** between exit and entrance: gapless storytelling.
 - The `01/02/03` kickers here are fine. Ordinal numbering *inside one stepped component* is real content, distinct from the page-wide numbered-everything tell ([anti-patterns.md](anti-patterns.md) §16). Don't let this pattern leak numerals onto every other section.
 - Snap is for stepped content; omit for continuous narratives. Never snap with distances under ~80% per phase (fights the user's thumb).
-- Skipping under reduced motion: render `PHASES` as a normal stacked list inside the `matchMedia` reduced branch.
+- **Server markup is the final, readable state.** Nothing is hidden with an inline `style={{ opacity: 0 }}` or a CSS class: the later phases are hidden by `gsap.set` inside the motion branch, so reduced motion, touch, a failed bundle and no-JS all read the three phases as a list. The layout switch is a data attribute set in the same branch, so the list and the pin can never disagree.
+- **One `GATE` string** for every decision about this section (the layout switch, the pin, and a canvas if one joins it, [webgl-r3f.md](webgl-r3f.md) §1). Two queries drift: a fine-pointer tablet ends up with a pin and no stage, or a stage and no pin.
 
 **Cheap tell:** content swaps via `opacity` crossfade fired at thresholds (`toggleActions`), no pin: a slideshow that happens near scroll. Or: pinned for 6 viewports with one sentence. **Instead:** Pinned, scrubbed, phases overlapping, one element evolving continuously, ≤2.5 viewports.
 
@@ -154,7 +181,7 @@ export function WorkGallery({ projects }: { projects: { title: string; meta: str
 
   return (
     <section ref={container} className="overflow-hidden bg-surface-0">
-      <div ref={track} className="flex h-screen w-max items-center gap-[6vw] px-[8vw]">
+      <div ref={track} className="flex h-[100svh] w-max items-center gap-[6vw] px-[8vw]">
         <div className="w-[28vw] shrink-0">
           <h2 className="font-display text-h2">Selected<br />work</h2>
         </div>
@@ -277,7 +304,7 @@ export function Showcase({ items }: { items: { id: string; title: string }[] }) 
         ref={track}
         className="flex items-center gap-[5vw] px-[8vw]
                    max-md:snap-x max-md:snap-mandatory max-md:overflow-x-auto
-                   md:h-screen md:w-max"
+                   md:h-[100svh] md:w-max"
       >
         {items.map((item) => (
           <article key={item.id} className="w-[82vw] shrink-0 snap-center md:w-[42vw]">

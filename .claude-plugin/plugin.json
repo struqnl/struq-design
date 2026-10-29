@@ -7,6 +7,7 @@
     "url": "https://struq.nl"
   },
   "homepage": "https://struq.nl",
+  "repository": "https://github.com/Deckdot/struq-design",
   "license": "MIT",
   "keywords": ["design", "web-design", "gsap", "lenis", "three.js", "awwwards", "skill"]
 }

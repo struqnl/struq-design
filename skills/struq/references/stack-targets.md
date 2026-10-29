@@ -20,6 +20,8 @@ Check `package.json` deps to confirm: `next` vs `vite` + `react-dom`. If a route
 present in Vite, it is almost always `react-router-dom`, and that is what the transition
 patterns below assume.
 
+Then read the installed majors (`vite`, `react`, `tailwindcss`, `gsap`, `lenis`, the router) and record them on the `Stack:` line; the installed version beats this file whenever they disagree ([setup.md](setup.md) §0, Known API shifts). Scaffold an empty folder with `npm create vite@latest`.
+
 ---
 
 ## 2. Translation table: Next App Router → Vite
@@ -34,7 +36,7 @@ patterns below assume.
 | **Route-change transitions** | `template.tsx` + `PageTransitionProvider` ([route-transitions.md](route-transitions.md)) | `AnimatePresence` driven by the router location; the curtain/overlay logic is identical, only the trigger source changes. |
 | **Images** | `next/image` (auto sizing, lazy, AVIF/WebP) | `<img>` with **explicit `width`/`height`** (or aspect-ratio box) + `loading="lazy"` + `decoding="async"`; for responsive sources use `srcset` or `vite-imagetools`. Keep explicit dims for CLS regardless. |
 | **Metadata / head** | `metadata` export / `generateMetadata` | `react-helmet-async` or set tags in `index.html`. |
-| **Icons** | `@phosphor-icons/react` (Iconify optional) | `@phosphor-icons/react`, or Iconify via compile-time `unplugin-icons` ([iconography.md](iconography.md)). |
+| **Icons** | `@deckdot/struq-icons` (the default; Phosphor light the fallback) | The same React package and root CSS imports in `src/main.tsx`; non-React or Iconify-based stacks use its `iconify.json` (prefix `struq`) or `sprite.svg` ([iconography.md](iconography.md) §2). |
 | **Env / public assets** | `/public`, `process.env.NEXT_PUBLIC_*` | `/public`, `import.meta.env.VITE_*`. |
 
 ---

@@ -75,7 +75,9 @@ gsap.from("[data-reveal]", {
   scrollTrigger: { trigger: container.current, start: "top 78%", once: true },
 });
 ```
-Transform + opacity, expo-out tail, 80ms rhythm between siblings. ([scroll-reveals.md](scroll-reveals.md))
+Transform + opacity, expo-out tail, 80ms rhythm between siblings, inside the reduced-motion branch. ([scroll-reveals.md](scroll-reveals.md))
+
+**The silent failure:** a `[data-reveal]` element that also carries `transition-opacity` (a sibling-dim hover) or a `translate-y-*` offset. The first leaves it stuck at `opacity: 0` with the tween at progress 1; the second is erased because GSAP sets `translate: none`. Reveal the wrapper, transition and offset the child ([pitfalls.md](pitfalls.md) §3).
 
 ---
 
@@ -130,7 +132,7 @@ Lines rising from individual overflow masks. ([scroll-reveals.md](scroll-reveals
 **Reflex:** reach for `anticipatePin: 1` (and/or `scrub: true`) to "smooth" the moment a pinned or horizontal section engages.
 **The tell:** a jerk/jump right at the vertical-to-horizontal (or pin-on) handoff, worst on a fast scroll-in. It snaps then corrects instead of easing in. With smooth scroll (Lenis), `anticipatePin` predicts from a *smoothed* velocity, overshoots, and pins a frame early; `scrub: true` then passes that spike straight through 1:1.
 
-**Agency:** **no `anticipatePin`** with smooth scroll + `scrub: 1` (pairs with Lenis lerp ~0.09 so the track settles softly). If only the *first* scroll-in snaps, the cause is stale pin positions, so add the delayed initial `lenis.resize()` + `ScrollTrigger.refresh()` from [setup.md](setup.md) §2. Tuning `scrub` is not the fix; removing `anticipatePin` is. ([pinning-scrub.md](pinning-scrub.md) §2)
+**Agency:** **no `anticipatePin`** with smooth scroll + `scrub: 1` (pairs with Lenis lerp ~0.09 so the track settles softly). If only the *first* scroll-in snaps, the cause is stale pin positions, so add the delayed initial `lenis.resize()` + `ScrollTrigger.refresh()` from [setup.md](setup.md) §2. Tuning `scrub` is not the fix; removing `anticipatePin` is. ([pinning-scrub.md](pinning-scrub.md) §2; every other pin cause, symptom first: [pitfalls.md](pitfalls.md) §2)
 
 ---
 
@@ -187,7 +189,7 @@ Lines rising from individual overflow masks. ([scroll-reveals.md](scroll-reveals
 **Reflex:** 🚀✨💡 as feature icons; the AI-cliché trio (`Sparkles`, `Rocket`, `Zap`/lightning, in any set) standing in for "magic / launch / fast"; reflexive Lucide for everything; icons at 5 sizes/strokes in brand-blue circles with light-blue backgrounds; an animated icon looping forever in a dashboard, or a 500ms+ animation lagging a click; a complex decorative icon turned to mud at 16px.
 **The tell:** icon-as-filler. `Sparkles`/`Rocket`/`Zap` are the visual signature of generated UI; the icon circle chip is the card-grid's sidekick; constant-loop animation reads as distraction, not delight.
 
-**Agency:** icons only where they inform (UI affordances, scannability, button anchors, never decoration); **one coherent family chosen for the brand via Iconify** (not reflexive Lucide), one size, `strokeWidth={1.5}`, ink-colored; system icons small, decorative/animated big. Animated icons: ≤500ms on click, 1.5 to 3s on hover, never loop in standard UI, natural physics, reduced-motion falls back to static. Decoration jobs otherwise go to hairline rules, ghost type, a single oversized numeral as an accent (not a per-row counter, see §16), real photography/render. Often the strongest move is **no icon at all**. (Full doctrine: [iconography.md](iconography.md); drawn or morphing line art belongs to [svg-motion.md](svg-motion.md))
+**Agency:** icons only where they inform (UI affordances, scannability, button anchors, never decoration); **one coherent family chosen for the brand** (its own set, else Struq Icons, else Phosphor light; never reflexive Lucide, never two families), one size, `strokeWidth={1.5}`, ink-colored; system icons small, decorative/animated big. Animated icons: ≤500ms on click, 1.5 to 3s on hover, never loop in standard UI, natural physics, reduced-motion falls back to static. Decoration jobs otherwise go to hairline rules, ghost type, a single oversized numeral as an accent (not a per-row counter, see §16), real photography/render. Often the strongest move is **no icon at all**. (Full doctrine: [iconography.md](iconography.md); drawn or morphing line art belongs to [svg-motion.md](svg-motion.md))
 
 ---
 

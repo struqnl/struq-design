@@ -96,6 +96,8 @@ In order of preference:
    - Avoid the AI-render look: no glossy 3D blobs, no purple-glow gradients, no hyperdetailed-everything. The §1 grade pass over generated output hides most remaining tells.
 3. **Treated stock**: last resort, and only *through* the grade layer. Untreated stock (beaming laptop people, handshake photos) is below the floor.
 
+**Stock and generated images show context, never the client's product.** The city, the canal, a rider, a room, a material: yes. A stranger's e-bike, a generated bottle or a stock ceramic presented as the product: never, because the visitor reads it as the thing they would buy. Until the real product is shot, it is a placeholder frame (§4b), a declared 3D stand-in ([webgl-scenes.md](webgl-scenes.md) §4, "No model file yet"), or type.
+
 **Never:** browser-chrome screenshot mockups tilted in perspective, generic "dashboard glow" renders, or watermark-adjacent placeholder imagery. If a section has no honest image, the strongest move is **no image**: type, space, and surface carry it (same logic as the no-icon rule, [iconography.md](iconography.md) §1).
 
 ---

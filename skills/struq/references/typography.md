@@ -2,7 +2,7 @@
 
 Type is most of what a visitor sees on a marketing site, and it decides in the first second whether the page reads as designed or generated. It costs no assets, no GPU and no scroll math, so spend the first hour of every build here. The baseline in [../SKILL.md](../SKILL.md) states the non-negotiables; this file is the system behind them.
 
-Treat type as a **system, not a font choice**: eight roles, one scale, a weight budget and per-size optics. Picking two nice faces and then improvising sizes per section is how good fonts end up looking like a template.
+Treat type as a **system, not a font choice**: a fixed set of roles, one scale, a weight budget and per-size optics. Picking two nice faces and then improvising sizes per section is how good fonts end up looking like a template.
 
 Prerequisites: the GSAP registry, `useGSAP` rules and reduced-motion pattern from [setup.md](setup.md); the root-rem knob from [scaling.md](scaling.md); the token contract from [vibe-presets.md](vibe-presets.md). The masked line reveal is specified in [scroll-reveals.md](scroll-reveals.md) §3. This file builds on it and does not repeat it.
 
@@ -22,7 +22,11 @@ During planning ([direction.md](direction.md) §4) read only this section; the r
    | Essay-led, sans headlines over book text | S6 Urbanist + Lora | Warm Editorial, Luxury Minimal |
    | Product, precise, technical | S7 Sora + Instrument Sans | Dark Cinematic, Soft Modern |
 
-2. **The roles are fixed; the pairing only overrides values.** Every string is one of the roles in §2.1, each with its own token: `font-display text-display` (hero), `font-display text-h2`, `type-h3 text-h3`, `text-lead`, `text-body`, `text-small`, `eyebrow text-eyebrow text-ink-muted`, `font-ui text-ui`, `stat text-stat`. The pairing's row writes its weights, tracking, leading, role faces and display clamp into `@theme`; components never change.
+   **Extended by the same word.** When the brief's temperament matches an Extended row word for word (a potter is "warm, crafted, hand-set", E1), take that row; sourcing cost alone is not a reason to fall back. If the face cannot be fetched in this run (Fontshare is a manual download), set the nearest Signature row, and record the Extended swap under ASSUMPTIONS so it lands when the files arrive.
+
+   **A brand that owns one face** keeps it in the role the matching S row gives that face, and takes the row's partner for the other role (a brand set in Sora takes S7: Sora display, Instrument Sans text), unless the brand already sets its body copy in its own face too; then it is a declared one-family system. Log the partner under ASSUMPTIONS.
+
+2. **The roles are fixed; the pairing only overrides values.** Every string is one of the roles in §2.1, each with its own token: `font-display text-display` (hero), `font-display text-statement` (the Orient line or manifesto), `font-display text-h2`, `type-h3 text-h3`, `text-lead`, `text-body`, `text-small`, `eyebrow text-eyebrow text-ink-muted`, `font-ui text-ui`, `stat text-stat`. The pairing's row writes its weights, tracking, leading, role faces and display clamp into `@theme`; components never change.
 
 3. **One signature move** (§5): `weight-in`, `soft-scrub`, `type-mask-media`, `fit-width-wordmark` or a cropped display. Record it next to the pairing id, with the preset's hero entrance ([vibe-presets.md](vibe-presets.md)).
 
@@ -44,13 +48,14 @@ The cost: light display needs a face drawn for large sizes. Hairline serifs die 
 
 ## 2. The system: roles, weights, optics
 
-### 2.1 The eight roles
+### 2.1 The roles
 
 Every piece of text on the page is one of these. If a string fits none, the design is improvising.
 
 | Role | Token | 390px to 1440px | Face token | Use it for | Never |
 |---|---|---|---|---|---|
-| **Display** | `text-display` | 46 to 120px | `font-display` | The hero h1 and at most one other statement line per page | Section titles; anything over 3 lines |
+| **Display** | `text-display` | 46 to 120px | `font-display` | The hero h1 and at most one other display line per page (the footer ask) | Section titles; anything over 3 lines |
+| **Statement** | `text-statement` | 28 to 52px | `font-display` | The Orient beat's one sentence and the `manifesto-fill` paragraph: larger than lead, not a heading | Section titles; more than one per page outside the manifesto |
 | **h2** | `text-h2` | 36 to 58px | `font-display` | Section openers, one per section | Two per viewport |
 | **h3** | `text-h3` | 24 to 33px | `type-h3` (`--font-h3`) | Item titles in lists, cards, case rows | As a subhead under an h2 (use lead) |
 | **Lead** | `text-lead` | 20 to 22px | `font-body` | The one paragraph under a hero or h2 | More than one paragraph in a row |
@@ -82,7 +87,7 @@ Sizes are read at the knob's two ends: the root is 16px at 390px and about 17.6p
 
 ### 2.4 The tokens
 
-Tailwind v4 lets a `--text-*` token carry its line height, tracking and weight, so `text-h2` applies all four and components never assemble them by hand. Roles that can change face per pairing (h3, eyebrow, UI, numerals) also get a **role font token**, so a pairing swap never touches a component. These defaults equal the S1 row in §3.1 exactly (Urbanist in both roles); every other pairing's row lists the values to override in the preset's `@theme`, including its four role faces.
+Tailwind (v4 or later, for `@theme`) lets a `--text-*` token carry its line height, tracking and weight, so `text-h2` applies all four and components never assemble them by hand. Roles that can change face per pairing (h3, eyebrow, UI, numerals) also get a **role font token**, so a pairing swap never touches a component. These defaults equal the S1 row in §3.1 exactly (Urbanist in both roles); every other pairing's row lists the values to override in the preset's `@theme`, including its four role faces.
 
 ```css
 /* app/theme.css: type layer, next to the preset's colour tokens. Defaults = S1. */
@@ -95,6 +100,7 @@ Tailwind v4 lets a `--text-*` token carry its line height, tracking and weight, 
 
   --text-h3: clamp(1.5rem, 1.34rem + 0.65vw, 1.875rem);  --text-h3--line-height: 1.2;   --text-h3--letter-spacing: -0.01em;  --text-h3--font-weight: 400;
   --text-h2: clamp(2.25rem, 1.8rem + 1.82vw, 3.3rem);    --text-h2--line-height: 1.06;  --text-h2--letter-spacing: -0.02em;  --text-h2--font-weight: 300;
+  --text-statement: clamp(1.75rem, 1.2rem + 2.2vw, 3.25rem); --text-statement--line-height: 1.2; --text-statement--letter-spacing: -0.015em; --text-statement--font-weight: 300;
   --text-stat: clamp(3rem, 2.2rem + 3vw, 5rem);          --text-stat--line-height: 1;    --text-stat--letter-spacing: -0.03em; --text-stat--font-weight: 300;
 
   /* The top of the scale, and ghost texture type. Both keep a rem term in the middle (zoom). */
@@ -119,7 +125,9 @@ h1, h2, h3 { text-wrap: balance; }
 p, li, blockquote { text-wrap: pretty; }
 ```
 
-Usage: `<h1 class="font-display text-display max-w-[16ch]">`, `<h3 class="type-h3 text-h3">`, `<p class="text-body max-w-[62ch]">`, `<span class="eyebrow text-eyebrow text-ink-muted">`, `<button class="font-ui text-ui">`, `<span class="stat text-stat">`. The scale has no h1 token on purpose: the page's h1 is the display role. `"case"` shifts punctuation and dashes up to cap height, which uppercase eyebrows need. Eyebrows and meta take `text-ink-muted`; `ink-faint` is never text ([vibe-presets.md](vibe-presets.md)).
+`text-statement` takes the pairing's h2 weight and tracking unless its row says otherwise; it is the only role a manifesto paragraph or an Orient sentence ever needs, so neither recipe carries an arbitrary `text-[clamp(...)]`.
+
+Usage: `<h1 class="font-display text-display max-w-[16ch]">`, `<p class="font-display text-statement max-w-[30ch]">`, `<h3 class="type-h3 text-h3">`, `<p class="text-body max-w-[62ch]">`, `<span class="eyebrow text-eyebrow text-ink-muted">`, `<button class="font-ui text-ui">`, `<span class="stat text-stat">`. The scale has no h1 token on purpose: the page's h1 is the display role. `"case"` shifts punctuation and dashes up to cap height, which uppercase eyebrows need. Eyebrows and meta take `text-ink-muted`; `ink-faint` is never text ([vibe-presets.md](vibe-presets.md)).
 
 **Wrapping.** `balance` evens headline lines so the last is not an orphan; engines cap it at a handful of lines, which suits headings only. `pretty` avoids one-word last lines in paragraphs. Both are progressive enhancement. SplitText measures the balanced layout, so balance and line masks agree.
 
@@ -172,7 +180,7 @@ The display clamps compensate for x-height and width: Cormorant and Newsreader h
 Honest notes, per face:
 
 - **Urbanist** (100 to 900) is geometric and wide-set, so it wants less negative tracking than a neo-grotesk and slightly looser leading; its round `o` and `e` collide first. At 400 it is a genuine text face, set at 1.0625rem because its x-height is modest. Eyebrows at 0.12em.
-- **Fraunces**: use the axes on purpose. `opsz` follows size automatically through `next/font`, so the hero gets the sharp cut and the h3 the sturdier one. `SOFT` (0 to 100) rounds the terminals: around 50 suits warm brands (S2), 100 is the soft and friendly voice of S3, 0 keeps it crisp. Pin it with `font-variation-settings: "SOFT" 50` (or 100) on the display roles only, and load the axis (§4). Leaving `opsz` out of `font-variation-settings` keeps optical sizing automatic.
+- **Fraunces**: use the axes on purpose. `opsz` follows size automatically through `next/font`, so the hero gets the sharp cut and the h3 the sturdier one. `SOFT` (0 to 100) rounds the terminals: around 50 suits warm brands (S2), 100 is the soft and friendly voice of S3, 0 keeps it crisp. Pin it with `font-variation-settings: "SOFT" 50` (or 100) on the display roles only, and load the axis (§4). Write the pin inside `@layer base` (`@layer base { .font-display, .type-h3, .stat { font-variation-settings: "SOFT" 50; } }`): an unlayered rule after `@import "tailwindcss"` beats every utility, including the start value of `soft-scrub`. On a `soft-scrub` site the hero h1 rests at `SOFT 0` (the scrub's start); every other display line pins 50. Leaving `opsz` out of `font-variation-settings` keeps optical sizing automatic.
 - **Cormorant Garamond** needs size. Display and h2 only, at its own larger clamp and leading 0.92; if it ever sets running text (a pull quote, a lead), never below 1.125rem. Hairlines vanish on cheap screens below that. Its h3 can move to Jost 500 in dense lists. Load the italic: it is the accent.
 - **Newsreader** (200 to 800, `opsz` 6 to 72) is S5's display face. Leave `opsz` automatic so the hero gets the fine display cut and h3 the sturdier text cut; run it 300 on dark grounds. Like Cormorant it sets a size larger than a geometric.
 - **Sora** (100 to 800) runs wide. It takes less negative tracking than its weight suggests (-0.025em at display, -0.015em at h2) because tight tracking on a wide face clots the counters; carry the width with a smaller clamp and a hero `max-w-[18ch]`, or headlines break into single words.
@@ -297,12 +305,12 @@ Wire the variables onto `<html>` exactly as in [vibe-presets.md](vibe-presets.md
 
 ### Fonts and SplitText
 
-- **Lines: `autoSplit: true`, animation returned from `onSplit`.** SplitText re-splits when fonts finish loading and when the element's width changes, reverting the returned animation first and carrying its progress into the new one. This is the 3.13 API; never `new SplitText()` plus a manual resize listener.
+- **Lines: `autoSplit: true`, animation returned from `onSplit`.** SplitText re-splits when fonts finish loading and when the element's width changes, reverting the returned animation first and carrying its progress into the new one. This API needs GSAP 3.13 or later; never `new SplitText()` plus a manual resize listener.
 - **Words or chars without `autoSplit`: split after `document.fonts.ready`, inside the matchMedia context** (char recipe in §5): `document.fonts.ready.then(() => live && ctx.add(() => { ... }))`. `ctx.add` puts the late split and tween in the same context the media query reverts, and `live` stops a resolve that lands after unmount or a media change. Split before the fonts land and it measures the fallback face.
 - **`adjustFontFallback` makes the re-split nearly invisible:** pre-swap breaks land within a word of the final ones.
 - **The options this skill uses:** `type`, `linesClass`, `mask`, `autoSplit`, `onSplit`, `aria`. `aria` defaults to `"auto"`: the split element gets an `aria-label` with its full text and the fragments are hidden from assistive tech. A label flattens markup, so do not split a heading that contains links.
 - **Where the accessible name lives.** `aria-label` is only reliable on a heading, a link, a button or another element with a role; on a `span`, `div` or `p` (generic roles) screen readers may ignore it. So: split a heading directly and `"auto"` is right (`line-rise-hero`). For a link or button, put `aria-label` on that element and split inner `aria-hidden` spans with `aria: "none"` (SwapLink). For a paragraph or a bare word, render an `sr-only` copy next to an `aria-hidden` visual copy and split the visual one with `aria: "none"` (Manifesto, CharWord). `aria: "hidden"` hides the fragments without adding a label, for a split whose text already exists elsewhere.
-- **Line masks and descenders.** With `mask: "lines"` each line sits in a wrapper with the class `linesClass + "-mask"` (`split-line-mask` here), which clips at tight leading. Pad the mask and pull the margin back so layout does not move: `.split-line-mask { padding-block: 0.1em; margin-block: -0.1em; }`.
+- **Line masks and descenders.** With `mask: "lines"` each line sits in a wrapper with the class `linesClass + "-mask"` (`split-line-mask` here), which clips at tight leading. Pad the mask and pull the margin back so layout does not move: `.split-line-mask { padding-block: 0.1em; margin-block: -0.1em; }`. Every other way a descender or an italic overhang gets clipped, and the 10-second test: [pitfalls.md](pitfalls.md) §1.
 - **Chars drop kerning.** Each character becomes an inline block, so pairs like `To`, `AV` and `Ty` open up at 8rem. Use chars only on short words and revert the split when the animation ends.
 
 ---
@@ -321,7 +329,7 @@ All recipes import from `@/lib/gsap` ([setup.md](setup.md)), live in a `"use cli
 - **`fit-width-wordmark`**: the wordmark set edge to edge at the exact container width, its size computed once from a measurement and on resize, never guessed in `vw`.
 - **A cropped display**: one display line deliberately cut by the canvas edge, the rest of the word implied.
 
-One per site, written into STRUQ.md next to the pairing. `manifesto-fill` (below) only when the copy is a genuine manifesto. The masked line rise is a technique, not a signature: it is the fallback entrance, and every hero using it is a tell (§7).
+One per site, written into STRUQ.md next to the pairing. `manifesto-fill` (below) only when the copy is a genuine manifesto. The masked line rise is a technique, not a signature. It is allowed as the delivery of a named entrance (Warm Editorial rises, then soft-scrubs) and as the fallback entrance. **The tell is precise:** the rise as the hero's *only* gesture, with no signature move on the hero and no preset entrance behind it (§7).
 
 ### `weight-in`: the weight arrives with the line
 
@@ -394,7 +402,7 @@ export function SoftScrubHero({ children }: { children: string }) {
 
 - Fraunces only (S2, S3), with `SOFT` in the font's `axes` (§4). `opsz` stays automatic because it is not in the settings string.
 - `SOFT` reshapes terminals without changing advance widths, so this is a repaint, not a layout. Still one per page.
-- Reduced motion keeps the resting `SOFT 0` (or the pairing's pinned value); nothing animates.
+- Reduced motion keeps the resting `SOFT 0`; nothing animates. The hero rests at the scrub's start, so it never flashes from a pinned 50 to 0 on hydrate; keep the site-wide `SOFT 50` pin in `@layer base` (§3.1 Fraunces note) so this utility wins on the hero.
 
 ### Index-list hover: weight, not colour
 
@@ -458,7 +466,7 @@ export function HeroHeadline({ children }: { children: string }) {
 
 - The h1 is split directly, so the default `aria: "auto"` puts the full text in an `aria-label` on a heading, where screen readers honour it.
 - Add `<noscript><style>{"[data-split-hero]{visibility:visible!important}"}</style></noscript>` to the root layout's `<head>` so a JS failure never hides the h1.
-- **Not every hero.** This is one entrance among several. Each preset names its own ([vibe-presets.md](vibe-presets.md)), and the site's signature move (below) often replaces it; a hero that rises line by line on every Struq site is a template.
+- **Not the hero's only gesture.** This is one entrance among several. Each preset names its own ([vibe-presets.md](vibe-presets.md)); use the rise when the preset's entrance includes it (Warm Editorial) or as a declared fallback, and pair it with the site's signature move. A hero that only rises line by line, on every Struq site, is a template.
 - This is the one place CSS hides content until JS runs, and it has a price: the hero is usually the LCP element, so its paint waits for hydration. Keep this component a small leaf with no heavy imports and measure LCP in verify ([seo.md](seo.md) §6).
 - With a loader, start the rise as the loader exits ([page-entrances.md](page-entrances.md), [loaders.md](loaders.md)).
 - **When not to:** every section headline. Those use the scroll-triggered version from scroll-reveals. The hero earns the loud one.
@@ -511,7 +519,7 @@ export function CharWord({ word }: { word: string }) {
 
 ### `scrub-headline`: oversized headline on scroll
 
-An oversized line that slides and scales with scroll and runs off the canvas. With modest travel it stays readable, so it can be the real heading.
+An oversized line that slides and scales with scroll and runs off the canvas. With modest travel it stays readable, so it can be the real heading, set in the display role (the page's one other display line). As pure texture it takes `text-ghost` instead (last bullet).
 
 ```tsx
 "use client";
@@ -536,7 +544,7 @@ export function ScrubHeadline({ children }: { children: string }) {
 
   return (
     <section ref={section} className="overflow-clip py-[14rem]">
-      <h2 data-big className="font-display text-[clamp(4rem,1rem+13vw,16rem)] font-light leading-[0.9] tracking-[-0.04em] whitespace-nowrap">
+      <h2 data-big className="font-display text-display whitespace-nowrap">
         {children}
       </h2>
     </section>
@@ -546,7 +554,8 @@ export function ScrubHeadline({ children }: { children: string }) {
 
 - Scrubbed tweens use `ease: "none"`; `scrub: 1` supplies the weight ([feel-layer.md](feel-layer.md)).
 - `xPercent` and `scale` stay on the compositor. Scrubbing `letter-spacing` or a `wght` axis costs a layout per frame; budget at most one, on a short line.
-- Past about 15% travel the line is unreadable mid-move. Then it is texture: `aria-hidden`, ghost colour, and the real h2 below it.
+- Past about 15% travel the line is unreadable mid-move. Then it is texture: `font-display text-ghost`, `aria-hidden`, ghost colour, and the real h2 below it.
+- The `scale` up to 1.04 sits on top of the token's clamp, so the line reads larger than the hero for a moment without a second arbitrary size. `text-display` already carries the pairing's leading and tracking.
 - **When not to:** more than one per page, or on a line people must read to understand the section.
 
 ### `manifesto-fill`: word-by-word color fill
@@ -580,7 +589,7 @@ export function Manifesto({ children }: { children: string }) {
   return (
     <div ref={root}>
       <p className="sr-only">{children}</p>
-      <p data-fill aria-hidden className="font-display max-w-[30ch] text-[clamp(1.75rem,1.2rem+2vw,3rem)] font-light leading-[1.2] tracking-[-0.015em]">
+      <p data-fill aria-hidden className="font-display text-statement max-w-[30ch]">
         {children}
       </p>
     </div>
@@ -681,11 +690,12 @@ Sweep before shipping, alongside [anti-patterns.md](anti-patterns.md).
 | `text-ink-faint` on any text | `ink-faint` is for hairlines, disabled states and placeholder rules; as text it fails contrast | `text-ink-muted` for eyebrows and meta |
 | An Instrument Serif `<em>` inside a sans headline | The 2025 to 2026 template tell | The pairing's own accent move (§3.1) |
 | Cream surface plus terracotta accent with no brand reason | The default "warm, human" palette of every generator | A palette argued from the brand ([vibe-presets.md](vibe-presets.md)) |
-| Every hero using the masked line rise | One entrance on every site is a template | The preset's named hero entrance and the site's signature move (§5) |
+| The masked line rise as the hero's only gesture (no signature move on it, no preset entrance behind it) | One entrance on every site is a template | The preset's named hero entrance and the site's signature move (§5); the rise may deliver them |
+| An arbitrary `text-[clamp(...)]` on a manifesto, statement or oversized line | The role tokens were bypassed | `text-statement`, `text-display` or `text-ghost` (§2.4) |
 | `font-bold` on every heading | Safe at 24px, loud at 115px | Weight 300 to 400, hierarchy by size |
 | 700 for emphasis inside light type | A hole in the page | 500 |
 | Four or more weights of one family | Extra voices, extra bytes | Three at most (300, 400, 500) |
-| Five similar sizes (`text-lg` to `text-4xl`) | Flat page, no focal point | The eight roles with real gaps (§2) |
+| Five similar sizes (`text-lg` to `text-4xl`) | Flat page, no focal point | The roles with real gaps (§2) |
 | Mono eyebrows, labels, stats or badges | Dev-tool cosplay | Tracked uppercase text face; `tabular-nums` |
 | A rounded or hairline display face used for body | Charming at 60px, tiring at 16px | Display faces stay at display sizes |
 | Everything centred | No axis, no reading edge | Left-aligned on a strong edge; centre only short single lines |
@@ -701,7 +711,7 @@ Sweep before shipping, alongside [anti-patterns.md](anti-patterns.md).
 ## 8. Thirty-second type audit
 
 1. Two faces, display at 300 to 400 unless the preset declares heavy, three weights per family at most?
-2. Every string on the page maps to one of the eight roles, with that role's token?
+2. Every string on the page maps to one of the roles in §2.1, with that role's token?
 3. Hero at the pairing's display clamp (standard `clamp(2.875rem, 1.2rem + 6.86vw, 8rem)`) with its tracking and leading, not defaults? One signature move declared?
 4. Body 400, at least 1rem, 55 to 75ch, `text-wrap: pretty`; emphasis at 500?
 5. `next/font`, two preloaded files, zero visible shift on a hard reload?

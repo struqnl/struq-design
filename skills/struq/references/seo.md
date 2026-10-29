@@ -79,7 +79,7 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default async function Image() {
-  // next/og needs the font as data: ship a TTF or OTF of the display face in the repo.
+  // next/og needs the font as data: a TTF, OTF or WOFF of the display face in the repo (Fontsource WOFF works, brand.md §3).
   const display = await readFile(join(process.cwd(), "assets/fonts/Display-Light.ttf"));
 
   return new ImageResponse(
@@ -133,17 +133,20 @@ import type { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = "https://example.com";
+  // A constant, not new Date(): with cacheComponents on, a request-time date breaks the prerender
+  // (setup.md §0, Known API shifts). Bump it when the content changes.
+  const LAST_UPDATED = "2026-01-15";
   const projects = await getProjects();
   return [
-    { url: base, lastModified: new Date(), changeFrequency: "monthly", priority: 1 },
-    { url: `${base}/work`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
+    { url: base, lastModified: LAST_UPDATED, changeFrequency: "monthly", priority: 1 },
+    { url: `${base}/work`, lastModified: LAST_UPDATED, changeFrequency: "weekly", priority: 0.8 },
     ...projects.map((p) => ({
       url: `${base}/work/${p.slug}`,
       lastModified: p.updatedAt,
       changeFrequency: "yearly" as const,
       priority: 0.6,
     })),
-    { url: `${base}/contact`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.5 },
+    { url: `${base}/contact`, lastModified: LAST_UPDATED, changeFrequency: "yearly", priority: 0.5 },
   ];
 }
 ```
