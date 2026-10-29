@@ -1,0 +1,58 @@
+/* theme.css: Struq's own palette poured into the Soft Modern token structure (STRUQ.md SYSTEM).
+   Type: the House pairing. Comfortaa (--font-brand) sets the h1 and the wordmark only;
+   Urbanist fills every other role with the S1 values (typography.md §3.1). */
+
+@theme {
+  /* Light ladder: the page is the lightest layer, panels step deeper. */
+  --color-surface-0: #fbf8f2;
+  --color-surface-1: #f3eee3;
+  --color-surface-2: #ece5d6;
+  --color-surface-3: #e2d9c6;
+
+  --color-ink: #221d15;
+  --color-ink-muted: #5c5546;      /* 5.27:1 even on surface-3 */
+  --color-ink-faint: #8b8371;      /* never text: hairlines, inactive bars */
+  --color-accent: #e4572e;         /* the flame: fills, rules, large type, UI. 3.47:1, never body links */
+  --color-line: rgb(34 29 21 / 0.12);
+
+  /* Inverse panel (the walkthrough stage, the footer): the brand's own inverse tuning. */
+  --color-inverse: #201b13;
+  --color-inverse-1: #2a241a;
+  --color-inverse-ink: #f4efe4;
+  --color-inverse-muted: #b5ac99;  /* 7.6:1 on inverse */
+  --color-inverse-accent: #ff8a63; /* the same flame, tuned for the dark ground (7.39:1) */
+  --color-inverse-line: rgb(244 239 228 / 0.12);
+
+  --radius-base: 12px;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
+
+  /* Type roles (typography.md §2.4). S1 values; display carries the h1's Comfortaa settings. */
+  --text-eyebrow: 0.75rem;   --text-eyebrow--line-height: 1.2;  --text-eyebrow--letter-spacing: 0.12em;  --text-eyebrow--font-weight: 500;
+  --text-small: 0.875rem;    --text-small--line-height: 1.55;   --text-small--letter-spacing: 0.01em;
+  --text-ui: 0.9375rem;      --text-ui--line-height: 1;         --text-ui--letter-spacing: 0.02em;       --text-ui--font-weight: 500;
+  --text-body: 1.0625rem;    --text-body--line-height: 1.65;
+  --text-lead: 1.25rem;      --text-lead--line-height: 1.5;
+
+  --text-h3: clamp(1.5rem, 1.34rem + 0.65vw, 1.875rem);  --text-h3--line-height: 1.2;   --text-h3--letter-spacing: -0.01em;  --text-h3--font-weight: 400;
+  --text-h2: clamp(2.25rem, 1.8rem + 1.82vw, 3.3rem);    --text-h2--line-height: 1.06;  --text-h2--letter-spacing: -0.02em;  --text-h2--font-weight: 300;
+  --text-statement: clamp(1.75rem, 1.2rem + 2.2vw, 3.25rem); --text-statement--line-height: 1.2; --text-statement--letter-spacing: -0.015em; --text-statement--font-weight: 300;
+  --text-stat: clamp(3rem, 2.2rem + 3vw, 5rem);          --text-stat--line-height: 1;    --text-stat--letter-spacing: -0.03em; --text-stat--font-weight: 300;
+
+  /* Comfortaa runs wide, so the hero sets a step smaller than the standard clamp (like S7) with a wider measure. */
+  --text-display: clamp(2.75rem, 1.1rem + 6.2vw, 7.25rem); --text-display--line-height: 1.02; --text-display--letter-spacing: -0.03em; --text-display--font-weight: 400;
+  --text-ghost: clamp(6rem, 2rem + 20vw, 24rem);           --text-ghost--line-height: 0.85;
+}
+
+@theme inline {
+  --font-brand: var(--font-brand-face), ui-rounded, system-ui, sans-serif;  /* Comfortaa: h1 + wordmark only */
+  --font-display: var(--font-body-face), system-ui, sans-serif;            /* Urbanist */
+  --font-body: var(--font-body-face), system-ui, sans-serif;               /* Urbanist */
+  --font-mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", Menlo, Consolas, monospace; /* literal code only */
+  --font-h3: var(--font-display);
+  --font-eyebrow: var(--font-body);
+  --font-ui: var(--font-body);
+  --font-stat: var(--font-display);
+}

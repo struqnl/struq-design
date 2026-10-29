@@ -1,0 +1,79 @@
+@import "tailwindcss";
+@import "./theme.css";
+
+/* The one fluid root-rem knob (scaling.md): 16px at 390, about 17.6px at 1440, 18px from about 1640. */
+html { font-size: clamp(1rem, 0.92rem + 0.2vw, 1.125rem); }
+
+@utility eyebrow { text-transform: uppercase; font-family: var(--font-eyebrow); font-feature-settings: "case"; }
+@utility stat { font-family: var(--font-stat); font-variant-numeric: lining-nums tabular-nums; }
+@utility type-h3 { font-family: var(--font-h3); }
+
+/* The three-lane content grid (composition.md §2). */
+@utility content-grid {
+  display: grid;
+  grid-template-columns:
+    [full-start] minmax(1.25rem, 1fr)
+    [wide-start] minmax(0, 6rem)
+    [content-start] min(100% - 2.5rem, 76rem) [content-end]
+    minmax(0, 6rem) [wide-end]
+    minmax(1.25rem, 1fr) [full-end];
+  & > * { grid-column: content; }
+}
+
+@layer base {
+  body {
+    font-synthesis: none;
+    background: var(--color-surface-0);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    /* Struq Icons follow the site's palette, not the set's default flame (iconography.md §2). */
+    --icon-base: currentColor;
+    --icon-accent: var(--color-accent);
+    --icon-accent-live: var(--color-accent);
+  }
+  h1, h2, h3 { text-wrap: balance; hyphens: manual; overflow-wrap: break-word; }
+  p, li, blockquote { text-wrap: pretty; }
+  code, kbd, pre { font-family: var(--font-mono); }
+}
+
+::selection { background: var(--color-accent); color: var(--color-ink); }
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; border-radius: 4px; }
+[data-surface="inverse"] :focus-visible { outline-color: var(--color-inverse-accent); }
+
+/* Descender and overhang room inside every SplitText line mask (pitfalls.md §1.1). */
+.split-line-mask { padding-block: 0.12em; margin-block: -0.12em; padding-inline: 0.06em; margin-inline: -0.06em; }
+
+/* The hero hides only while motion is allowed and the split has not happened (typography.md line-rise-hero). */
+@media (prefers-reduced-motion: no-preference) {
+  [data-split-hero]:not([data-ready]) { visibility: hidden; }
+  [data-hero-mark]:not([data-ready]) [data-bar] { visibility: hidden; }
+}
+
+/* Hero copy rises in CSS, so it paints with the HTML instead of waiting for hydration (LCP). */
+@keyframes hero-in { from { opacity: 0; transform: translateY(1.5rem); } }
+@media (prefers-reduced-motion: no-preference) {
+  [data-hero-in] { animation: hero-in 1s var(--ease-out-expo) both; animation-delay: var(--d, 0.5s); }
+}
+
+/* Lenis helpers (setup.md §2). */
+html.lenis, html.lenis body { height: auto; }
+.lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
+.lenis [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-smooth iframe { pointer-events: none; }
+
+/* Footer-reveal (composition.md §5), the sticky form: the footer stays in flow (so a
+   full-page capture shows it and nothing is measured), sticks to the viewport bottom
+   under the page, and is uncovered as the page scrolls off it. Wide screens with motion
+   allowed only; everywhere else it is a plain footer. */
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  [data-footer-reveal] main { position: relative; z-index: 10; background: var(--color-surface-0); }
+  [data-footer-reveal] footer[data-surface] { position: sticky; bottom: 0; z-index: 0; }
+  [data-footer-reveal][data-js] footer[data-surface]:not([data-near]) { visibility: hidden; }
+}
+
+/* Origin-flipping underline for secondary links (micro-interactions.md §3a). */
+.link-draw { background: linear-gradient(currentColor, currentColor) no-repeat 100% 100% / 0% 1px; }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .link-draw { transition: background-size 0.45s var(--ease-out-quart); }
+}
+.link-draw:hover, .link-draw:focus-visible { background-position: 0% 100%; background-size: 100% 1px; }
