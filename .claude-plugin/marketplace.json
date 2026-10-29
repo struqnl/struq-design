@@ -1,0 +1,14 @@
+{
+  "name": "struq",
+  "owner": {
+    "name": "Roy Heilbron",
+    "url": "https://struq.nl"
+  },
+  "plugins": [
+    {
+      "name": "struq",
+      "source": "./",
+      "description": "Award-tier web design for coding agents."
+    }
+  ]
+}

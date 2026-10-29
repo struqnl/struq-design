@@ -1,0 +1,124 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: #080808;
+  color: #f5f2ea;
+  font-family: system-ui, sans-serif;
+}
+
+button,
+a {
+  font: inherit;
+}
+
+.experience-root {
+  min-height: 100%;
+  background: #080808;
+}
+
+.experience-narrative {
+  position: relative;
+  min-height: 1000vh;
+}
+
+.experience-stage {
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.experience-stage canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.experience-scroll-space {
+  height: 900vh;
+}
+
+.experience-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: grid;
+  align-items: center;
+  padding: clamp(1rem, 4vw, 4rem);
+}
+
+.experience-copy {
+  width: min(34rem, 80vw);
+}
+
+.experience-copy h1 {
+  margin: 0;
+  font-size: clamp(2.7rem, 7vw, 7rem);
+  line-height: 0.92;
+  letter-spacing: -0.055em;
+}
+
+.experience-bridge {
+  position: absolute;
+  inset: auto 5vw 8vh auto;
+  width: min(32rem, 45vw);
+  overflow: visible;
+}
+
+.local-ui-button {
+  position: absolute;
+  left: clamp(1rem, 4vw, 4rem);
+  bottom: 4vh;
+  pointer-events: auto;
+}
+
+.experience-semantic-content {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.experience-semantic-content section {
+  min-height: 300vh;
+  padding: 2rem;
+}
+
+.experience-semantic-content h2,
+.experience-semantic-content p {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.experience-footer {
+  min-height: 70vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  background: #ece9e0;
+  color: #111;
+}
+
+@media (max-width: 767px) {
+  .experience-copy {
+    align-self: start;
+    margin-top: 12vh;
+  }
+
+  .experience-bridge {
+    width: 70vw;
+    right: 15vw;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .local-ui-button {
+    transition: none;
+  }
+}
