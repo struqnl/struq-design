@@ -13,6 +13,8 @@ Read this file before the first tween (workflow step 6) and again at verify (ste
 | A timed entrance (match cut, hold, intro) fires over an empty frame or behind the loader | §3.3 |
 | The hero flashes unsplit, then jumps into lines | §3.4 |
 | Two animations fight over one element (a menu that half-closes, a jittering object) | §3.5 |
+| A footer, CTA, frame or row is blank in a reduced-motion, no-JS or settled capture | §3.6 |
+| Bars, lines or display type run past their frame at 390 or 1920 | §3.7 |
 
 ---
 
@@ -257,6 +259,22 @@ Read this file before the first tween (workflow step 6) and again at verify (ste
 - **Fix:** kill the running timeline before starting its opposite (keep it in a ref, [nav-header.md](nav-header.md) §3b); nest groups so scroll and pointer each own one ([webgl-scenes.md](webgl-scenes.md) §4, product-rig); use `quickTo` for anything that reverses mid-gesture; never GSAP and Motion on the same property ([../SKILL.md](../SKILL.md), GSAP vs Motion).
 - **Verify:** trigger the reverse mid-animation (Escape during the menu entrance, a direction flip mid-scroll): the motion reverses cleanly.
 
+### 3.6 A section renders empty: a blank footer, an empty frame, a CTA with nothing in it
+
+This is the most common way an ambitious build loses craft points to a plain one: the plain build has no reveals, so it never shows an empty state.
+
+- **Symptom:** in a full-page capture, a reduced-motion capture or mid-scroll, a whole region is blank: the footer, a CTA panel, a media frame, a list row. The reveal never ran, or ran and was reverted.
+- **Cause:** the element starts hidden in CSS or from a `gsap.set` outside `matchMedia`, so the reduced-motion and no-JS branches never show it; a ScrollTrigger whose start is never reached (a footer-reveal or the last section of the page, where `top 80%` cannot happen); a reveal keyed to an element that a pin or a footer-reveal moved; a drawn SVG or canvas that waits for an event that never fires.
+- **Fix:** final state is the default and hidden state is set only inside the motion branch (`gsap.from` inside `mm.add("(prefers-reduced-motion: no-preference)")`, [setup.md](setup.md) §4); triggers near the end of the page use `start: "top bottom"` or fire on load when the section is already in view (`ScrollTrigger.isInViewport`); anything drawn or loaded gets a visible fallback until it is ready.
+- **Verify:** three captures, each read region by region for anything blank that should hold content: a full page with `reducedMotion: 'reduce'`, a full page with JavaScript disabled, and the motion-on scroll sequence after each step settles (wait for the longest reveal). An empty region in any of them fails verify.
+
+### 3.7 Something overruns its frame
+
+- **Symptom:** data bars run past their axis, a drawn line leaves its container, a wordmark or display line pushes past the viewport at 1920.
+- **Cause:** values scaled to a fixed width while the frame is fluid; an axis that does not cover the data's range; display clamps without a max.
+- **Fix:** scale from the measured container (or `%` of it), make the axis cover the data's max, and keep display type inside its clamp ceiling ([typography.md](typography.md)).
+- **Verify:** look at the edges of every frame at 390 and 1920.
+
 ---
 
 ## 4. The pitfall pass at verify
@@ -267,5 +285,6 @@ Run it on the production server ([performance.md](performance.md) §8), motion o
 2. Every pinned section through the check at the top of §2: slow, fast flick, back up, reload mid-page, then reduced motion, touch and no-JS.
 3. A search for `transition-` and `translate-`, `scale-`, `rotate-` utilities on GSAP targets (§3.1, §3.2).
 4. The frame trace of the first 3 seconds, read frame by frame (§3.3, §3.4).
+5. The empty-region check: reduced-motion full page, no-JS full page, and the settled scroll sequence, each with no blank region that should hold content (§3.6); then the frame edges at 390 and 1920 (§3.7).
 
 Write the result on the `Motion:` line under VERIFY in STRUQ.md.

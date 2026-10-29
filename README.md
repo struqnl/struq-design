@@ -24,6 +24,39 @@ Then, in your agent:
 | Cursor | invoke the struq skill by name: "use the struq skill to build ..." |
 | OpenCode | invoke the struq skill by name: "use the struq skill to build ..." |
 
+## Same brief, with and without Struq
+
+Three briefs, each built twice by the same model with the same materials: once as a plain coding agent, once with `/struq`. An independent reviewer then scored all six sites **blind**, from screenshots only, without knowing which side used the skill.
+
+| Brief | Without | With Struq | Invented facts (without / with) | Template tells (without / with) |
+|---|---|---|---|---|
+| Ceramicist portfolio, no logo, no photos | 56 | **79** | 14 / 5 | 6 / 3 |
+| E-bike launch, existing brand, wants 3D | 66 | **76** | 11 / 3 | 6 / 3 |
+| Open-source dev-tool landing page | 50 | **76** | 11 / 2 | 10 / 2 |
+| **Average** | **57** | **77** | **36 / 10** | **22 / 8** |
+
+Scored out of 100 on typography, composition, color, concept, motion, content honesty, craft and distinctiveness. "Invented facts" counts claims the brief never gave: quotes, bios, stats, specs, API names.
+
+**Dev-tool landing page.** Without: the dark developer-tool template, item for item. With: a light page built around a trace waterfall that assembles as you scroll.
+
+| Without | With Struq |
+|---|---|
+| ![Tidewater without Struq](docs/compare/saas-plain.webp) | ![Tidewater with Struq](docs/compare/saas-struq.webp) |
+
+**Ceramicist portfolio.** Without: a tidy template with a stat strip, a chef quote and a bio the brief never supplied. With: a single-line profile drawing of each piece stands in for the missing photos and becomes the site's motif.
+
+| Without | With Struq |
+|---|---|
+| ![Ana Ferreira without Struq](docs/compare/ceramics-plain.webp) | ![Ana Ferreira with Struq](docs/compare/ceramics-struq.webp) |
+
+**E-bike launch.** The closest pair: both built a pinned 3D bike. Without: a spec sheet the brand never published. With: the lime belt as the one motif, and unknown specs openly held back.
+
+| Without | With Struq |
+|---|---|
+| ![Vela Mono without Struq](docs/compare/ebike-plain.webp) | ![Vela Mono with Struq](docs/compare/ebike-struq.webp) |
+
+Where Struq lost points: craft. The plain builds are less ambitious and break less; the Struq builds had reveal states that rendered empty in some captures. That is the next thing being fixed.
+
 ## What you get
 
 **One recipe, fixed on purpose.** The expensive feel comes from these pieces sharing one animation clock, not from any single effect.
