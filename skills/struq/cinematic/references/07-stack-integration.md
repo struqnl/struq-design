@@ -78,18 +78,21 @@ Lenis must be created with `autoRaf: false`. If it keeps its own animation loop 
 Conceptual setup:
 
 ```tsx
+// ScrollTrigger sync: useLenis subscribes once the root instance exists.
+// Never capture lenisRef.current?.lenis once in an effect; on first mount it
+// is often still undefined, and the listener is silently never bound.
+useLenis(() => ScrollTrigger.update());
+
 useEffect(() => {
+  // Registered unconditionally, instance resolved per frame.
   const update = (time: number) => {
     lenisRef.current?.lenis?.raf(time * 1000);
   };
 
-  const lenis = lenisRef.current?.lenis;
-  lenis?.on('scroll', ScrollTrigger.update);
   gsap.ticker.add(update);
   gsap.ticker.lagSmoothing(0);
 
   return () => {
-    lenis?.off('scroll', ScrollTrigger.update);
     gsap.ticker.remove(update);
   };
 }, []);

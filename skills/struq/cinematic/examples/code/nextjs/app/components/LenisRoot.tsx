@@ -1,8 +1,8 @@
 'use client';
 
-import { ReactLenis, type LenisRef } from 'lenis/react';
+import { ReactLenis, useLenis, type LenisRef } from 'lenis/react';
 import 'lenis/dist/lenis.css';
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, type JSX, type ReactNode } from 'react';
 import { gsap, ScrollTrigger, registerGsap } from '@/experience/gsap-client';
 
 registerGsap();
@@ -14,26 +14,28 @@ type LenisRootProps = {
 export function LenisRoot({ children }: LenisRootProps): JSX.Element {
   const lenisRef = useRef<LenisRef>(null);
 
-  useEffect(() => {
-    const lenis = lenisRef.current?.lenis;
-    if (!lenis) return;
+  // ScrollTrigger sync. useLenis subscribes as soon as the root instance exists,
+  // so it never races the ref the way a one-time lenis.on('scroll') capture does.
+  useLenis(() => ScrollTrigger.update());
 
+  useEffect(() => {
+    // Registered unconditionally; the instance is resolved through the ref on
+    // every frame. Never capture it once and early-return: that is the
+    // dead-scroll race (references/setup.md §2).
     const update = (time: number) => {
-      lenis.raf(time * 1000);
+      lenisRef.current?.lenis?.raf(time * 1000);
     };
 
-    lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add(update);
     gsap.ticker.lagSmoothing(0);
 
     return () => {
-      lenis.off('scroll', ScrollTrigger.update);
       gsap.ticker.remove(update);
     };
   }, []);
 
   return (
-    <ReactLenis root ref={lenisRef} options={{ autoRaf: false }}>
+    <ReactLenis root ref={lenisRef} options={{ lerp: 0.1, anchors: true, autoRaf: false }}>
       {children}
     </ReactLenis>
   );

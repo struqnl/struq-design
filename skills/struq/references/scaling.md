@@ -78,9 +78,9 @@ carry it. If it's a display headline or a showpiece measurement, give it its own
 
 This is the discipline that makes the knob work:
 
-- **Type:** rem (Tailwind `text-*` is already rem ✓). Display type: its own `clamp()`.
+- **Type:** rem (Tailwind `text-*` is already rem). Display type: its own `clamp()`.
 - **Spacing / padding / gap / margin:** rem (Tailwind `p-*`, `gap-*`, `space-*`, `m-*`
-  are already rem ✓). Section padding stays role-varied per the
+  are already rem). Section padding stays role-varied per the
   [baseline](baseline-prompt.md), just expressed in rem so it scales.
 - **Component sizing, max-widths, radii:** rem / `ch` / `%`. `max-w-[44ch]` scales with
   type; `rounded-[0.5rem]` scales with the knob.
@@ -142,8 +142,8 @@ Next: it's one CSS rule in the global stylesheet either way.
 
 ---
 
-❌ **Cheap tell:** px-everything layout with `sm: md: lg: xl:` size ladders on type and
+**Cheap tell:** px-everything layout with `sm: md: lg: xl:` size ladders on type and
 padding, hand-tuned per breakpoint, that still drifts at 1440 and 2560 and needs a fresh
 override every time a new screen is tested.
-✅ One a11y-safe root clamp, everything in rem, breakpoints only for structural change,
+**Instead:** One a11y-safe root clamp, everything in rem, breakpoints only for structural change,
 display type on its own `clamp()`: proportional at every width with zero per-element fixes.

@@ -8,11 +8,11 @@ The header is on screen for 100% of the session; the menu is the one interaction
 
 - **Contents:** wordmark left, 3 to 5 links + one CTA right (or wordmark + menu button only, the "editorial minimal" header). Anything more belongs in the footer's nav echo ([page-architecture.md](page-architecture.md) §4).
 - **Height:** 4 to 5rem, authored in rem so it rides the scaling knob ([scaling.md](scaling.md)).
-- **Surface:** transparent over the hero, then, once real content scrolls under it, either a **hard surface swap** (`bg-surface-0` + `border-b border-line`, on-genre for editorial/brutalist) or `bg-surface-0/80` + `backdrop-blur-md` (the one sanctioned blur in the system; cinematic/luxury registers). Never a drop shadow: the border *is* the elevation ([anti-patterns.md](anti-patterns.md) §1).
-- **Links:** body-size or smaller, tracked; hover = the origin-flipping underline ([micro-interactions.md](micro-interactions.md) §3a), not a color swap.
+- **Surface:** transparent over the hero, then, once real content scrolls under it, either a **hard surface swap** (`bg-surface-0` + `border-b border-line`, on-genre for editorial/brutalist) or `bg-surface-0/80` + `backdrop-blur-md` (the one sanctioned blur in the system, cinematic and luxury registers only; every other `backdrop-blur`, glass cards above all, stays on the blocklist in [../SKILL.md](../SKILL.md) AI-default blocklist). Never a drop shadow: the border *is* the elevation ([anti-patterns.md](anti-patterns.md) §1).
+- **Links:** body-size or smaller, tracked; hover = the origin-flipping underline ([micro-interactions.md](micro-interactions.md) §3 (a)), not a color swap.
 - Wordmark and CTA are prime candidates for the page's 1 to 3 magnetic elements ([micro-interactions.md](micro-interactions.md) §1).
 
-❌ **Cheap tell:** `sticky top-0 bg-white shadow-md` with 7 gray links and a blue button. ✅ Transparent → surfaced on scroll, hairline-separated, 3 to 5 links, one designed CTA.
+**Cheap tell:** `sticky top-0 bg-white shadow-md` with 7 gray links and a blue button. **Instead:** Transparent → surfaced on scroll, hairline-separated, 3 to 5 links, one designed CTA.
 
 ---
 
@@ -68,7 +68,7 @@ Craft notes:
 
 Menu opens = a full-viewport `surface-3` (or inverted) panel wipes in; nav links render as **display type** with masked line staggers; a meta column carries contact/socials. The menu is a *destination*, not a dropdown.
 
-**Build it on an accessible primitive.** An overlay that covers the page is a modal dialog, and a modal needs a focus trap, Escape to close, `aria-modal` semantics, inert background content, and focus return to the trigger. Hand-rolling all of that is where menus break. Use **Radix Dialog** (`@radix-ui/react-dialog`) or an equivalent primitive (React Aria, Ark UI) and let it own accessibility while GSAP owns the motion. §3a shows the motion; §3b shows it wrapped in Radix, which is the version to ship.
+**Build it on an accessible primitive.** An overlay that covers the page is a modal dialog, and a modal needs a focus trap, Escape to close, `aria-modal` semantics, inert background content, and focus return to the trigger. Hand-rolling all of that is where menus break. Use **Radix Dialog** (`Dialog` from the unified `radix-ui` package that [setup.md](setup.md) installs) or an equivalent primitive (React Aria, Ark UI) and let it own accessibility while GSAP owns the motion. §3a shows the motion; §3b shows it wrapped in Radix, which is the version to ship.
 
 ### 3a. The motion (reference sketch)
 
@@ -148,7 +148,7 @@ export function OverlayMenu() {
 Load-bearing details:
 - **`lenis.stop()` / `lenis.start()`** is the scroll lock. Never `overflow: hidden` on body, which fights the smooth-scroll provider and jumps the page.
 - Links live in `overflow-hidden` `<li>` masks: the masked line reveal ([scroll-reveals.md](scroll-reveals.md) §2) at menu scale. The exit reverses with `power2.in` at ~60% duration and `from: "end"`, the designed exit rule ([transitions.md](transitions.md) §4).
-- The menu button sits **above** the panel (`z-[60]`) and swaps its label. The close affordance is designed, not an ✕ icon reflex.
+- The menu button sits **above** the panel (`z-[60]`) and swaps its label. The close affordance is designed, not a reflexive close-icon glyph.
 - Menu links can navigate through the page-flow wipe ([route-transitions.md](route-transitions.md)): close the menu, then `push(href)`, never both animations at once.
 - **A11y is non-optional:** `role="dialog"` + `aria-modal`, `aria-expanded`/`aria-controls` on the trigger, `Esc` closes, focus moves into the panel on open and returns to the trigger on close, and focus is trapped while open. The sketch above declares the semantics but does not implement the trap or Escape; §3b gets all of it from the primitive. Reduced motion: panel and links fade 0.2s, no travel.
 - In-page anchor variant (one-pagers): links call `lenis.scrollTo(target)` after close. `anchors: true` covers plain hash links already.
@@ -160,8 +160,9 @@ Radix supplies the focus trap, Escape handling, `aria-modal`, inert background, 
 ```tsx
 "use client";
 
-import { useCallback, useRef, useState } from "react";
-import * as Dialog from "@radix-ui/react-dialog";
+import { useCallback, useRef, useState, type MouseEvent } from "react";
+import { useRouter } from "next/navigation";
+import { Dialog } from "radix-ui";
 import { gsap } from "@/lib/gsap";
 import { useLenis } from "lenis/react";
 
@@ -170,7 +171,10 @@ import { useLenis } from "lenis/react";
 export function OverlayMenu() {
   const [open, setOpen] = useState(false);
   const panel = useRef<HTMLDivElement | null>(null);
+  const enterTl = useRef<gsap.core.Timeline | null>(null);
   const closing = useRef(false);
+  const pendingHref = useRef<string | null>(null);
+  const router = useRouter();
   const lenis = useLenis();
 
   // Enter: Radix mounts the content, the ref callback plays the timeline.
@@ -178,7 +182,7 @@ export function OverlayMenu() {
     panel.current = node;
     if (!node) return;
     const links = node.querySelectorAll("[data-menu-link]");
-    gsap.timeline()
+    enterTl.current = gsap.timeline()
       .fromTo(node, { yPercent: -100 }, { yPercent: 0, duration: 0.6, ease: "power4.inOut" })
       .fromTo(links, { yPercent: 110 },
         { yPercent: 0, duration: 0.8, ease: "expo.out", stagger: 0.06 }, "-=0.15")
@@ -192,11 +196,29 @@ export function OverlayMenu() {
     if (next) { lenis?.stop(); setOpen(true); return; }
     if (closing.current || !panel.current) return;
     closing.current = true;
+    enterTl.current?.kill(); // a fast close must not fight a half-played entrance
     const node = panel.current;
-    gsap.timeline({ onComplete: () => { closing.current = false; setOpen(false); lenis?.start(); } })
+    gsap.timeline({
+      onComplete: () => {
+        closing.current = false;
+        setOpen(false);
+        lenis?.start();
+        const href = pendingHref.current;
+        pendingHref.current = null;
+        if (href) router.push(href); // navigate only after the exit has finished
+      },
+    })
       .to(node.querySelectorAll("[data-menu-link]"),
         { yPercent: -110, duration: 0.35, ease: "power2.in", stagger: { each: 0.03, from: "end" } })
       .to(node, { yPercent: -100, duration: 0.5, ease: "power4.inOut" }, "-=0.1");
+  };
+
+  // Keep the real href (crawlers, middle-click, new tab) but take over a plain click.
+  const onLinkClick = (e: MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+    e.preventDefault();
+    pendingHref.current = href;
+    onOpenChange(false);
   };
 
   return (
@@ -218,7 +240,7 @@ export function OverlayMenu() {
             <ul>
               {LINKS.map((l) => (
                 <li key={l.href} className="overflow-hidden">
-                  <a data-menu-link href={l.href} onClick={() => onOpenChange(false)}
+                  <a data-menu-link href={l.href} onClick={(e) => onLinkClick(e, l.href)}
                      className="font-display block text-[clamp(2.5rem,7vw,6rem)] leading-[1.05] tracking-tight">
                     {l.label}
                   </a>
@@ -241,10 +263,11 @@ Notes on the Radix version:
 - **Scroll lock still coordinates with Lenis.** Radix applies its own modal scroll lock; keep `lenis.stop()` on open and `lenis.start()` after the exit so Lenis' wheel and touch handling halts too. Put `data-lenis-prevent` on any scrollable region inside the menu so it can scroll natively while Lenis is running elsewhere.
 - **`Dialog.Title` is required** for screen readers (hide it visually with `sr-only`). `aria-describedby={undefined}` is the documented way to opt out of a description when there isn't one.
 - **Focus** moves into the panel on open and returns to the trigger on close without extra code. Do not fight it with manual `focus()` calls.
-- Links that navigate: a plain `<a href>` navigates immediately and cuts the exit short. In Next, call `e.preventDefault()`, start the exit with `onOpenChange(false)`, and call `router.push(href)` from the timeline's `onComplete` so the motion stays strictly sequential.
+- **Links navigate client-side after the exit.** A plain `<a href>` navigates immediately and cuts the exit short, and a full reload drops the Lenis and transition providers. `onLinkClick` stores the target in `pendingHref`, prevents the default, starts the exit, and `router.push` runs in the exit timeline's `onComplete`, so the motion stays strictly sequential. The `href` stays real for crawlers and modified clicks. On a site with route curtains, swap `useRouter` for `useTransitionRouter()` from the provider in [route-transitions.md](route-transitions.md) (its `push` is the same `navigate` that `TransitionLink` calls) so the menu exit hands straight into the curtain.
+- **The enter timeline is kept in a ref and killed before the exit runs.** Escape pressed mid-entrance otherwise leaves two timelines writing the same `yPercent`.
 - **Reduced motion:** branch with `gsap.matchMedia()` ([setup.md](setup.md) §4) and replace the travel with a 0.2s `autoAlpha` fade in both timelines.
 
-❌ **Cheap tell:** hamburger → white dropdown of body-size links sliding 200ms `ease-in-out`, with no focus trap and Escape ignored. ✅ A surface wipe, display-type links rising from masks, meta column, choreographed exit, scroll properly locked, and a real dialog primitive underneath.
+**Cheap tell:** hamburger → white dropdown of body-size links sliding 200ms `ease-in-out`, with no focus trap and Escape ignored. **Instead:** A surface wipe, display-type links rising from masks, meta column, choreographed exit, scroll properly locked, and a real dialog primitive underneath.
 
 ---
 

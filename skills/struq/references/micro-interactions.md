@@ -73,7 +73,7 @@ export function MagneticButton({ children, strength = 0.35 }: { children: React.
 
 The two depth cues, the label trailing at 0.5× and the `elastic.out` return, are the difference between "follows the mouse" and "magnetic." Strength stays at or below 0.4. Buttons chasing cursors across the screen is the parody version.
 
-❌ **Cheap tell:** `hover:scale-105 transition` on the button. ✅ Proximity drift + trailing label + elastic return + fill swell.
+**Cheap tell:** `hover:scale-105 transition` on the button. **Instead:** Proximity drift + trailing label + elastic return + fill swell.
 
 ---
 
@@ -130,7 +130,7 @@ export function Cursor() {
 // Usage: <article data-cursor="view">…</article>. The native cursor stays visible alongside.
 ```
 
-❌ **Cheap tell:** a ring + dot following the cursor everywhere, no state changes, native cursor hidden. ✅ Small dot that *becomes an affordance* over opted-in elements, delegation-driven, hover-gated.
+**Cheap tell:** a ring + dot following the cursor everywhere, no state changes, native cursor hidden. **Instead:** Small dot that *becomes an affordance* over opted-in elements, delegation-driven, hover-gated.
 
 ---
 
@@ -208,7 +208,7 @@ Three timings: image `700ms` (heavy thing, moves slow), tag `400ms` + `delay-75`
 
 Label rolls up and out of its mask while its twin rolls in: the masked-reveal principle ([scroll-reveals.md](scroll-reveals.md)) at button scale. With per-char stagger it becomes the full slot-machine; that needs JS (SplitText chars + `stagger: 0.02`) and is worth it on exactly one element (the main CTA or logo).
 
-❌ **Cheap tell:** `hover:shadow-xl hover:-translate-y-1` on cards: everything moves at once, on one duration, with a shadow change for "lift." ✅ Image, caption, and siblings on three different clocks; elevation never via shadow swell.
+**Cheap tell:** `hover:shadow-xl hover:-translate-y-1` on cards: everything moves at once, on one duration, with a shadow change for "lift." **Instead:** Image, caption, and siblings on three different clocks; elevation never via shadow swell.
 
 ---
 
@@ -251,7 +251,7 @@ The discipline that separates "delightful" from "distracting" is **timing**, and
 
 Full icon doctrine (source via Iconify, system vs decorative registers, color/state, labels, accessibility, touch targets) is in [iconography.md](iconography.md).
 
-❌ **Cheap tell:** a row of icons all looping forever, or a 700ms "success" spin that lags every click. ✅ One hover-triggered animated anchor that plays once, ≤500ms on click, static under reduced motion.
+**Cheap tell:** a row of icons all looping forever, or a 700ms "success" spin that lags every click. **Instead:** One hover-triggered animated anchor that plays once, ≤500ms on click, static under reduced motion.
 
 ---
 

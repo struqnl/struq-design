@@ -1,5 +1,5 @@
 import { useFrame } from '@react-three/fiber';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type JSX } from 'react';
 import * as THREE from 'three';
 import { experienceRegistry } from './registry';
 import { runtime } from './runtime';

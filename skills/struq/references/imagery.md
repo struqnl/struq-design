@@ -42,7 +42,7 @@ export function GradedImage({ src, alt, ratio = "4/3", className = "" }: {
 - Duotone variant: `[filter:grayscale(1)]` on the img + an accent-colored overlay with `mix-blend-screen` (dark pages) or `mix-blend-multiply` (light pages).
 - `scale-[1.18]` is the parallax headroom from [depth-parallax.md](depth-parallax.md) §2, so grading and panning share the same frame component.
 
-❌ **Cheap tell:** every image at its source colors, six looks on one page. ✅ One `GradedImage` component; swap the page's grade by editing one filter line.
+**Cheap tell:** every image at its source colors, six looks on one page. **Instead:** One `GradedImage` component; swap the page's grade by editing one filter line.
 
 ---
 
@@ -100,13 +100,42 @@ In order of preference:
 
 ---
 
+## 4b. Placeholders: when the real image is not here yet
+
+A slot that will hold a real image (planned in the shot list, not yet shot or generated) ships as a **graded tonal frame**, never a grey box and never random stock dropped in to fill it. It must look like part of the page's system, so the layout can be judged honestly before the photography exists.
+
+- **Frame:** the declared ratio for that role (`--ratio-standard`, `--ratio-wide`, `--ratio-portrait`, §2), with the same radius and mask as the real `GradedImage` frame.
+- **Tone:** a vertical gradient between two adjacent surface steps of the palette (for example `surface-2` to `surface-3`), with the page's grain on top. No icon, no "image" glyph, no diagonal cross.
+- **Caption:** the shot-list line (subject and ratio) set in the eyebrow style, bottom left inside the frame's padding, in `ink-muted`. Example: `ROASTER MACHINE, 4/5`.
+- **Markup:** `role="img"` with an `aria-label` that names the planned subject, so the placeholder is honest to screen readers too.
+- **Never inside a showpiece.** A media-led showpiece is not staged on placeholders; it waits for the real assets ([showcase.md](showcase.md) Choosing).
+
+```tsx
+// components/ui/ImagePlaceholder.tsx: the stand-in for one shot-list line
+export function ImagePlaceholder({ caption, ratio = "4/3", className = "" }: {
+  caption: string; ratio?: string; className?: string;
+}) {
+  return (
+    <div role="img" aria-label={`Planned image: ${caption}`}
+         className={`relative overflow-hidden bg-linear-to-b from-surface-2 to-surface-3 ${className}`}
+         style={{ aspectRatio: ratio }}>
+      <span className="absolute bottom-4 left-4 text-eyebrow uppercase tracking-[0.16em] text-ink-muted">
+        {caption}
+      </span>
+    </div>
+  );
+}
+```
+
+---
+
 ## 5. Accessibility & weight
 
 - **Content images:** real `alt` describing the subject. **Decorative/texture images** (ghost imagery, grain, backdrop media): `alt=""` or `aria-hidden`, so "image of background texture" never leaks to screen readers.
-- Ship AVIF/WebP with sensible `sizes`; a full-bleed 21/9 hero should be ~200 to 400KB, not 4MB.
+- Ship AVIF/WebP with sensible `sizes`; a full-bleed hero stays at or under 250KB at 1920w and a content image at or under 150KB at 1440w, the budgets in [performance.md](performance.md) §1. Never 4MB.
 - Ambient/looping video obeys the motion doctrine: muted, `playsinline`, poster, paused under `prefers-reduced-motion`. It also counts as the page's one autonomous mover ([feel-layer.md](feel-layer.md) §5).
 
 ---
 
-❌ **Cheap tell:** mixed-grade stock + a tilted browser-chrome screenshot + a purple-glow 3D blob, all at random ratios, alt-less.
-✅ One grade constant, one grain layer, 2 to 3 declared ratios, assets real or generated on-brief, treated identically. The imagery reads as *photographed for this site*.
+**Cheap tell:** mixed-grade stock + a tilted browser-chrome screenshot + a purple-glow 3D blob, all at random ratios, alt-less.
+**Instead:** One grade constant, one grain layer, 2 to 3 declared ratios, assets real or generated on-brief, treated identically. The imagery reads as *photographed for this site*.

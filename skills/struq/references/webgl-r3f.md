@@ -28,58 +28,66 @@ render both scenes through one canvas (drei `<View>`) or cut one.
 ## 1. The canonical island (lazy, SSR-free, poster-fallback)
 
 WebGL must never be in the initial JS bundle or the SSR tree. The island is a
-client component loaded with `next/dynamic` + `ssr: false`, sitting behind a
-poster so the page is complete without it.
+client component loaded with `next/dynamic` + `ssr: false`, sitting on top of a
+poster so the page is complete without it. Two rules carry the whole pattern:
+
+- **The parent section always renders the poster**, server-side, as a real
+  `next/image` (`fill`, `preload`). It is the LCP candidate and the permanent
+  fallback, not a loading state.
+- **The parent decides whether WebGL loads at all.** The gate (reduced motion,
+  coarse pointer) runs in the parent *before* the dynamic import is rendered,
+  so gated users never download three.js. A gate inside the lazy chunk is too
+  late: by then the chunk is already on the wire.
 
 ```tsx
-// components/sections/HeroScene.tsx: the SECTION owns the lazy boundary
+// components/sections/HeroScene.tsx: the SECTION owns the poster, the gate and the lazy boundary
 "use client";
 
 import dynamic from "next/dynamic";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 
-// The canvas chunk loads only on the client, only when this section renders.
-// The fallback IS the design: a real poster/gradient, not a spinner.
-const SceneCanvas = dynamic(() => import("./SceneCanvas"), {
-  ssr: false,
-  loading: () => <div aria-hidden className="absolute inset-0 bg-surface-1" />,
-});
+// The canvas chunk is requested only when <SceneCanvas /> is rendered, which
+// happens only after the gate passes. No loading UI: the poster is already there.
+const SceneCanvas = dynamic(() => import("./SceneCanvas"), { ssr: false });
 
 export function HeroScene() {
+  const [webgl, setWebgl] = useState(false);
+
+  useEffect(() => {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const coarse = window.matchMedia("(pointer: coarse)").matches;
+    // Policy per project: skip entirely on touch (default), or allow it with a lower dpr.
+    setWebgl(!reduced && !coarse);
+  }, []);
+
   return (
     <section className="relative min-h-screen overflow-hidden">
-      <SceneCanvas />
+      {/* Always rendered: the design without WebGL, and the LCP image with it.
+          Next 16 uses `preload`; on Next 15 use `priority` instead. */}
+      <Image src="/media/hero-poster.webp" alt="" fill preload sizes="100vw"
+             className="object-cover" />
+      {webgl && <SceneCanvas />}
       <div className="relative z-10 section-shell">{/* content */}</div>
     </section>
   );
 }
 ```
 
-Two gates before the canvas ever mounts: reduced-motion users and weak/mobile
-GPUs get the poster, not a degraded scene:
+The lazy chunk is now only the canvas; it never re-checks the gate:
 
 ```tsx
 // components/sections/SceneCanvas.tsx
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-import { useEffect, useState } from "react";
 
 export default function SceneCanvas() {
-  const [ok, setOk] = useState(false);
-
-  useEffect(() => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const coarse = window.matchMedia("(pointer: coarse)").matches;
-    // Policy per project: skip entirely on touch, or mount with lower dpr.
-    setOk(!reduced && !coarse);
-  }, []);
-
-  if (!ok) return null; // the poster behind it stays, the page is already complete
-
   return (
     <Canvas
+      aria-hidden                            // decoration: the real copy lives in the DOM
       className="absolute inset-0"
-      frameloop="never"                      // ← driven by the GSAP ticker, §2
+      frameloop="never"                      // driven by the GSAP ticker, §2
       dpr={[1, 1.75]}                        // clamp: retina tax caps at 1.75
       gl={{ antialias: false, powerPreference: "high-performance", alpha: true }}
       camera={{ position: [0, 0, 5], fov: 45 }}
@@ -249,7 +257,7 @@ function BackdropPlane({ progress }: { progress: React.RefObject<number> }) {
   no layout shift when the canvas pops in (absolute-fill behind content).
 - `aria-hidden` on the canvas wrapper; it is decoration, never content.
 
-❌ **Cheap tell:** a spinning torus-knot/blob over a gradient, `frameloop="always"`,
+**Cheap tell:** a spinning torus-knot/blob over a gradient, `frameloop="always"`,
 shipped in the main bundle, white flash before context creation, dead on mobile.
-✅ A scene that reacts to scroll/pointer through the one synced clock, behind a
+**Instead:** A scene that reacts to scroll/pointer through the one synced clock, behind a
 lazy boundary, with a poster path so good you could ship it alone.

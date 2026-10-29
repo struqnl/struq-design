@@ -92,7 +92,7 @@ Craft notes:
 - Snap is for stepped content; omit for continuous narratives. Never snap with distances under ~80% per phase (fights the user's thumb).
 - Skipping under reduced motion: render `PHASES` as a normal stacked list inside the `matchMedia` reduced branch.
 
-❌ **Cheap tell:** content swaps via `opacity` crossfade fired at thresholds (`toggleActions`), no pin: a slideshow that happens near scroll. Or: pinned for 6 viewports with one sentence. ✅ Pinned, scrubbed, phases overlapping, one element evolving continuously, ≤2.5 viewports.
+**Cheap tell:** content swaps via `opacity` crossfade fired at thresholds (`toggleActions`), no pin: a slideshow that happens near scroll. Or: pinned for 6 viewports with one sentence. **Instead:** Pinned, scrubbed, phases overlapping, one element evolving continuously, ≤2.5 viewports.
 
 ---
 
@@ -182,7 +182,7 @@ Craft notes:
 - **Never `anticipatePin` with smooth scroll.** `anticipatePin` pins *early* by predicting scroll velocity, but Lenis feeds it a **smoothed** velocity, so the prediction overshoots and the pin engages a frame too early, then corrects. The result is a visible jump at the exact vertical→horizontal handoff that reads as "jagged, not eased in," worst on a fast scroll-in. It exists to hide native-scroll pin latency; smooth scroll already removes that latency, so it only adds jitter. The fix for a jagged handoff is almost always **remove `anticipatePin`** (not tuning `scrub`). If the *first* scroll-in specifically snaps, the cause is stale pin positions: add the delayed initial `lenis.resize()` + `ScrollTrigger.refresh()` from [setup.md](setup.md) §2, not `anticipatePin`.
 - Mobile fallback: **never pin on touch**. The exact matchMedia pattern is §4 below. Pinned horizontal on small phones is a common award-site sin.
 
-❌ **Cheap tell:** `overflow-x-auto` with `scroll-snap` and visible scrollbar presented as the showpiece; or a horizontal section where panels are identical-width cards 1 to 12. ✅ Pinned 1:1 mapping, mixed panel widths, parallax inside panels, native fallback on mobile.
+**Cheap tell:** `overflow-x-auto` with `scroll-snap` and visible scrollbar presented as the showpiece; or a horizontal section where panels are identical-width cards 1 to 12. **Instead:** Pinned 1:1 mapping, mixed panel widths, parallax inside panels, native fallback on mobile.
 
 ---
 
@@ -217,7 +217,7 @@ useGSAP(
 
 Different elements at different rates = instant depth (full multi-layer treatment in [depth-parallax.md](depth-parallax.md)). Dim with a `data-hero-veil` overlay div, not `filter: brightness()`: opacity composites cheaply, scrubbed filters don't.
 
-❌ **Cheap tell:** hero scrolls away as one static raster. ✅ Title, media, veil, and meta leave at four different speeds, tied to the hand.
+**Cheap tell:** hero scrolls away as one static raster. **Instead:** Title, media, veil, and meta leave at four different speeds, tied to the hand.
 
 ---
 

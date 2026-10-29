@@ -1,314 +1,406 @@
 # Typography: the single biggest lever
 
-Type is most of what a visitor sees on a marketing site, and most of what separates a custom build from a template. It is also free: no assets, no GPU, no scroll math. Spend the first hour of any build here. The baseline block in [../SKILL.md](../SKILL.md) states the non-negotiables; this file is the full craft behind them: why they hold, which faces to pick, the scale as tokens, how to load fonts without a shift, the choreography recipes that make type move well, and the tell list of what generated sites do by default.
+Type is most of what a visitor sees on a marketing site, and it decides in the first second whether the page reads as designed or generated. It costs no assets, no GPU and no scroll math, so spend the first hour of every build here. The baseline in [../SKILL.md](../SKILL.md) states the non-negotiables; this file is the system behind them.
 
-Prerequisites: the GSAP registry, `useGSAP` rules and reduced-motion pattern from [setup.md](setup.md); the fluid root-rem knob from [scaling.md](scaling.md); the token contract from [vibe-presets.md](vibe-presets.md). The masked line reveal is already specified in [scroll-reveals.md](scroll-reveals.md) section 3. This file builds on it and never repeats it.
+Treat type as a **system, not a font choice**: eight roles, one scale, a weight budget and per-size optics. Picking two nice faces and then improvising sizes per section is how good fonts end up looking like a template.
 
----
-
-## 1. The principles, with the reasons
-
-**Two faces, no more.** One display face and one text face. Every extra face adds a voice the page has to referee, and each voice dilutes the one that matters. Hierarchy comes from scale contrast (huge against small), not from changing fonts. A single family used at two optical cuts (display and text) counts as one face and is a valid, quiet choice.
-
-**Display runs light and large.** Weight 300 to 400, sizes from 8vw up. Three reasons:
-
-1. At 115px, a 300-weight stem is about 7px and a 700-weight stem is about 17px. Light type at that size shows its drawing: the curves, the counters, the air between letters. Heavy type at that size is a wall of ink that shouts instead of speaks.
-2. Whitespace reads as confidence. A light 115px line surrounded by 12rem of nothing says the brand has nothing to prove. A bold line in the same space reads as a billboard.
-3. It is the agency signal. Template sites default to `font-bold` on every heading because it is safe at 24px. Award sites go the other way and let scale do the emphasis.
-
-The cost: light display needs a face that is drawn well at large sizes (optical-size axis, fine curves, even colour). Cormorant at 16px dies; at 120px it sings. Pick faces for their large-size behaviour, and set weight 300 only at 3rem and above.
-
-**When heavy display is the right call.** Brutalist, poster, sports, events, streetwear, music: genres where the page is meant to shout. Then commit completely: weight 700 to 900, uppercase or tight mixed case, leading 0.85 to 0.92, sizes up to 14vw cropped off canvas. The failure is the half measure, a bold 600 display that is neither quiet nor loud. The vibe preset that owns this is Brutalist ([vibe-presets.md](vibe-presets.md)); heavy display is declared per preset, never a reflex.
-
-**Hierarchy by contrast, not by steps.** Five type sizes between 1.25rem and 2.25rem make a page flat. The page needs a hero near 115px, a body near 19px, a small tier near 14px and a tracked eyebrow near 12px. The gaps between those four are the design.
+Prerequisites: the GSAP registry, `useGSAP` rules and reduced-motion pattern from [setup.md](setup.md); the root-rem knob from [scaling.md](scaling.md); the token contract from [vibe-presets.md](vibe-presets.md). The masked line reveal is specified in [scroll-reveals.md](scroll-reveals.md) §3. This file builds on it and does not repeat it.
 
 ---
 
-## 2. A curated pairing library
+## 1. Principles, with the reasons
 
-Sixteen pairings, grouped by register. Everything here is on Google Fonts or Fontshare, so it is free to use and self-hostable. "Preset" is the vibe preset in [vibe-presets.md](vibe-presets.md) the pairing suits best. Weights are the weights the family ships; the display weight listed is the one to start from.
+**Two faces, no more.** One display face, one text face. Each extra face is another voice the page has to referee. A single family used for both roles counts as one face and is a valid, quiet choice.
 
-How to read the source column: **GF** is Google Fonts (load with `next/font/google`, section 4). **FS** is Fontshare (download the family, self-host the WOFF2 with `next/font/local`, section 4). Fontshare ships most families as a variable file; when a family only offers static cuts, self-host just the two or three weights you use.
+**Display runs large and light (300 to 400).** At 115px a light stem is about 7px wide and a bold stem about 17px. Light type at that size shows its drawing: curves, counters, the air between letters. Bold type at that size is a slab of ink. Template sites put `font-bold` on every heading because it is safe at 24px; award sites let scale carry the emphasis and keep the weight down. That inversion is the agency signal.
 
-### Editorial serif display
+The cost: light display needs a face drawn for large sizes. Hairline serifs die at 16px and sing at 120px. Choose faces for their behaviour at hero size and use weight 300 only from 3rem up.
 
-| Display (weight) | Text face | Source | Reads as | Preset |
-|---|---|---|---|---|
-| **Fraunces** 300 to 400, `opsz` axis on | Hanken Grotesk 400 | GF + GF | Bookish at text sizes, razor sharp at 100px+. Warm, literate, a little wry. | Warm Editorial |
-| **Instrument Serif** 400 (only weight; italic exists) | Instrument Sans 400, 500 | GF + GF | Condensed, high-contrast, fashion-magazine. The single weight reads light because of its fine strokes. | Warm Editorial, Dark Cinematic |
-| **Newsreader** 300 to 400 (`opsz` up to 72) | Schibsted Grotesk 400 | GF + GF | Newsroom authority without the stuffiness. Strong italic for pull quotes. | Warm Editorial |
-| **Gambetta** 300 to 400 | General Sans 400 | FS + FS | Soft, inky serif with calligraphic warmth. Feels hand-set. | Warm Editorial |
+**Heavy display only as a declared genre.** Brutalist, poster, sport, streetwear: pages meant to shout. Then commit fully (700 to 900 or a single-weight black face, leading 0.85 to 0.92, up to 14vw cropped off canvas). The failure is the half measure, a 600 display that is neither quiet nor loud. In [vibe-presets.md](vibe-presets.md) only the Brutalist genre appendix declares it.
 
-Instrument Serif has exactly one weight (400). Never set `font-weight: 700` on it: the browser will synthesise a fake bold. Section 6 covers `font-synthesis: none`.
-
-### Neo-grotesk minimal
-
-| Display (weight) | Text face | Source | Reads as | Preset |
-|---|---|---|---|---|
-| **Switzer** 300 | Switzer 400 | FS | Swiss, neutral, quiet. One family does everything. | Luxury Minimal, Dark Cinematic |
-| **Inter Tight** 300 | Albert Sans 400 | GF + GF | Tighter-spaced display cut of the grotesk everyone knows, paired with a less common text face so the page does not read as default. | Dark Cinematic |
-
-### Luxury
-
-| Display (weight) | Text face | Source | Reads as | Preset |
-|---|---|---|---|---|
-| **Cormorant Garamond** 300 (large sizes only) | Figtree 400 | GF + GF | Hairline Garamond, restrained. This is the Luxury Minimal preset's own pairing. | Luxury Minimal |
-| **Bodoni Moda** 400 (`opsz` axis) | Jost 300, 400 | GF + GF | High-contrast fashion-house. Jost is a Futura-style geometric that takes tracked uppercase well. Display sizes only; the hairlines vanish below 40px. | Luxury Minimal |
-| **Sentient** 300 | Satoshi 400 | FS + FS | Modern luxury. Warmer and less brittle than a Didone. | Luxury Minimal, Warm Editorial |
-
-### Expressive and experimental
-
-| Display (weight) | Text face | Source | Reads as | Preset |
-|---|---|---|---|---|
-| **Clash Display** 300 to 500 | Supreme 400 | FS + FS | Sharp, confident, slightly futurist. Light cuts keep it elegant. | Dark Cinematic |
-| **Archivo Black** 400 (only weight) | Archivo 400 | GF + GF | Poster weight, uppercase, cropped off canvas. This is the Brutalist preset's own pairing. | Brutalist |
-| **Unbounded** 300 | DM Sans 400 | GF + GF | Wide, rounded, forward-looking. The light weights keep the width from becoming a toy. | Dark Cinematic |
-
-### Warm humanist
-
-| Display (weight) | Text face | Source | Reads as | Preset |
-|---|---|---|---|---|
-| **Bricolage Grotesque** 300 (`opsz` axis at its high end) | DM Sans 400 | GF + GF | Quirky ink-trap grotesque with personality. Friendly without being childish. | Warm Editorial |
-| **Erode** 300 | Satoshi 400 | FS + FS | Warm, slightly calligraphic serif for food, craft and community brands. | Warm Editorial |
-
-### Technical but not mono
-
-| Display (weight) | Text face | Source | Reads as | Preset |
-|---|---|---|---|---|
-| **Space Grotesk** 300 to 400 | IBM Plex Sans 400 | GF + GF | Engineered character in the letterforms (the `a`, the `G`) without ever using a monospace. The Dark Cinematic preset's display face. | Dark Cinematic |
-| **Geist** 300 | Geist 400 | GF | Clean, systems-y, single family. Reads as developer-grade without a mono eyebrow. | Dark Cinematic |
-
-### Commercial references and their free stand-ins
-
-You will see these on award sites. Do not reach for them without a licence; use the stand-in.
-
-| Commercial face | Free stand-in |
-|---|---|
-| Canela, PP Editorial New | Instrument Serif, Gambetta |
-| PP Neue Montreal, Neue Haas Grotesk | Switzer, General Sans |
-| Soehne | Hanken Grotesk, Inter Tight |
-| GT Sectra | Fraunces |
-
-### Three tests before committing to a pair
-
-1. **Structure contrast.** Serif display with a grotesk text face, or a grotesk display with a clearly different grotesk. Two similar sans faces (two geometrics, two humanists) read as a mistake, not a pairing.
-2. **The 96 and 16 test.** Set the headline at 96px and a paragraph at 16px on the real surface colour. If the headline is beautiful and the paragraph is tiring, the text face is wrong. Text faces earn their place at 16px, not at 96px.
-3. **The squint test.** Blur your eyes. The headline should still be the first shape; the eyebrow should recede to a texture. If two tiers compete, the scale gap is too small, not the fonts.
+**Hierarchy by contrast, not steps.** Five sizes between 1.25rem and 2.25rem make a flat page. A few tiers with big gaps make a designed one. The gaps are the design.
 
 ---
 
-## 3. The fluid scale as tokens
+## 2. The system: roles, weights, optics
 
-The scale sits on top of the root-rem knob ([scaling.md](scaling.md)). The knob already scales every rem by roughly 25 percent between a 390px phone (root about 15.1px) and a 1440px desktop (root 19px). So:
+### 2.1 The eight roles
 
-- **Small steps are plain rem.** They ride the knob alone, ratio 1.25.
-- **Large steps carry their own clamp on top.** Their ratio opens from 1.25 at 390px to 1.333 at 1440px, because display type has to grow faster than UI text.
-- **The hero leaves the scale on purpose.** `clamp(3rem, 8vw, 9rem)` is the baseline hero value. The scale exists so everything else has a defined relationship to it.
+Every piece of text on the page is one of these. If a string fits none, the design is improvising.
+
+| Role | Token | 390px to 1440px | Face token | Use it for | Never |
+|---|---|---|---|---|---|
+| **Display** | `text-display` | 46 to 120px | `font-display` | The hero h1 and at most one other statement line per page | Section titles; anything over 3 lines |
+| **h2** | `text-h2` | 36 to 58px | `font-display` | Section openers, one per section | Two per viewport |
+| **h3** | `text-h3` | 24 to 33px | `type-h3` (`--font-h3`) | Item titles in lists, cards, case rows | As a subhead under an h2 (use lead) |
+| **Lead** | `text-lead` | 20 to 22px | `font-body` | The one paragraph under a hero or h2 | More than one paragraph in a row |
+| **Body** | `text-body` | 16 to 18.7px | `font-body` | Running copy | Below 1rem; wider than 75ch |
+| **Small** | `text-small` | 14 to 15.4px | `font-body` | Captions, meta, footnotes, legal | Body-length copy; below 0.875rem |
+| **Eyebrow** | `text-eyebrow` | 12 to 13.2px | `eyebrow` (`--font-eyebrow`), uppercase | Section wayfinding labels, one per section | Numbered `01 / 02` stamps; mono |
+| **UI** | `text-ui` | 15 to 16.5px | `font-ui` (`--font-ui`) | Buttons, nav links, form labels, tabs | Sentence-length strings |
+| **Numerals** | `text-stat` | 48 to 82px | `stat` (`--font-stat`), `tabular-nums` | Stats, counters, prices | Monospace |
+
+Sizes are read at the knob's two ends: the root is 16px at 390px and about 17.6px at 1440px, and freezes at 18px from about 1640px ([scaling.md](scaling.md)). Body spans 1rem to 1.0625rem depending on the text face (§3.1).
+
+**The root and the scale.** The skill's root is `html { font-size: clamp(1rem, 0.92rem + 0.2vw, 1.125rem); }`. On it sits a 1.333 scale with skipped steps, so every tier is a real jump: body 1, lead 1.25, h3 about 1.78, h2 about 3.16, display 7 to 8. Every `clamp()` in this file keeps a `rem` term in its middle argument, so browser zoom and the user's font-size preference still scale it; a bare `vw` middle ignores both.
+
+### 2.2 Weight rules
+
+- **Display, h2, h3: 300 to 400.** Lighter on dark grounds (light on dark reads heavier by irradiation; run a variable face 20 to 40 units lighter, for example 340 on light and 310 on dark). Never below 300, never faked with opacity.
+- **Text roles: 400.** Body, lead, small at 400. The text face at 300 is too pale for 4.5:1 on toned surfaces.
+- **Emphasis is 500, not 700.** UI labels, eyebrows, an inline `<strong>`: 500. A 700 inside light typography is a hole in the page.
+- **At most three weights per family loaded**, typically 300, 400 and 500. With a variable file it is one request, but the rule still holds for what the CSS uses: a fourth weight is a fourth voice.
+- **`font-synthesis: none` on `body`**, so a single-weight face (Instrument Serif, Archivo Black) is never smeared into a fake bold.
+
+### 2.3 Optics per size
+
+- **Tracking tightens as size grows.** Spacing drawn for 16px reads loose at 115px. Grotesks take about -0.04em at display size, -0.02em at h2, 0 at body. Serifs and wide geometrics carry their own horizontal rhythm and want 40 to 60% less, or letters touch.
+- **Leading tightens as size grows.** The eye reads the white between lines, which scales with size. Body wants 1.6 to 1.7 to track a 62ch line back; a three-line headline at 1.65 falls apart. Below 0.95, descenders hit ascenders.
+- **Uppercase flips both.** Capitals have no descenders, so leading can drop to 0.88, and tracking wants 0 to +0.02em on display and +0.12 to +0.2em at eyebrow size, never a negative value.
+- **Small tiers loosen.** +0.005em on small, +0.01em on UI. Tracked uppercase is how a 12px line earns its place.
+- **Measure.** Body 55 to 75 characters (`max-w-[62ch]`), lead 40 to 50ch, hero 14 to 18ch, h2 18 to 22ch. Cap widths in `ch`, never in px: `ch` follows the face and the knob.
+
+### 2.4 The tokens
+
+Tailwind v4 lets a `--text-*` token carry its line height, tracking and weight, so `text-h2` applies all four and components never assemble them by hand. Roles that can change face per pairing (h3, eyebrow, UI, numerals) also get a **role font token**, so a pairing swap never touches a component. These defaults equal the S1 row in §3.1 exactly (Urbanist in both roles); every other pairing's row lists the values to override in the preset's `@theme`, including its four role faces.
 
 ```css
-/* app/globals.css: the knob first, then the type layer */
-@import "tailwindcss";
-@import "./theme.css";
+/* app/theme.css: type layer, next to the preset's colour tokens. Defaults = S1. */
+@theme {
+  --text-eyebrow: 0.75rem;   --text-eyebrow--line-height: 1.2;  --text-eyebrow--letter-spacing: 0.12em;  --text-eyebrow--font-weight: 500;
+  --text-small: 0.875rem;    --text-small--line-height: 1.55;   --text-small--letter-spacing: 0.01em;
+  --text-ui: 0.9375rem;      --text-ui--line-height: 1;         --text-ui--letter-spacing: 0.02em;       --text-ui--font-weight: 500;
+  --text-body: 1.0625rem;    --text-body--line-height: 1.65;
+  --text-lead: 1.25rem;      --text-lead--line-height: 1.5;
 
-html { font-size: clamp(0.9375rem, 0.836rem + 0.45vw, 1.1875rem); }
+  --text-h3: clamp(1.5rem, 1.34rem + 0.65vw, 1.875rem);  --text-h3--line-height: 1.2;   --text-h3--letter-spacing: -0.01em;  --text-h3--font-weight: 400;
+  --text-h2: clamp(2.25rem, 1.8rem + 1.82vw, 3.3rem);    --text-h2--line-height: 1.06;  --text-h2--letter-spacing: -0.02em;  --text-h2--font-weight: 300;
+  --text-stat: clamp(3rem, 2.2rem + 3vw, 5rem);          --text-stat--line-height: 1;    --text-stat--letter-spacing: -0.03em; --text-stat--font-weight: 300;
+
+  /* The top of the scale, and ghost texture type. Both keep a rem term in the middle (zoom). */
+  --text-display: clamp(2.875rem, 1.2rem + 6.86vw, 8rem);  --text-display--line-height: 0.98;  --text-display--letter-spacing: -0.03em;  --text-display--font-weight: 300;
+  --text-ghost: clamp(6rem, 2rem + 20vw, 24rem);           --text-ghost--line-height: 0.85;
+}
+
+/* Role faces. --font-display and --font-body come from the preset; these default to S1. */
+@theme inline {
+  --font-h3: var(--font-display);
+  --font-eyebrow: var(--font-body);
+  --font-ui: var(--font-body);
+  --font-stat: var(--font-display);
+}
+
+@utility eyebrow { text-transform: uppercase; font-family: var(--font-eyebrow); font-feature-settings: "case"; }
+@utility stat { font-family: var(--font-stat); font-variant-numeric: lining-nums tabular-nums; }
+@utility type-h3 { font-family: var(--font-h3); }
+
+body { font-synthesis: none; }
+h1, h2, h3 { text-wrap: balance; }
+p, li, blockquote { text-wrap: pretty; }
+```
+
+Usage: `<h1 class="font-display text-display max-w-[16ch]">`, `<h3 class="type-h3 text-h3">`, `<p class="text-body max-w-[62ch]">`, `<span class="eyebrow text-eyebrow text-ink-muted">`, `<button class="font-ui text-ui">`, `<span class="stat text-stat">`. The scale has no h1 token on purpose: the page's h1 is the display role. `"case"` shifts punctuation and dashes up to cap height, which uppercase eyebrows need. Eyebrows and meta take `text-ink-muted`; `ink-faint` is never text ([vibe-presets.md](vibe-presets.md)).
+
+**Wrapping.** `balance` evens headline lines so the last is not an orphan; engines cap it at a handful of lines, which suits headings only. `pretty` avoids one-word last lines in paragraphs. Both are progressive enhancement. SplitText measures the balanced layout, so balance and line masks agree.
+
+---
+
+## 3. The pairing library
+
+A short, curated set, not a catalogue. The Struq taste profile: **open, geometric, soft-modern sans** (clean round forms, generous apertures, elegant at light weights) set against **refined serifs** (high-contrast or warm). Not neutral grotesks, not quirky display gimmicks.
+
+**How to choose.** Pick by brand temperament: warm and literate, soft and friendly, quiet luxury, cinematic, product and precise. Take the **Signature** pairing that matches. Use **Extended** only when the brief names a temperament Signature does not cover, or when two Struq sites in the same niche would otherwise share a face. **Unsure is not a temperament.** Pick from the brief's temperament word. S1 only when the brief declares a one-family system. Two Struq sites in the same niche never share a display face. **Never fall back to Inter or another default** (§3.4); "unsure" is exactly when a default sneaks in. The presets in [vibe-presets.md](vibe-presets.md) are built from Signature, and the type step of [brief-router.md](brief-router.md) defers to this section: Signature first, always.
+
+**Reading the role rows.** Size tokens are fixed by the system (§2.4): display `text-display`, h2 `text-h2`, h3 `text-h3`, eyebrow `text-eyebrow`, body `text-body`, small `text-small`, UI `text-ui`, numerals `text-stat`. Each row gives `weight / tracking (em) / leading` per role; those are the overrides you write into the preset's `@theme`. Display and h2 use the display face, body and small the text face. h3, eyebrow, UI and numerals take whatever face the pairing's role font tokens name (the third table): write those four `--font-*` values into the preset's `@theme inline`, plus the display clamp and body size where the row differs from the standard. **GF** is Google Fonts (`next/font/google`); **FS** is Fontshare (self-host with `next/font/local`, §4). Every weight listed ships in the family.
+
+### 3.1 Struq Signature (the default set)
+
+| # | Pairing | Source | Temperament | Why it is not generic | Preset |
+|---|---|---|---|---|---|
+| S1 | **Urbanist** + **Urbanist** | GF | Modern, open, calm | A geometric with round, open forms that stays elegant at 300; one family, one file, a page that feels drawn rather than defaulted | Soft Modern (its pairing); only when the brief declares a one-family system |
+| S2 | **Fraunces** (`opsz`, `SOFT`) + **Urbanist** | GF | Warm, literate, editorial | A soft-serif display with optical sizing over a round geometric: warmth and precision in one line, unlike the usual serif-plus-grotesk | Warm Editorial (its pairing) |
+| S3 | **Fraunces** (`SOFT` 100, `opsz` auto) + **Outfit** | GF | Soft, friendly, optimistic | Fraunces at full softness reads round and kind without a novelty rounded face, and Outfit's clean geometry keeps the text crisp | Light brands of any preset |
+| S4 | **Cormorant Garamond** + **Jost** | GF | Quiet luxury | Hairline Garamond at size, over a Futura-lineage geometric that takes wide-tracked caps and stays legible on toned paper | Luxury Minimal (its pairing) |
+| S5 | **Newsreader** (`opsz`) + **Manrope** | GF | Cinematic, dark, literate | An optical-size news serif that turns razor-fine at hero size on black, over an engineered text sans: film-title gravity with a reading voice | Dark Cinematic (its pairing) |
+| S6 | **Urbanist** + **Lora** | GF | Essay-led editorial sans | The reversed pair: light geometric headlines over a warm book serif for long reading. Editorial without any serif headline | Warm Editorial, Luxury Minimal |
+| S7 | **Sora** + **Instrument Sans** | GF | Product, precise, technical | A wide geometric display over a compact, slightly condensed grotesk: technical by letterform, never by monospace | Dark Cinematic, Soft Modern |
+
+| # | Display | h2 | h3 | Eyebrow | Body | Small | UI | Numerals |
+|---|---|---|---|---|---|---|---|---|
+| S1 | 300 / -0.03 / 0.98 | 300 / -0.02 / 1.06 | 400 / -0.01 / 1.2 | 500 / 0.12 / 1.2 | 400 / 0 / 1.65 | 400 / 0.01 / 1.55 | 500 / 0.02 / 1 | Urbanist 300, tabular |
+| S2 | 300 / -0.025 / 0.95 | 300 / -0.015 / 1.06 | 400 / -0.005 / 1.2 | 500 / 0.12 / 1.2 | 400 / 0 / 1.65 | 400 / 0.01 / 1.55 | 500 / 0.02 / 1 | Fraunces 300, -0.02 |
+| S3 | 400 / -0.02 / 0.96 | 300 / -0.012 / 1.06 | 400 / -0.005 / 1.2 | 500 / 0.12 / 1.2 | 400 / 0 / 1.65 | 400 / 0.01 / 1.55 | 500 / 0.02 / 1 | Outfit 400, tabular |
+| S4 | 300 / -0.01 / 0.92 | 300 / -0.005 / 1.04 | 400 / 0 / 1.2 | 500 / 0.18 / 1.2 | 400 / 0 / 1.7 | 400 / 0.01 / 1.55 | 500 / 0.06 / 1 | Jost 400, tabular |
+| S5 | 300 / -0.02 / 0.94 | 300 / -0.012 / 1.04 | 400 / -0.005 / 1.15 | 500 / 0.14 / 1.2 | 400 / 0 / 1.6 | 400 / 0.005 / 1.5 | 500 / 0.01 / 1 | Manrope 400, tabular |
+| S6 | 300 / -0.03 / 0.98 | 300 / -0.02 / 1.06 | 400 / -0.01 / 1.2 | 500 / 0.12 / 1.2 | Lora 400 / 0 / 1.7 | Urbanist 400 / 0.01 / 1.5 | 500 / 0.02 / 1 | Urbanist 300, tabular |
+| S7 | 300 / -0.025 / 1.0 | 300 / -0.015 / 1.08 | 400 / -0.01 / 1.2 | 500 / 0.12 / 1.2 | 400 / 0 / 1.6 | 400 / 0.005 / 1.5 | 500 / 0.01 / 1 | Sora 300, tabular |
+
+Per-pairing columns: the role faces (write them into `@theme inline`), the display size, the body size and the accent move. "Standard" display is the §2.4 token. `display` and `body` here mean `var(--font-display)` and `var(--font-body)`.
+
+| # | `--font-h3` | `--font-eyebrow` | `--font-ui` | `--font-stat` | `--text-display` | `--text-body` | Accent move |
+|---|---|---|---|---|---|---|---|
+| S1 | display | body | body | display | standard | 1.0625rem | Weight shift 300 to 500 on one word, or the accent colour |
+| S2 | display | body | body | display | standard | 1.0625rem | One word in Fraunces italic |
+| S3 | display | body | body | body | standard | 1.0625rem | One word in Fraunces italic (SOFT 100 keeps it round) |
+| S4 | display | body | body | body | `clamp(3.25rem, 1.4rem + 7.8vw, 9rem)` | 1.0625rem | One word in Cormorant italic 300; the italic is loaded (§4) |
+| S5 | display | body | body | body | `clamp(3.25rem, 1.4rem + 7.8vw, 9rem)` | 1rem | One word in Newsreader italic |
+| S6 | display | display | display | display | standard | 1.0625rem (Lora) | Weight shift 300 to 500 on one word, or the accent colour |
+| S7 | display | body | body | display | `clamp(2.5rem, 1rem + 6vw, 7rem)`, hero `max-w-[18ch]` | 1rem | Weight shift 300 to 500 on one word, or the accent colour |
+
+The display clamps compensate for x-height and width: Cormorant and Newsreader have small x-heights and read a size smaller than a geometric at the same `font-size`, so they set larger; Sora runs wide and sets smaller with a wider measure. **A face with no italic (Sora, Comfortaa, Archivo Black) never gets an `<em>` accent.** Urbanist does ship an italic, but a slanted geometric reads as a style toggle, not a voice, so S1, S6 and S7 move weight or colour instead.
+
+Honest notes, per face:
+
+- **Urbanist** (100 to 900) is geometric and wide-set, so it wants less negative tracking than a neo-grotesk and slightly looser leading; its round `o` and `e` collide first. At 400 it is a genuine text face, set at 1.0625rem because its x-height is modest. Eyebrows at 0.12em.
+- **Fraunces**: use the axes on purpose. `opsz` follows size automatically through `next/font`, so the hero gets the sharp cut and the h3 the sturdier one. `SOFT` (0 to 100) rounds the terminals: around 50 suits warm brands (S2), 100 is the soft and friendly voice of S3, 0 keeps it crisp. Pin it with `font-variation-settings: "SOFT" 50` (or 100) on the display roles only, and load the axis (§4). Leaving `opsz` out of `font-variation-settings` keeps optical sizing automatic.
+- **Cormorant Garamond** needs size. Display and h2 only, at its own larger clamp and leading 0.92; if it ever sets running text (a pull quote, a lead), never below 1.125rem. Hairlines vanish on cheap screens below that. Its h3 can move to Jost 500 in dense lists. Load the italic: it is the accent.
+- **Newsreader** (200 to 800, `opsz` 6 to 72) is S5's display face. Leave `opsz` automatic so the hero gets the fine display cut and h3 the sturdier text cut; run it 300 on dark grounds. Like Cormorant it sets a size larger than a geometric.
+- **Sora** (100 to 800) runs wide. It takes less negative tracking than its weight suggests (-0.025em at display, -0.015em at h2) because tight tracking on a wide face clots the counters; carry the width with a smaller clamp and a hero `max-w-[18ch]`, or headlines break into single words.
+- **Manrope** (200 to 800): 200 is too thin for anything but one giant word. As text at 400 it holds up down to 0.875rem; body at 1rem, eyebrows at 0.14em.
+- **Lora** (400 to 700) is a text serif: body and lead only, never display. Body 1.0625rem at leading 1.7, because serif text on screen wants more air than sans.
+- **Outfit** (100 to 900) is a clean geometric; body at 1.0625rem, eyebrows at 0.12em. On dark grounds keep body and small at 400, not 300.
+- **Jost** (100 to 900) is a Futura-lineage geometric. Body 1.0625rem at 1.7 under Cormorant; its caps want the widest eyebrow tracking in the set (0.18em) and UI at 0.06em.
+- **Instrument Sans** (400 to 700, `wdth` axis) is compact and even: body 1rem at 1.6, eyebrows at 0.12em. Keep `wdth` at 100; condensing it under a wide Sora display tips the contrast into a mismatch.
+
+**House pairing: Comfortaa + Urbanist.** This is Struq's own brand pairing, not a default for other brands, and it is not in the Signature set. Comfortaa sets the wordmark and the h1 only; h2 and everything below runs in Urbanist 300 and up. Comfortaa is a rounded display face that charms at 40px and up and tires in a paragraph, so it never sets h3, body, small or UI.
+
+### 3.2 Extended (distinctive alternatives, same spirit)
+
+Less-seen faces for when Signature does not fit, or to keep two sites in the same niche apart. Mostly Fontshare: free, self-hosted, and rarely seen on generated sites.
+
+| # | Pairing | Source | Temperament | Why it is not generic | Preset |
+|---|---|---|---|---|---|
+| E1 | **Gambetta** + **Albert Sans** | FS + GF | Warm, crafted, hand-set | A soft, inky serif with calligraphic warmth over a clean, slightly warm geometric grotesk | Warm Editorial |
+| E2 | **Zodiak** + **General Sans** | FS | Confident editorial | A high-contrast serif with sharp wedges, set light, over a clean sans with open apertures | Warm Editorial, Dark Cinematic |
+| E3 | **Sentient** + **General Sans** | FS | Modern luxury | Warmer and less brittle than a Didone; reads expensive at 300 without hairline fragility | Luxury Minimal |
+| E4 | **Boska** + **Albert Sans** | FS + GF | Fashion, editorial | Sharp, high-contrast display serif whose light weights stay graceful at 120px | Luxury Minimal, Dark Cinematic |
+| E5 | **Bodoni Moda** (`opsz`) + **Albert Sans** | GF | Fashion house | A Didone with optical sizing over a quiet grotesk that lets the hairlines carry the voice | Luxury Minimal |
+| E6 | **Instrument Serif** (400 only) + **Outfit** | GF | Film title, poster | A condensed high-contrast serif against a soft geometric: poster gravity without a heavy weight. Never with the italic accent word inside a sans headline (the 2025 to 2026 template tell) | Dark Cinematic |
+
+| # | Display | h2 | h3 | Eyebrow | Body | Small | UI | Numerals |
+|---|---|---|---|---|---|---|---|---|
+| E1 | 300 / -0.02 / 0.96 | 300 / -0.01 / 1.06 | 400 / 0 / 1.2 | 500 / 0.14 / 1.2 | 400 / 0 / 1.65 | 400 / 0.005 / 1.55 | 500 / 0.01 / 1 | Albert Sans 400, tabular |
+| E2 | 300 / -0.02 / 0.95 | 300 / -0.015 / 1.05 | 400 / -0.005 / 1.2 | 500 / 0.14 / 1.2 | 400 / 0 / 1.65 | 400 / 0.005 / 1.55 | 500 / 0.01 / 1 | General Sans 400, tabular |
+| E3 | 300 / -0.02 / 0.98 | 300 / -0.01 / 1.06 | 400 / 0 / 1.2 | 500 / 0.18 / 1.2 | 400 / 0 / 1.7 | 400 / 0.005 / 1.55 | 500 / 0.02 / 1 | Sentient 300, -0.01 |
+| E4 | 300 / -0.02 / 0.96 | 300 / -0.01 / 1.04 | 400 / 0 / 1.2 | 500 / 0.16 / 1.2 | 400 / 0 / 1.65 | 400 / 0.005 / 1.55 | 500 / 0.02 / 1 | Albert Sans 400, tabular |
+| E5 | 400 / -0.015 / 1.0 | 400 / -0.01 / 1.08 | 400 / 0 / 1.2 | 500 / 0.16 / 1.2 | 400 / 0 / 1.7 | 400 / 0.01 / 1.55 | 500 / 0.04 / 1 | Albert Sans 400, tabular |
+| E6 | 400 / -0.01 / 0.92 | 400 / -0.005 / 1.02 | 400 / 0 / 1.15 | 500 / 0.12 / 1.2 | 400 / 0 / 1.65 | 400 / 0.005 / 1.5 | 500 / 0.01 / 1 | Outfit 400, tabular |
+
+Role faces for Extended: `--font-h3` is the display face; eyebrow, UI and numerals use the text face, except E3, whose numerals use Sentient. Every Extended row takes the standard display clamp and a 1rem body (1.0625rem for Outfit in E6). Bodoni Moda starts at 400, which reads light because of its hairlines; hairlines vanish under 40px, so h3 can move to Albert Sans 500. **Instrument Serif** has one weight, 400, plus an italic: set every display-role weight to 400, never ask it for 700, and keep its italic inside its own serif headlines.
+
+### 3.3 Genre exception: heavy display
+
+Outside the profile on purpose, for the one preset that shouts. **Archivo Black** (400 only, a black weight) + **Archivo** (GF) for Brutalist: display `400 caps / -0.01 / 0.88`, h2 `400 caps / 0 / 0.92`, h3 Archivo `500 / -0.01 / 1.15`, eyebrow `500 / 0.08 / 1.2`, body `400 / 0 / 1.55`, small `400 / 0 / 1.45`, UI `500 caps / 0.04 / 1`, numerals Archivo 500 tabular. Use it only when the brief declares the genre.
+
+### 3.4 Off the list, on purpose
+
+**Inter, Roboto, Open Sans, Poppins, Montserrat and Lato** are the defaults of starters, UI kits and generators; on a marketing page they read as "nobody chose this". **Space Grotesk and Geist** are good faces that became the reflex for anything "technical" or anything scaffolded by a Next.js starter, so they carry the same signal. Use one only when the brand already owns it. None appears in a preset, and none is ever the fallback when a choice feels hard.
+
+**Commercial faces seen on award sites.** Use them only with a licence; otherwise take the free stand-in.
+
+| Commercial | Free stand-in |
+|---|---|
+| Canela | Newsreader, Gambetta |
+| PP Editorial New | Instrument Serif (E6), Gambetta |
+| PP Neue Montreal, Neue Haas Grotesk | General Sans |
+| Söhne | General Sans, Manrope |
+| GT Sectra | Fraunces, Zodiak |
+
+### 3.5 Three tests before committing
+
+1. **Structure contrast.** Serif against geometric, or one family in two roles. Two similar sans faces from different families read as a mistake. (S7 passes because Sora's width against Instrument Sans's compact text is the contrast.)
+2. **96 and 16.** Set the headline at 96px and a paragraph at 16px on the real surface. If the paragraph tires you, the text face is wrong.
+3. **Squint.** Blur your eyes. The headline is the first shape; the eyebrow recedes to texture. If two tiers compete, the gap is too small, not the fonts.
+
+---
+
+## 4. Loading: variable, preloaded, no shift
+
+1. **Variable files wherever the family has one.** One request carries every weight and the `opsz` axis.
+2. **`display: "swap"`.** Fallback text paints immediately; invisible text costs more than a swap.
+3. **Preload two files: display roman and body roman.** Italics and anything else get `preload: false`.
+4. **Subset `latin`.** It covers English, Dutch, German, French and Spanish (`ë ï ü ö ä ß é`). Add `latin-ext` only for Polish, Czech, Turkish and similar.
+5. **`adjustFontFallback`** generates a metric-matched fallback (`size-adjust`, ascent and descent overrides), so the swap shifts almost nothing. That matters twice: CLS, and SplitText line breaks.
+
+```tsx
+// app/fonts.ts: ONE pairing. Default: S1, Urbanist in both roles (Soft Modern).
+import { Urbanist } from "next/font/google";
+
+// One variable file carries every weight; both role variables point at it.
+const urbanist = Urbanist({ subsets: ["latin"], variable: "--font-body-face", display: "swap" });
+export const display = urbanist; // adjustFontFallback defaults to true for Google fonts
+export const body = urbanist;
+
+/* Another pairing REPLACES the block above; never load two pairings.
+
+// S2 (Warm Editorial): a variable display with axes, plus its italic as its own call.
+// import { Fraunces, Urbanist } from "next/font/google";
+// export const display = Fraunces({
+//   subsets: ["latin"], axes: ["opsz", "SOFT"], variable: "--font-display-face", display: "swap",
+// });
+// export const displayItalic = Fraunces({
+//   subsets: ["latin"], style: "italic", axes: ["opsz", "SOFT"],
+//   variable: "--font-display-italic-face", display: "swap", preload: false, // the accent word, not LCP
+// });
+// export const body = Urbanist({ subsets: ["latin"], variable: "--font-body-face", display: "swap" });
+
+// S4 (Luxury Minimal): a static family states its weights.
+// import { Cormorant_Garamond, Jost } from "next/font/google";
+// export const display = Cormorant_Garamond({ weight: ["300", "400"], subsets: ["latin"], variable: "--font-display-face", display: "swap" });
+// export const displayItalic = Cormorant_Garamond({ weight: "300", style: "italic", subsets: ["latin"], variable: "--font-display-italic-face", display: "swap", preload: false });
+// export const body = Jost({ subsets: ["latin"], variable: "--font-body-face", display: "swap" });
+
+// Fontshare (Extended): download the family, commit the web-kit WOFF2 (the variable file when offered).
+// import localFont from "next/font/local";
+// export const display = localFont({
+//   src: [{ path: "../fonts/Gambetta-Variable.woff2", weight: "300 700", style: "normal" }],
+//   variable: "--font-display-face", display: "swap",
+//   adjustFontFallback: "Times New Roman", // "Arial" for a sans, "Times New Roman" for a serif
+//   fallback: ["Georgia", "serif"],
+// });
+*/
 ```
 
 ```css
-/* app/theme.css (type layer). "static" because the role utilities below read these vars. */
-@theme static {
-  /* Small steps: ride the knob. Ratio 1.25. */
-  --text-eyebrow: 0.75rem;                       --text-eyebrow--line-height: 1.2;
-  --text-small:   0.875rem;                      --text-small--line-height: 1.55;
-  --text-body:    1rem;                          --text-body--line-height: 1.65;
-  --text-lead:    1.25rem;                       --text-lead--line-height: 1.5;
-
-  /* Large steps: own clamp, ratio opens 1.25 (390px) to 1.333 (1440px). */
-  --text-h4: clamp(1.56rem, 1.45rem + 0.43vw, 1.78rem);  --text-h4--line-height: 1.25;
-  --text-h3: clamp(1.95rem, 1.74rem + 0.83vw, 2.37rem);  --text-h3--line-height: 1.15;
-  --text-h2: clamp(2.44rem, 2.07rem + 1.43vw, 3.16rem);  --text-h2--line-height: 1.08;
-  --text-h1: clamp(2.75rem, 2rem + 2.92vw, 4.21rem);     --text-h1--line-height: 1.02;
-
-  /* The hero and the ghost line break the scale deliberately. */
-  --text-display: clamp(3rem, 8vw, 9rem);                --text-display--line-height: 0.95;
-  --text-ghost:   clamp(6rem, 22vw, 24rem);              --text-ghost--line-height: 0.85;
-
-  /* Tracking tightens as size grows. Letter-spacing is relative, so it scales for free. */
-  --tracking-eyebrow: 0.14em;
-  --tracking-h4: -0.005em;  --tracking-h3: -0.01em;  --tracking-h2: -0.02em;
-  --tracking-h1: -0.03em;   --tracking-display: -0.04em;
-}
-
+/* S1 theme: one family fills both role tokens */
 @theme inline {
-  --font-display: var(--font-display-face), Georgia, serif;
+  --font-display: var(--font-body-face), system-ui, sans-serif;
   --font-body: var(--font-body-face), system-ui, sans-serif;
 }
-
-:root { --display-weight: 300; }
+/* Pairings with a separate italic call: the accent word picks it up */
+:where(h1, h2, .font-display) em { font-family: var(--font-display-italic-face), var(--font-display); font-style: italic; }
 ```
 
-Role utilities bundle the five properties that must always travel together (size, leading, tracking, weight, wrap) so components never assemble them by hand:
+Wire the variables onto `<html>` exactly as in [vibe-presets.md](vibe-presets.md): `${body.variable}` for S1, `${display.variable} ${body.variable}` (plus `${displayItalic.variable}`) for a two-face pairing. The italic gets its own call with `preload: false`, so the roman display and body stay the only two preloaded files; one call with `style: ["normal", "italic"]` also works and is simpler, but preloads the italic too. If a Fontshare family ships only static cuts, list each weight you use (three at most) as its own `src` entry. Read the licence on the family page once; Fontshare's free licence covers commercial use. Fraunces also has a `WONK` axis; leave it off unless the brand is genuinely playful. `SOFT` must be listed in `axes` before `font-variation-settings` can use it (§3.1).
 
-```css
-@utility type-display {
-  font-family: var(--font-display);
-  font-size: var(--text-display);
-  line-height: var(--text-display--line-height);
-  letter-spacing: var(--tracking-display);
-  font-weight: var(--display-weight);
-  text-wrap: balance;
-  hyphens: manual;
-}
-@utility type-eyebrow {
-  font-family: var(--font-body);
-  font-size: var(--text-eyebrow);
-  line-height: var(--text-eyebrow--line-height);
-  letter-spacing: var(--tracking-eyebrow);
-  font-weight: 500;
-  text-transform: uppercase;
-}
-@utility type-body {
-  font-family: var(--font-body);
-  font-size: var(--text-body);
-  line-height: var(--text-body--line-height);
-  text-wrap: pretty;
-  max-width: 62ch;
-}
-/* type-h1, type-h2, type-h3, type-h4, type-lead, type-small and type-ghost follow the same
-   shape: their own size, leading and tracking tokens, weight 300 to 400 for headings,
-   text-wrap: balance for headings and pretty for text. type-ghost sets only size and leading. */
-```
+**`lang` is not decoration.** It drives hyphenation, quote selection and fallback choice. Set it on `<html>` and on any element whose copy switches language.
 
-### What each tier measures on screen
+### Fonts and SplitText
 
-| Role | 390px | 1440px | Leading | Tracking, sans | Tracking, serif | Weight |
-|---|---|---|---|---|---|---|
-| display (hero) | 45px | 115px | 0.95 | -0.04em | -0.025em | 300 |
-| h1 | 42px | 80px | 1.02 | -0.03em | -0.02em | 300 to 400 |
-| h2 | 37px | 60px | 1.08 | -0.02em | -0.015em | 300 to 400 |
-| h3 | 30px | 45px | 1.15 | -0.01em | -0.01em | 400 |
-| h4 | 24px | 34px | 1.25 | -0.005em | 0 | 400 to 500 |
-| lead | 19px | 24px | 1.5 | 0 | 0 | 400 |
-| body | 15px | 19px | 1.65 | 0 | 0 | 400 |
-| small | 13px | 17px | 1.55 | +0.005em | +0.005em | 400 |
-| eyebrow | 11px | 14px | 1.2 | +0.14em | +0.14em | 500, uppercase |
-
-Why each optical tweak exists:
-
-- **Tracking tightens as size grows** because spacing designed for 16px reads loose at 115px; the eye perceives gaps in proportion to letter size. -0.04em at the hero is the grotesk figure. Serifs add their own horizontal rhythm and need about 40 percent less tightening, or the serifs touch.
-- **Leading tightens as size grows** because the line gap the eye perceives is the white between lines, and it scales with size. Body at 1.65 needs the air to track across a 62ch line; a 3-line headline at 1.65 falls apart into separate lines. Below 0.95 descenders hit ascenders; keep the hero at 0.95 or higher unless you control the copy.
-- **Uppercase display needs the opposite tweak.** Capitals have no descenders, so leading can drop to 0.88 to 0.92, and they want tracking from 0 to +0.02em rather than negative. Never apply the lowercase tracking number to a capitalised headline.
-- **Small and eyebrow tiers loosen** because small type needs more room to stay legible, and tracked uppercase is how a 12px line earns its place as wayfinding (baseline: tracked uppercase 11 to 12px eyebrows instead of mid-size subheads).
-- **Light and dark grounds shift optical weight.** Light-on-dark reads slightly heavier than dark-on-light. With a variable face, run `--display-weight` 20 to 40 units lighter on a dark preset (for example 340 on light, 310 on dark) and judge by eye. Never go below 300 and never fake it with opacity.
-
-### Wrapping
-
-- `text-wrap: balance` on every heading. It distributes words across lines so the last line is not a single orphan. Browsers cap it at a handful of lines (about 6 in Chromium), which is fine for headlines and wrong for paragraphs.
-- `text-wrap: pretty` on body copy. It avoids short last lines in paragraphs. Treat both as progressive enhancement: older engines ignore them and fall back to normal wrapping.
-- SplitText measures the balanced layout, so `balance` and the line masks agree.
-- Cap headline width in characters, not pixels: `max-width: 16ch` to `20ch` for a hero, `62ch` for body (section 6).
+- **Lines: `autoSplit: true`, animation returned from `onSplit`.** SplitText re-splits when fonts finish loading and when the element's width changes, reverting the returned animation first and carrying its progress into the new one. This is the 3.13 API; never `new SplitText()` plus a manual resize listener.
+- **Words or chars without `autoSplit`: split after `document.fonts.ready`, inside the matchMedia context** (char recipe in §5): `document.fonts.ready.then(() => live && ctx.add(() => { ... }))`. `ctx.add` puts the late split and tween in the same context the media query reverts, and `live` stops a resolve that lands after unmount or a media change. Split before the fonts land and it measures the fallback face.
+- **`adjustFontFallback` makes the re-split nearly invisible:** pre-swap breaks land within a word of the final ones.
+- **The options this skill uses:** `type`, `linesClass`, `mask`, `autoSplit`, `onSplit`, `aria`. `aria` defaults to `"auto"`: the split element gets an `aria-label` with its full text and the fragments are hidden from assistive tech. A label flattens markup, so do not split a heading that contains links.
+- **Where the accessible name lives.** `aria-label` is only reliable on a heading, a link, a button or another element with a role; on a `span`, `div` or `p` (generic roles) screen readers may ignore it. So: split a heading directly and `"auto"` is right (`line-rise-hero`). For a link or button, put `aria-label` on that element and split inner `aria-hidden` spans with `aria: "none"` (SwapLink). For a paragraph or a bare word, render an `sr-only` copy next to an `aria-hidden` visual copy and split the visual one with `aria: "none"` (Manifesto, CharWord). `aria: "hidden"` hides the fragments without adding a label, for a split whose text already exists elsewhere.
+- **Line masks and descenders.** With `mask: "lines"` each line sits in a wrapper with the class `linesClass + "-mask"` (`split-line-mask` here), which clips at tight leading. Pad the mask and pull the margin back so layout does not move: `.split-line-mask { padding-block: 0.1em; margin-block: -0.1em; }`.
+- **Chars drop kerning.** Each character becomes an inline block, so pairs like `To`, `AV` and `Ty` open up at 8rem. Use chars only on short words and revert the split when the animation ends.
 
 ---
 
-## 4. Loading fonts: variable, preloaded, no shift
+## 5. Choreography recipes
 
-### Rules
+All recipes import from `@/lib/gsap` ([setup.md](setup.md)), live in a `"use client"` leaf with a scope ref, and create animation only inside the `no-preference` branch of `gsap.matchMedia()`. Reduced-motion users get the server markup as the final state with no animation work.
 
-1. **Variable files wherever the family offers one.** One file carries every weight (and `opsz`), so three static weights collapse into one request.
-2. **`display: "swap"`.** Text paints in the fallback immediately; the real font swaps in. Flash of invisible text costs more than flash of fallback.
-3. **Preload exactly two files:** display roman and body roman. Italics, extra weights and any third family load on demand (`preload: false`).
-4. **Subset to `latin`.** That covers Dutch, German, French, Spanish and English: `ë ï ü ö ä ß é è` all live in Latin and Latin-1 Supplement. Add `latin-ext` only for Polish, Czech, Turkish and similar.
-5. **Let `adjustFontFallback` do the metric matching.** `next/font` generates a fallback face with `size-adjust`, `ascent-override` and `descent-override` so the swap is near-zero layout shift. This matters twice here: layout shift, and SplitText line breaks (below).
+### The typographic signature move
 
-### Google fonts
+**Every STRUQ.md declares one signature move**, the single typographic gesture the site is remembered by. Pick one:
 
-```tsx
-// app/fonts.ts
-import { Fraunces, Hanken_Grotesk } from "next/font/google";
+- **`weight-in`**: the hero's `wght` rises from 100 to its resting 300 together with a short y-rise, once, on load (below).
+- **`soft-scrub`**: Fraunces `SOFT` scrubbed from 0 to 100 across the hero's departure, so the headline softens as it leaves (below).
+- **`type-mask-media`**: the display word is a window onto a photograph or video (the media clipped to the glyphs with `background-clip: text`, or an SVG `<mask>` for video), with the same words in the DOM.
+- **`fit-width-wordmark`**: the wordmark set edge to edge at the exact container width, its size computed once from a measurement and on resize, never guessed in `vw`.
+- **A cropped display**: one display line deliberately cut by the canvas edge, the rest of the word implied.
 
-export const display = Fraunces({
-  subsets: ["latin"],
-  axes: ["opsz"],                   // optical size: bookish at text sizes, razor at hero sizes
-  variable: "--font-display-face",
-  display: "swap",                  // adjustFontFallback defaults to true for Google fonts
-});
+One per site, written into STRUQ.md next to the pairing. `manifesto-fill` (below) only when the copy is a genuine manifesto. The masked line rise is a technique, not a signature: it is the fallback entrance, and every hero using it is a tell (§7).
 
-export const body = Hanken_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-body-face",
-  display: "swap",
-});
-```
-
-Fraunces also has `SOFT` and `WONK` axes. Check the specimen at your display size and pin them with `font-variation-settings` if the default letterforms are not what you want.
-
-A single-weight family needs the weight stated: `Instrument_Serif({ weight: "400", style: ["normal", "italic"], subsets: ["latin"], ... })`. Request `italic` only if the design uses it; each style is a separate file.
-
-### Fontshare fonts (self-hosted)
-
-Fontshare fonts are not on `next/font/google`. Download the family from its Fontshare page, take the WOFF2 files from the web kit (the variable file if one is offered), commit them into your project, and load them with `next/font/local`. Read the licence text on the family page once; it covers commercial use and self-hosting.
+### `weight-in`: the weight arrives with the line
 
 ```tsx
-// app/fonts.ts (continued)
-import localFont from "next/font/local";
+"use client";
+import { useRef } from "react";
+import { gsap, useGSAP, SplitText } from "@/lib/gsap";
 
-export const displayLocal = localFont({
-  src: [{ path: "../fonts/Gambetta-Variable.woff2", weight: "300 700", style: "normal" }],
-  variable: "--font-display-face",
-  display: "swap",
-  adjustFontFallback: "Times New Roman",   // pick the closest system face: "Arial" for sans, "Times New Roman" for serif
-  fallback: ["Georgia", "serif"],
-});
-```
+export function WeightInHeadline({ children }: { children: string }) {
+  const root = useRef<HTMLDivElement>(null);
 
-If the family only offers static cuts, list each weight you use as its own `src` entry (`{ path, weight: "300", style: "normal" }`, and so on). Do not ship weights the design never uses.
+  useGSAP(() => {
+    const mm = gsap.matchMedia();
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      const h1 = root.current!.querySelector<HTMLElement>("[data-split-hero]")!;
+      SplitText.create(h1, {
+        type: "lines",
+        autoSplit: true,
+        onSplit(self) {
+          h1.dataset.ready = "1"; // same pre-split guard as line-rise-hero
+          return gsap.from(self.lines, {
+            fontWeight: 100, yPercent: 40, autoAlpha: 0,
+            duration: 1.6, ease: "expo.out", stagger: 0.09,
+          });
+        },
+      });
+    });
+  }, { scope: root });
 
-### Wire it into the layout
-
-```tsx
-// app/layout.tsx
-import { display, body } from "./fonts";
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable}`}>
-      <head>
-        {/* No-JS safety for the hero guard in section 5 */}
-        <noscript><style>{`[data-split-hero]{visibility:visible!important}`}</style></noscript>
-      </head>
-      <body className="bg-surface-0 font-body text-ink antialiased">{children}</body>
-    </html>
+    <div ref={root}>
+      <h1 data-split-hero className="font-display text-display max-w-[16ch]">{children}</h1>
+    </div>
   );
 }
 ```
 
-`lang` is not decoration. It drives hyphenation, quote marks and font fallback selection. Set it per document, and per element when copy switches language (section 6).
+- The lines are measured at the resting weight, then animated *from* 100, which is narrower, so no line can overflow and rewrap mid-move.
+- It needs a variable face whose `wght` axis reaches 100: Urbanist, Fraunces, Outfit, Sora and Jost do; Cormorant (300), Newsreader and Manrope (200) do not, so start from their minimum. The 100 is a transit value and does not count against the three-weight budget (§2.2).
+- Animating weight is a layout per frame. That is acceptable once, on load, on one element; never on scroll and never on body copy.
 
-### Fonts and SplitText
+### `soft-scrub`: the headline softens as it leaves
 
-SplitText measures lines. A font swap changes line breaks. The interplay:
+```tsx
+"use client";
+import { useRef } from "react";
+import { gsap, useGSAP } from "@/lib/gsap";
 
-- **Use `autoSplit: true` and put the animation in `onSplit`.** SplitText re-splits when `document.fonts.ready` resolves and when the container width changes, so the lines always match the final font. Returning the animation from `onSplit` lets SplitText revert it before the re-split and carry progress over to the new one. This is the 3.13 API; never use the old `new SplitText()` plus manual resize listeners.
-- **`adjustFontFallback` makes the re-split nearly invisible.** With matched fallback metrics, pre-swap line breaks are within a word or two of the final ones. Without it, the first split can be wildly wrong and the user sees lines rise twice.
-- **Hide the hero until it has split.** The unsplit headline painting for a frame and then snapping to its start pose is a visible flash (section 5, recipe 1).
-- **Only these SplitText options appear in this skill:** `type`, `linesClass`, `mask`, `autoSplit`, `onSplit`, `aria`. They are the stable surface. `aria` defaults to `"auto"`: the element gets an `aria-label` with its full text and the fragments are hidden from assistive tech. Because `aria-label` flattens inline markup, do not split a heading that contains links or meaningful nested elements; split the plain-text headings.
-- **Chars drop kerning.** Each character becomes its own inline-block, so kerning pairs between letters stop applying (`To`, `AV`, `Ty` visibly open up at 8rem). Use chars only on short display words, and revert after the animation when you can (recipe 2).
+export function SoftScrubHero({ children }: { children: string }) {
+  const root = useRef<HTMLElement>(null);
 
----
+  useGSAP(() => {
+    const mm = gsap.matchMedia();
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      gsap.fromTo("[data-soft]", { fontVariationSettings: '"SOFT" 0' }, {
+        fontVariationSettings: '"SOFT" 100',
+        ease: "none",
+        scrollTrigger: { trigger: root.current, start: "top top", end: "bottom top", scrub: 1 },
+      });
+    });
+  }, { scope: root });
 
-## 5. Typographic choreography recipes
+  return (
+    <section ref={root} className="min-h-svh">
+      <h1 data-soft className="font-display text-display max-w-[16ch] [font-variation-settings:'SOFT'_0]">{children}</h1>
+    </section>
+  );
+}
+```
 
-All of these assume the registry from [setup.md](setup.md) (`import { gsap, useGSAP, SplitText } from "@/lib/gsap"`), a `"use client"` leaf, a scope ref, and a `gsap.matchMedia()` guard. In each, the animation is created only inside the `no-preference` branch, so reduced-motion users get the final state from the server markup with zero JS.
+- Fraunces only (S2, S3), with `SOFT` in the font's `axes` (§4). `opsz` stays automatic because it is not in the settings string.
+- `SOFT` reshapes terminals without changing advance widths, so this is a repaint, not a layout. Still one per page.
+- Reduced motion keeps the resting `SOFT 0` (or the pairing's pinned value); nothing animates.
 
-### Recipe 1. Masked line rise for the hero
+### Index-list hover: weight, not colour
 
-The hero version of the line reveal in [scroll-reveals.md](scroll-reveals.md) section 3: it fires on load instead of on scroll, and it must not flash.
+A list of case titles or services in `type-h3`: on hover the row's title moves from `wght` 300 to 450 over 0.4s. It reads as the line leaning toward the pointer, which a colour change never does.
 
 ```css
-/* globals.css: hide only while motion is on and the split has not happened yet */
+.index-row .type-h3 { font-weight: 300; }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .index-row .type-h3 { transition: font-weight 0.4s var(--ease-out-quart); }
+}
+.index-row:hover .type-h3, .index-row:focus-visible .type-h3 { font-weight: 450; }
+```
+
+Keep each title on one line with room to its right: the heavier weight is wider, and a title that wraps on hover jumps the whole list.
+
+### `line-rise-hero`: masked line rise on load
+
+The hero variant of [scroll-reveals.md](scroll-reveals.md) §3: it fires on load, not on scroll, and it must not flash.
+
+```css
+/* globals.css: hide only while motion is allowed and the split has not happened */
 @media (prefers-reduced-motion: no-preference) {
   [data-split-hero]:not([data-ready]) { visibility: hidden; }
 }
-.split-line { padding-bottom: 0.08em; }  /* gives descenders room inside the mask */
+/* descender room inside each line mask (class = linesClass + "-mask"), with no layout jump */
+.split-line-mask { padding-block: 0.1em; margin-block: -0.1em; }
 ```
 
 ```tsx
@@ -319,47 +411,41 @@ import { gsap, useGSAP, SplitText } from "@/lib/gsap";
 export function HeroHeadline({ children }: { children: string }) {
   const root = useRef<HTMLDivElement>(null);
 
-  useGSAP(
-    () => {
-      const mm = gsap.matchMedia();
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const h1 = root.current!.querySelector<HTMLElement>("[data-split-hero]")!;
-        SplitText.create(h1, {
-          type: "lines",
-          mask: "lines",
-          autoSplit: true,
-          linesClass: "split-line",
-          onSplit(self) {
-            h1.dataset.ready = "1";                    // reveals the wrapper, lines are now in their start pose
-            return gsap.from(self.lines, {
-              yPercent: 115,
-              duration: 1.3,
-              ease: "expo.out",
-              stagger: 0.11,
-            });
-          },
-        });
+  useGSAP(() => {
+    const mm = gsap.matchMedia();
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      const h1 = root.current!.querySelector<HTMLElement>("[data-split-hero]")!;
+      SplitText.create(h1, {
+        type: "lines",
+        mask: "lines",
+        linesClass: "split-line",
+        autoSplit: true,
+        onSplit(self) {
+          h1.dataset.ready = "1"; // lines are in their start pose; safe to show
+          return gsap.from(self.lines, { yPercent: 115, duration: 1.3, ease: "expo.out", stagger: 0.11 });
+        },
       });
-    },
-    { scope: root }
-  );
+    });
+  }, { scope: root });
 
   return (
     <div ref={root}>
-      <h1 data-split-hero className="type-display">{children}</h1>
+      <h1 data-split-hero className="font-display text-display max-w-[16ch]">{children}</h1>
     </div>
   );
 }
 ```
 
-- Start this when the loader's exit begins, not at mount; the choreography belongs in [page-entrances.md](page-entrances.md).
-- Hero leading is 0.95, which clips long descenders inside the mask. The `padding-bottom: 0.08em` on the line fixes that; if the rhythm shifts, nudge the leading to 1.0 on the split headline only.
-- This is the one place where CSS hides content until JS runs (the baseline rule in [setup.md](setup.md) is to avoid that). The justification: an unsplit headline flashing before its start pose is worse. The guard only applies under `no-preference` and the `noscript` rule in section 4 covers JS failure.
-- **When not to:** every section headline. Use the plain scroll-triggered version from scroll-reveals for those; the hero earns the loud one.
+- The h1 is split directly, so the default `aria: "auto"` puts the full text in an `aria-label` on a heading, where screen readers honour it.
+- Add `<noscript><style>{"[data-split-hero]{visibility:visible!important}"}</style></noscript>` to the root layout's `<head>` so a JS failure never hides the h1.
+- **Not every hero.** This is one entrance among several. Each preset names its own ([vibe-presets.md](vibe-presets.md)), and the site's signature move (below) often replaces it; a hero that rises line by line on every Struq site is a template.
+- This is the one place CSS hides content until JS runs, and it has a price: the hero is usually the LCP element, so its paint waits for hydration. Keep this component a small leaf with no heavy imports and measure LCP in verify ([seo.md](seo.md) §6).
+- With a loader, start the rise as the loader exits ([page-entrances.md](page-entrances.md), [loaders.md](loaders.md)).
+- **When not to:** every section headline. Those use the scroll-triggered version from scroll-reveals. The hero earns the loud one.
 
-### Recipe 2. Character stagger for a short display word
+### Char stagger for one short word
 
-For one word of 3 to 12 characters: a section title, a number, a brand name. Never a sentence.
+For a single word of 3 to 12 characters: a section title, a number, a brand name. Never a sentence.
 
 ```tsx
 "use client";
@@ -369,40 +455,43 @@ import { gsap, useGSAP, SplitText } from "@/lib/gsap";
 export function CharWord({ word }: { word: string }) {
   const root = useRef<HTMLDivElement>(null);
 
-  useGSAP(
-    () => {
-      const mm = gsap.matchMedia();
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const el = root.current!.querySelector<HTMLElement>("[data-word]")!;
-        const split = SplitText.create(el, { type: "lines,chars", mask: "lines" });
-        gsap.from(split.chars, {
-          yPercent: 110,
-          duration: 1,
-          ease: "expo.out",
-          stagger: { each: 0.035, from: "start" },
-          scrollTrigger: { trigger: root.current, start: "top 80%", once: true },
-          onComplete: () => split.revert(),            // restores kerning and ligatures
+  useGSAP(() => {
+    const mm = gsap.matchMedia();
+    mm.add("(prefers-reduced-motion: no-preference)", (ctx) => {
+      let live = true;
+      document.fonts.ready.then(() => live && ctx.add(() => { // measure the real face, not the fallback
+        const split = SplitText.create(root.current!.querySelector("[data-word]"), {
+          type: "lines,chars", mask: "lines", aria: "none", // the sr-only copy carries the name
         });
-      });
-    },
-    { scope: root }
-  );
+        gsap.from(split.chars, {
+          yPercent: 110, duration: 1, ease: "expo.out", stagger: 0.035,
+          scrollTrigger: { trigger: root.current, start: "top 80%", once: true },
+          onComplete: () => split.revert(), // restores kerning and ligatures
+        });
+      }));
+      return () => { live = false; };
+    });
+  }, { scope: root });
 
   return (
     <div ref={root}>
-      <p data-word className="type-display">{word}</p>
+      <p className="font-display text-display">
+        <span className="sr-only">{word}</span>
+        <span data-word aria-hidden className="block">{word}</span>
+      </p>
     </div>
   );
 }
 ```
 
-- `onComplete: () => split.revert()` puts the original text node back, so kerning pairs return the moment the animation ends. There is no `autoSplit` here on purpose: a single short word on one line does not need re-splitting on resize, and reverting an auto-splitting instance is not something to rely on.
-- Try `from: "center"` for a symmetric word, `from: "end"` for a right-aligned one. Avoid `from: "random"` on anything a client will read twice.
-- **When not to:** body text, headlines longer than a few words (it becomes a typewriter toy), or more than one char-split element per viewport.
+- `ctx.add` runs the late split inside the matchMedia context, so the media query flipping or the component unmounting reverts it with everything else; `live` stops a resolve that lands after either.
+- The `sr-only` copy is the accessible text; the visual copy is `aria-hidden` and split with `aria: "none"`, so assistive tech reads one clean word, never a list of letters.
+- `stagger: { each: 0.035, from: "center" }` suits a centred word. Never `from: "random"` on anything a client reads twice.
+- **When not to:** body copy, phrases longer than two words (a typewriter toy), more than one per viewport.
 
-### Recipe 3. Scrub-tied oversized headline
+### `scrub-headline`: oversized headline on scroll
 
-A giant word that drifts and scales with scroll position. It is texture, not content: the real h2 sits below it.
+An oversized line that slides and scales with scroll and runs off the canvas. With modest travel it stays readable, so it can be the real heading.
 
 ```tsx
 "use client";
@@ -412,41 +501,37 @@ import { gsap, useGSAP } from "@/lib/gsap";
 export function ScrubHeadline({ children }: { children: string }) {
   const section = useRef<HTMLElement>(null);
 
-  useGSAP(
-    () => {
-      const mm = gsap.matchMedia();
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
-        gsap.fromTo(
-          "[data-big]",
-          { xPercent: 6, scale: 0.9, transformOrigin: "0% 50%" },
-          {
-            xPercent: -6,
-            scale: 1.08,
-            ease: "none",                              // scrubbed motion is linear; the scrub supplies the feel
-            scrollTrigger: { trigger: section.current, start: "top bottom", end: "bottom top", scrub: 1 },
-          }
-        );
-      });
-    },
-    { scope: section }
-  );
+  useGSAP(() => {
+    const mm = gsap.matchMedia();
+    mm.add({ motion: "(prefers-reduced-motion: no-preference)", small: "(max-width: 767px)" }, (ctx) => {
+      const { motion, small } = ctx.conditions!;
+      if (!motion) return;
+      const travel = small ? 4 : 10; // percent; authored smaller on phones
+      gsap.fromTo("[data-big]",
+        { xPercent: travel, scale: 0.94, transformOrigin: "0% 50%" },
+        { xPercent: -travel, scale: 1.04, ease: "none",
+          scrollTrigger: { trigger: section.current, start: "top bottom", end: "bottom top", scrub: 1 } });
+    });
+  }, { scope: section });
 
   return (
-    <section ref={section} className="relative overflow-hidden py-[16rem]">
-      <p data-big aria-hidden className="type-ghost whitespace-nowrap text-ink/[0.06]">{children}</p>
+    <section ref={section} className="overflow-clip py-[14rem]">
+      <h2 data-big className="font-display text-[clamp(4rem,1rem+13vw,16rem)] font-light leading-[0.9] tracking-[-0.04em] whitespace-nowrap">
+        {children}
+      </h2>
     </section>
   );
 }
 ```
 
-- Use `xPercent` and `scale`, both compositor-only. Animating `letter-spacing` or a variable font's `wght` axis would track the scroll too, but every frame triggers layout. If you must (one short headline), budget it as the single filter-class cost in the viewport.
-- `scrub: 1` follows the position with a one-second ease behind the scroll; `scrub: true` is a mechanical 1:1. Feel values are in [feel-layer.md](feel-layer.md).
-- Decorative duplicate, so `aria-hidden`.
-- **When not to:** more than one per page, or on the headline that carries the section's actual message. Scrubbed type is hard to read mid-move.
+- Scrubbed tweens use `ease: "none"`; `scrub: 1` supplies the weight ([feel-layer.md](feel-layer.md)).
+- `xPercent` and `scale` stay on the compositor. Scrubbing `letter-spacing` or a `wght` axis costs a layout per frame; budget at most one, on a short line.
+- Past about 15% travel the line is unreadable mid-move. Then it is texture: `aria-hidden`, ghost colour, and the real h2 below it.
+- **When not to:** more than one per page, or on a line people must read to understand the section.
 
-### Recipe 4. Word-by-word colour fill (manifesto paragraph)
+### `manifesto-fill`: word-by-word color fill
 
-The paragraph "reads itself" as the user scrolls: words go from faint to full ink in sequence.
+A large paragraph "reads itself": words go from faint to full ink as the reader scrolls.
 
 ```tsx
 "use client";
@@ -456,91 +541,46 @@ import { gsap, useGSAP, SplitText } from "@/lib/gsap";
 export function Manifesto({ children }: { children: string }) {
   const root = useRef<HTMLDivElement>(null);
 
-  useGSAP(
-    () => {
-      const mm = gsap.matchMedia();
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
-        SplitText.create(root.current!.querySelector("[data-fill]"), {
-          type: "words",
-          autoSplit: true,
-          onSplit: (self) =>
-            gsap.fromTo(
-              self.words,
-              { opacity: 0.16 },
-              {
-                opacity: 1,
-                ease: "none",
-                stagger: 0.1,
-                scrollTrigger: { trigger: root.current, start: "top 75%", end: "bottom 40%", scrub: 0.6 },
-              }
-            ),
-        });
+  useGSAP(() => {
+    const mm = gsap.matchMedia();
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      SplitText.create(root.current!.querySelector("[data-fill]"), {
+        type: "words",
+        aria: "none",   // the visual copy is aria-hidden; the sr-only copy is what is read
+        autoSplit: true,
+        onSplit: (self) =>
+          gsap.fromTo(self.words, { opacity: 0.16 }, {
+            opacity: 1, ease: "none", stagger: 0.1,
+            scrollTrigger: { trigger: root.current, start: "top 75%", end: "bottom 45%", scrub: 0.6 },
+          }),
       });
-    },
-    { scope: root }
-  );
+    });
+  }, { scope: root });
 
   return (
     <div ref={root}>
-      <p data-fill className="max-w-[34ch] font-display text-[clamp(1.75rem,1.2rem+2vw,3rem)] font-light leading-[1.25]">{children}</p>
-    </div>
-  );
-}
-```
-
-- Opacity on `text-ink` is the compositor-cheap way to do a colour fill, and it stays inside the token palette. The start state (0.16) fails contrast on purpose; it exists only while motion is on and resolves with scroll. Never park the user in it: the fill must complete before the section scrolls away (or pin it, see [pinning-scrub.md](pinning-scrub.md)).
-- Split into `words`, not chars: 60 to 90 words is fine, 400 is not.
-- Reduced motion: no tween is created, so the paragraph is simply fully inked.
-- **When not to:** more than one manifesto per site, or any text people need to skim (pricing, terms).
-
-### Recipe 5. Ghost marquee tied to scroll
-
-Oversized, near-invisible type drifting sideways with scroll. The scrub-drift mechanic is specified in [depth-parallax.md](depth-parallax.md) section 4; this is the typographic setup.
-
-```tsx
-"use client";
-import { useRef } from "react";
-import { gsap, useGSAP } from "@/lib/gsap";
-
-export function GhostMarquee({ text }: { text: string }) {
-  const root = useRef<HTMLDivElement>(null);
-
-  useGSAP(
-    () => {
-      const mm = gsap.matchMedia();
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
-        gsap.to("[data-marquee]", {
-          xPercent: -18,
-          ease: "none",
-          scrollTrigger: { trigger: root.current, start: "top bottom", end: "bottom top", scrub: true },
-        });
-      });
-    },
-    { scope: root }
-  );
-
-  return (
-    <div ref={root} aria-hidden className="overflow-hidden">
-      <p data-marquee className="type-ghost whitespace-nowrap text-ink/[0.05]">
-        {`${text} ${text} ${text}`}
+      <p className="sr-only">{children}</p>
+      <p data-fill aria-hidden className="font-display max-w-[30ch] text-[clamp(1.75rem,1.2rem+2vw,3rem)] font-light leading-[1.2] tracking-[-0.015em]">
+        {children}
       </p>
     </div>
   );
 }
 ```
 
-- Repeat the phrase three times so the visible window never runs out of type at the end of the drift.
-- Ghost opacity stays 0.04 to 0.06. Higher, and it competes with real content; lower, and it is invisible on cheap screens.
-- **When not to:** light surfaces where the ghost reads as a dirty smudge (raise opacity or skip); pages that already have a marquee. A looping CSS marquee is only for genuinely continuous content such as a logo wall.
+- **Only for a genuine manifesto:** copy written as a statement of belief, read slowly. Pasting a features paragraph into it is the tell.
+- The `sr-only` paragraph is what assistive tech reads; the split copy is `aria-hidden` with `aria: "none"`, so no generic `p` is left carrying an `aria-label`.
+- Opacity on `text-ink` is the compositor-cheap fill and stays inside the palette. The 0.16 start fails contrast on purpose, so the fill must complete before the paragraph leaves the viewport; for long copy, pin it ([pinning-scrub.md](pinning-scrub.md)).
+- Split words, not chars: 60 to 90 words is fine, 400 is not.
+- **When not to:** more than one per site, or text people skim (pricing, terms, specs).
 
-### Recipe 6. Text-swap hover on a link
+### Ghost marquee
 
-The slot-machine label from [micro-interactions.md](micro-interactions.md) section 3c, upgraded to per-character stagger. Worth it on exactly one element (the main CTA or the logo).
+The scroll-drift mechanic and its code live in [depth-parallax.md](depth-parallax.md) §4. The type setup on top: `text-ghost` size, the display face at its lightest loaded weight, `text-ink/[0.05]` (0.04 to 0.06; higher competes with content, lower vanishes on cheap panels), `whitespace-nowrap`, the phrase repeated three times so the window never runs dry, `aria-hidden` on the wrapper. Keep it muted solid type; outlined ghost type (`-webkit-text-stroke` with a transparent fill) is a dated template move, so it is not offered here. **When not to:** light surfaces where 5% ink reads as a smudge, or pages that already run a marquee.
 
-```css
-.swap { position: relative; display: inline-flex; overflow: hidden; }
-.swap [data-b] { position: absolute; inset: 0; visibility: hidden; }
-```
+### Text-swap hover
+
+The CSS slot-machine label is in [micro-interactions.md](micro-interactions.md) §3c. The per-char upgrade needs SplitText and belongs on exactly one element, the main CTA or the logo:
 
 ```tsx
 "use client";
@@ -551,121 +591,100 @@ export function SwapLink({ href, label }: { href: string; label: string }) {
   const root = useRef<HTMLAnchorElement>(null);
   const tl = useRef<gsap.core.Timeline | null>(null);
 
-  useGSAP(
-    () => {
-      const mm = gsap.matchMedia();
-      mm.add("(hover: hover) and (prefers-reduced-motion: no-preference)", () => {
-        const a = root.current!.querySelector<HTMLElement>("[data-a]")!;
-        const b = root.current!.querySelector<HTMLElement>("[data-b]")!;
-        const sa = SplitText.create(a, { type: "chars" });
-        const sb = SplitText.create(b, { type: "chars" });
-        tl.current = gsap
-          .timeline({ paused: true, defaults: { duration: 0.5, ease: "expo.out" } })
-          .set(b, { autoAlpha: 1 }, 0)
-          .to(sa.chars, { yPercent: -110, stagger: 0.015 }, 0)
-          .fromTo(sb.chars, { yPercent: 110 }, { yPercent: 0, stagger: 0.015 }, 0);
-        return () => { tl.current = null; };
-      });
-    },
-    { scope: root }
-  );
+  useGSAP(() => {
+    const mm = gsap.matchMedia();
+    mm.add("(hover: hover) and (prefers-reduced-motion: no-preference)", () => {
+      // the <a> carries the name; both visual copies are aria-hidden, so the split adds nothing
+      const a = SplitText.create(root.current!.querySelector("[data-a]"), { type: "chars", aria: "none" });
+      const b = SplitText.create(root.current!.querySelector("[data-b]"), { type: "chars", aria: "none" });
+      tl.current = gsap.timeline({ paused: true, defaults: { duration: 0.5, ease: "expo.out", stagger: 0.015 } })
+        .set("[data-b]", { autoAlpha: 1 }, 0)
+        .to(a.chars, { yPercent: -110 }, 0)
+        .fromTo(b.chars, { yPercent: 110 }, { yPercent: 0 }, 0);
+      return () => { tl.current = null; };
+    });
+  }, { scope: root });
 
   return (
-    <a
-      ref={root}
-      href={href}
-      className="swap type-small"
-      onPointerEnter={() => tl.current?.play()}
-      onPointerLeave={() => tl.current?.reverse()}
-      onFocus={() => tl.current?.play()}
-      onBlur={() => tl.current?.reverse()}
-    >
-      <span data-a>{label}</span>
-      <span data-b aria-hidden>{label}</span>
+    <a ref={root} href={href} aria-label={label} className="font-ui text-ui relative inline-flex overflow-hidden"
+       onPointerEnter={() => tl.current?.play()} onPointerLeave={() => tl.current?.reverse()}
+       onFocus={() => tl.current?.play()} onBlur={() => tl.current?.reverse()}>
+      <span data-a aria-hidden>{label}</span>
+      <span data-b aria-hidden className="invisible absolute inset-0">{label}</span>
     </a>
   );
 }
 ```
 
-- The timeline only exists on hover-capable devices with motion allowed; everywhere else the handlers are no-ops and the link is a plain link with a visible label.
-- The second copy is `aria-hidden` and `visibility: hidden` until the timeline starts, so no one ever sees both labels overlap.
-- Handlers call `play()` and `reverse()` on a timeline made inside `useGSAP`, so they create no new animations and need no `contextSafe` wrapper.
-- **When not to:** every nav link. Pick one. If every label rolls, nothing is special.
+The timeline exists only on hover-capable devices with motion allowed; elsewhere the handlers are no-ops and the link is plain. Handlers only `play()` and `reverse()` a timeline built inside `useGSAP`, so they need no `contextSafe`. **When not to:** every nav link. If every label rolls, none is special.
 
 ---
 
 ## 6. Details that sell it
 
-These cost nothing and are the difference between "looks designed" and "looks set in type."
+**Real punctuation.** Type the real characters in copy: `’` for apostrophes, `“ ”` for English quotes, `„ “` for German, `…` for an ellipsis. Straight `"` and `'` are keyboard artefacts. Browsers pick `<q>` quote marks from `lang`.
 
-**Line length.** Body 55 to 75 characters per line: `max-width: 62ch` is the default. Longer and the eye loses its return; shorter and the rhythm breaks. `ch` is relative to the font's zero width, so it scales with the knob and with the face you picked.
+**Numbers: `tabular-nums`, not mono.** Counters and tables need equal-width digits so a ticking number does not wobble. That is a font feature (`font-variant-numeric: lining-nums tabular-nums`, Tailwind `tabular-nums lining-nums`), not a monospace face. Check the face ships tabular figures; if the display face lacks them, set stats in the text face, which is why the numerals column in §3 names a face. **Running text is the opposite:** in Cormorant and Fraunces paragraphs, pull quotes and leads, a year or a figure set in lining tabular digits stands up like a capital. Use oldstyle proportional figures there (`font-variant-numeric: oldstyle-nums proportional-nums`) and keep lining tabular for counters, prices and tables.
 
-**Real quotes and apostrophes.** Straight `"` and `'` are keyboard artefacts. Use curly characters in copy (`’` for apostrophes, `“ ”` for English quotes) or let CSS choose by language:
+**Optical margin alignment.** A display or h2 line that starts with a round or open letter (`O`, `C`, `G`, `T`, `W`, a quote mark) looks indented next to the body copy's straight edge, because the side bearing and the curve's overshoot add white. Pull the heading back a hair: `margin-inline-start: -0.04em` to `-0.07em`, tuned per face at display size. Round starts need the most; serifs with a flat stem start need the least. Set it per pairing on the display and h2 roles, never on body text.
 
-```css
-q { quotes: "“" "”" "‘" "’"; }
-:lang(de) q { quotes: "„" "“" "‚" "‘"; }
-```
+**Ligatures and kerning.** Leave both at their defaults; never switch on discretionary ligatures site-wide. SplitText chars disable both (§4).
 
-**Hanging punctuation.** Opening quotes and bullets sit outside the text edge so the left margin of the text stays clean. `hanging-punctuation: first` works only in Safari; elsewhere fake it on pull quotes with a negative `text-indent` of about 0.4em on the first line (tune per face).
+**`::selection`.** `::selection { background: var(--color-accent); color: var(--color-surface-0); }` is part of the token contract ([vibe-presets.md](vibe-presets.md)). Selection is the moment people stare at your type, and default blue says "unfinished".
 
-**Tabular numerals for stats.** Counters and tables need digits of equal width so a number does not wobble while it counts. The right tool is a font feature, not a monospace face (mono is banned for stats in the baseline):
+**Hanging punctuation.** `hanging-punctuation: first` works only in Safari. On pull quotes elsewhere, fake it with a negative `text-indent` of about 0.4em, tuned per face.
 
-```css
-.stat { font-variant-numeric: lining-nums tabular-nums; }
-```
-
-Check the face's specimen for tabular figures first. If a display face lacks them, set the stats in the text face.
-
-**Ligatures and kerning.** Leave `font-variant-ligatures` and `font-kerning` at their defaults. Never turn on discretionary ligatures site-wide. Remember that SplitText chars disable both (section 4).
-
-**`::selection`.** Part of the token contract ([vibe-presets.md](vibe-presets.md)): `::selection { background: var(--color-accent); color: var(--color-surface-0); }`. Selected text is the one place users stare at your type, and the default blue is a free "we did not finish this" signal.
-
-**Stop faux bold.** `font-synthesis: none` on `body`. A single-weight face (Instrument Serif, Archivo Black) asked for 700 will otherwise be smeared into a fake bold.
-
-**Dutch and German long words.** Compound words (`Gegevensbeschermingsverordening`, `Duurzaamheidsrapportage`) overflow narrow columns. Set the document language and let the browser hyphenate body copy, never headlines:
+**Dutch and German compounds.** Words like `Duurzaamheidsrapportage` overflow narrow columns. Set `lang` and hyphenate body copy, never headlines:
 
 ```css
-:lang(nl) .prose, :lang(de) .prose { hyphens: auto; hyphenate-limit-chars: 7 3 3; } /* limit is progressive enhancement */
-h1, h2, h3, [data-split-hero] { hyphens: manual; overflow-wrap: break-word; }
+:lang(nl) .prose, :lang(de) .prose { hyphens: auto; hyphenate-limit-chars: 7 3 3; } /* limit: progressive */
+h1, h2, h3 { hyphens: manual; overflow-wrap: break-word; }
 ```
 
-In a headline, place a soft hyphen by hand in the one long word (`Duurzaam&shy;heid`). Never put `&shy;` in a word you split into chars; the soft hyphen becomes its own character. Hyphenation dictionaries differ by browser and device, so check a real phone, and check the hero at 390px with the longest real word the copy contains.
+In a headline, place one soft hyphen by hand (`Duurzaam&shy;heid`), never inside a word you split into chars. Dictionaries differ per browser and device: check the hero at 390px on a real phone with the longest real word in the copy.
 
-**An italic accent word.** Setting one word of a headline in the display face's italic is the cheapest high-end move there is. Wrap it in `<em>`; SplitText keeps nested elements intact.
+**One accent word.** One word of a headline in the display italic is the cheapest high-end move there is, when the display face has a real italic and it is loaded (S2, S3, S4, S5). Wrap it in `<em>`; SplitText keeps nested inline elements. Geometric pairings (S1, S6, S7) shift that one word from 300 to 500 or set it in the accent colour instead. The accent word stays in the headline's own family: a serif italic `<em>` dropped into a sans headline is the template tell of the moment (§7).
 
-**Eyebrow copy is wayfinding.** Short, tracked, uppercase, one per section ([anti-patterns.md](anti-patterns.md) covers the numbered-sections tell). Source copy stays in sentence case; CSS uppercases it.
+**Eyebrows are wayfinding.** Short, tracked, uppercase via CSS (source copy stays sentence case), one per section, never a stamped `01 / 02 / 03` ([anti-patterns.md](anti-patterns.md)).
 
 ---
 
 ## 7. Typography tell list
 
-What generated sites do by default, and what replaces it. Sweep before shipping, alongside [anti-patterns.md](anti-patterns.md).
+Sweep before shipping, alongside [anti-patterns.md](anti-patterns.md).
 
 | Tell | Why it reads as generated | Replace with |
 |---|---|---|
-| Inter on every surface, display included | The default of every starter template | A pairing from section 2; Inter Tight only as a display cut with a different text face |
-| `font-bold` or 700 on every heading | Safe at 24px, loud at 115px | Weight 300 to 400, hierarchy by size |
-| Five medium sizes (`text-lg` to `text-4xl`) at similar weights | Flat page, no focal point | Four tiers with big gaps: hero, body, small, eyebrow |
-| Monospace eyebrows, labels, stats or badges | Dev-tool filler masquerading as "technical" | Tracked uppercase in the text face; tabular numerals |
-| Everything centred | No axis, no reading line | Left-aligned text on a strong edge; centre only single short lines |
-| Gradient text (`bg-clip-text`) | The 2021 SaaS tell, and it fails contrast | Solid ink; the accent on one word at most |
-| Uniform `tracking-tight` on all sizes | Not optical, just a utility class | Tracking by size (section 3 table) |
-| Faux bold or italic from a missing cut | Smeared strokes | `font-synthesis: none`; load the real italic or avoid it |
-| Straight quotes, double hyphens, `...` | Keyboard text, not typeset text | Curly quotes, a real ellipsis character, no hyphen standing in for punctuation |
-| Orphans and one-word last lines | No `text-wrap` | `balance` for headings, `pretty` for body |
-| Body below 1rem, muted text below 0.875rem | Fails the floor in the baseline | Body 1rem to 1.125rem; muted at least 0.875rem; contrast at least 4.5:1 |
-| Mismatched line height (1.65 on headlines, 1.2 on paragraphs) | Leading was never designed | Leading tightens as size grows (section 3 table) |
+| Inter, Roboto, Open Sans, Poppins, Montserrat or Lato anywhere | Starter and UI-kit defaults | A pairing from §3 |
+| Space Grotesk or Geist as the "technical" reflex | The generator's idea of modern | S7 (Sora + Instrument Sans) or S1 (Urbanist) |
+| `tracking-tight`, `text-xs` or `text-3xl` to `text-5xl` on headings or eyebrows | The role tokens were bypassed; the size and optics are improvised | `text-h2`, `text-h3`, `text-eyebrow` and the role faces (§2.4) |
+| `text-ink-faint` on any text | `ink-faint` is for hairlines, disabled states and placeholder rules; as text it fails contrast | `text-ink-muted` for eyebrows and meta |
+| An Instrument Serif `<em>` inside a sans headline | The 2025 to 2026 template tell | The pairing's own accent move (§3.1) |
+| Cream surface plus terracotta accent with no brand reason | The default "warm, human" palette of every generator | A palette argued from the brand ([vibe-presets.md](vibe-presets.md)) |
+| Every hero using the masked line rise | One entrance on every site is a template | The preset's named hero entrance and the site's signature move (§5) |
+| `font-bold` on every heading | Safe at 24px, loud at 115px | Weight 300 to 400, hierarchy by size |
+| 700 for emphasis inside light type | A hole in the page | 500 |
+| Four or more weights of one family | Extra voices, extra bytes | Three at most (300, 400, 500) |
+| Five similar sizes (`text-lg` to `text-4xl`) | Flat page, no focal point | The eight roles with real gaps (§2) |
+| Mono eyebrows, labels, stats or badges | Dev-tool cosplay | Tracked uppercase text face; `tabular-nums` |
+| A rounded or hairline display face used for body | Charming at 60px, tiring at 16px | Display faces stay at display sizes |
+| Everything centred | No axis, no reading edge | Left-aligned on a strong edge; centre only short single lines |
+| Gradient text | The 2021 SaaS tell, and it fails contrast | Solid ink; accent on one word at most |
+| One `tracking-tight` on all sizes | A utility, not optics | Tracking per role and face (§2.3, §3) |
+| Faux bold or italic | Smeared strokes | `font-synthesis: none`; load the real cut |
+| Straight quotes, `...`, `--` | Keyboard text, not typeset text | Real quotes, `…`, proper punctuation |
+| Orphans and one-word last lines | No wrap control | `balance` on headings, `pretty` on body |
+| Body under 1rem, muted under 0.875rem | Fails the baseline floor | Body 1rem to 1.125rem, contrast 4.5:1+ |
+| Char-split sentences | Typewriter toy | Lines for sentences, chars for one word |
+| Hero flashes unsplit, then jumps | No pre-split guard | The `line-rise-hero` guard (§5) |
 
----
+## 8. Thirty-second type audit
 
-## 8. 30 second type audit
-
-1. Two faces at most? Display weight 300 to 400 unless the preset is deliberately heavy?
-2. Hero at `clamp(3rem, 8vw, 9rem)` with tracking and leading from the table, not the browser defaults?
-3. Only four visible tiers (hero, body, small, eyebrow) plus the occasional h2?
-4. Body at least 1rem, line length 55 to 75ch, `text-wrap: pretty`?
-5. Fonts loaded through `next/font`, two preloaded files, fallback metrics adjusted, zero visible shift on reload?
-6. Hero headline hidden until split, no flash, `lang` set, longest real word checked at 390px?
-7. Stats in tabular numerals, quotes curly, `::selection` set, `font-synthesis: none`?
-8. Reduced motion: type is fully visible and static with no JS running?
+1. Two faces, display at 300 to 400 unless the preset declares heavy, three weights per family at most?
+2. Every string on the page maps to one of the eight roles, with that role's token?
+3. Hero at the pairing's display clamp (standard `clamp(2.875rem, 1.2rem + 6.86vw, 8rem)`) with its tracking and leading, not defaults? One signature move declared?
+4. Body 400, at least 1rem, 55 to 75ch, `text-wrap: pretty`; emphasis at 500?
+5. `next/font`, two preloaded files, zero visible shift on a hard reload?
+6. Hero hidden until split, no flash, `lang` set, longest real word checked at 390px?
+7. `tabular-nums` on stats, real quotes, `::selection`, `font-synthesis: none`?
+8. Reduced motion: every line of type visible and static with no animation work?

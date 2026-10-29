@@ -19,11 +19,11 @@ Read the argument and pick one. State the mode in one line, then work.
 | `/struq <brief>` (or no argument) | **Build** | Run the Direction phases into `STRUQ.md`, stop once for a veto, build, verify. |
 | `/struq redesign <path>` | **Redesign** | Audit assets and performance, triage the current site ([references/triage.md](references/triage.md)), then Direction with the brand kept, then build. |
 | `/struq audit <path-or-url>` | **Audit** | No code changes. Screenshot, run the tell scan and feel audit, return a scored report (see Audit below). |
-| `/struq direct <brief>` | **Directed** | One continuous WebGL experience across chapters (persistent stage, camera shots, handoffs). Enter [cinematic/README.md](cinematic/README.md). Use only when the brief is genuinely an "experience", not a site with a 3D hero. |
+| `/struq direct <brief>` | **Directed** | One continuous WebGL experience across chapters (persistent stage, camera shots, handoffs). Run Direction phases 0 to 3 into `STRUQ.md`, then enter [cinematic/README.md](cinematic/README.md), which appends its direction to the same file. Use only when the brief is genuinely an "experience", not a site with a 3D hero. |
 
-**Plan everything before the first component.** Build and Redesign always start with [references/direction.md](references/direction.md): intake, brand (name, SVG logo and mark, when there is none), concept (the one idea and its motif), system (two typefaces, palette, icon family, imagery, motion), and the site plan (pages, arc, showpieces, transitions, SEO). It all goes into one file, `STRUQ.md` in the project root, which is the contract for the rest of the build. Ask once for a veto, then build.
+**Plan everything before the first component.** Build and Redesign always start with [references/direction.md](references/direction.md): intake, brand (name, SVG logo and mark, when there is none), concept (the one idea and its motif), system (two typefaces, palette, icon family, imagery, motion), and the site plan (pages, arc, showpieces, transitions, SEO). It all goes into one file, `STRUQ.md` in the project root, which is the only plan artifact and the contract for the rest of the build. Stop once, at the gate, then build.
 
-**Ask for materials, never invent them.** Use the logo, copy, photos and numbers that exist. Where something is missing, write real, specific running copy for the brief and list imagery as placeholders. Never lorem, never "Acme", never invented testimonials, logos or stats.
+**Ask for materials, never invent them.** Use the logo, copy, photos and numbers that exist. With a usable brief, do not stop to ask first: plan with what is there, and put the materials request inside the one gate message ("Veto anything? If you have a logo, photos or real numbers, send them now."). Where something is still missing, write real, specific running copy for the brief and plan imagery as graded placeholders ([references/imagery.md](references/imagery.md) §4b). Never lorem, never "Acme", never invented testimonials, logos or stats.
 
 ## The recipe
 
@@ -31,7 +31,7 @@ This is the stack and the layer each tool owns. It is fixed on purpose: the "wei
 
 | Layer | Tool | Rule of thumb | Reference |
 |---|---|---|---|
-| Brand | Name, SVG wordmark and mark, favicon, OG image | Positioning before name; the wordmark is drawn from the display face | [brand.md](references/brand.md) |
+| Brand | Name, SVG wordmark and mark, favicon set | Positioning before name; the wordmark is drawn from the display face | [brand.md](references/brand.md) |
 | Typography | Two faces: one display, one text | Display runs **large and light (300 to 400)**. Hierarchy from scale contrast, not weight. | [typography.md](references/typography.md) |
 | Palette | Tokens on `:root` via Tailwind v4 `@theme` | Temperature-shifted neutrals do 95% of the work, one accent | [vibe-presets.md](references/vibe-presets.md) |
 | Scale | One fluid root-rem knob | Everything in rem; breakpoints change layout, never size | [scaling.md](references/scaling.md) |
@@ -40,7 +40,7 @@ This is the stack and the layer each tool owns. It is fixed on purpose: the "wei
 | Text motion | SplitText | Masked line rise, char stagger, scroll color fill | [typography.md](references/typography.md) |
 | SVG motion | DrawSVG, MorphSVG, MotionPath | Draw-on-scroll paths, logo morphs, signature marks | [svg-motion.md](references/svg-motion.md) |
 | Showpieces | Pinned scrub, horizontal galleries, sticky stacks | One or two per site, placed at act breaks | [showcase.md](references/showcase.md), [pinning-scrub.md](references/pinning-scrub.md) |
-| Icons | Struq Icons (two-tone, animated), else Phosphor light, else Iconoir or Tabler | One family per site, never Lucide by reflex | [iconography.md](references/iconography.md) |
+| Icons | Phosphor (light) by default, else Iconoir or Tabler; Struq Icons is coming soon, do not install it yet | One icon family per site, never Lucide by reflex | [iconography.md](references/iconography.md) |
 | Hover and pointer | GSAP `quickTo` (magnetic, cursor), CSS + GSAP hover scenes | Garnish, applied last | [micro-interactions.md](references/micro-interactions.md) |
 | React lifecycle | Motion (`motion/react`) | Mount/unmount, `layoutId`, gesture state | GSAP vs Motion below |
 | Overlays | Radix primitives (Dialog for menus and modals) | Focus trap, Escape, scroll lock paired with `lenis.stop()` | [nav-header.md](references/nav-header.md) |
@@ -68,6 +68,7 @@ Hierarchy comes from scale contrast (huge against small), not from five
 medium sizes. Section eyebrows are uppercase 11 to 12px labels tracked 0.1em+,
 not mid-size subheads. FLOOR: body at least 1rem, muted at least 0.875rem,
 nothing under 12px. CONTRAST: body at least 4.5:1, large text at least 3:1.
+The faintest ink tier is non-essential meta only, never body copy.
 No monospace for display, labels, eyebrows, stats or body. Mono is for literal
 code only. Headings get text-wrap: balance; body gets text-wrap: pretty.
 
@@ -85,8 +86,9 @@ size. Display headlines keep their own clamp() on top for drama.
 SURFACE: Elevation is a tonal step, not a drop shadow. Dark mode: each layer
 steps LIGHTER (#0A0A0B, #111113, #19191C, #232328). Light mode: pick one
 direction and keep it (panels a shade deeper than a toned page, or white lifted
-off a toned page). Hairline borders about 8 to 12% off the surface. Shadows only
-for true floating elements, then large, soft and faint
+off a toned page). Hairline borders about 8 to 12% off the surface; in light
+mode a border is the ink at low alpha (rgb(<ink> / 0.08 to 0.14)), never a
+flat gray hex. Shadows only for true floating elements, then large, soft and faint
 (0 24px 80px -12px rgb(0 0 0 / 0.4)). Never shadow-md or shadow-lg.
 
 COLOR: One accent, used sparingly (links, the key CTA, one highlight per
@@ -99,9 +101,12 @@ MOTION: Lenis smooth scroll (lerp 0.09 to 0.11) on one gsap.ticker clock,
 unless the genre calls for native scroll. Every entrance animates opacity AND
 transform (y 24 to 80px, or a clip or overflow mask). Opacity-only fades are
 forbidden. Stagger siblings 0.06 to 0.1s. Durations: micro 0.2 to 0.3s,
-reveals 0.6 to 1.0s, hero and cinematic 1.0 to 1.6s. Eases: entrances expo-out
-cubic-bezier(0.16, 1, 0.3, 1); exits power2.in; position swaps quart-in-out
-cubic-bezier(0.76, 0, 0.24, 1). Never default ease-in-out everywhere.
+standard UI 0.3 to 0.6s, reveals 0.6 to 1.0s, hero and cinematic 1.0 to 1.6s;
+exits run about 60% of their entrance. Eases: entrances expo-out
+cubic-bezier(0.16, 1, 0.3, 1) (expo.out); exits power2.in; position swaps
+quart-in-out cubic-bezier(0.76, 0, 0.24, 1) (power3.inOut); curtains and
+panels quint-in-out cubic-bezier(0.83, 0, 0.17, 1) (power4.inOut). Never
+default ease-in-out everywhere.
 Scroll-tied effects scrub; they do not fire time-based tweens at a threshold.
 prefers-reduced-motion: gate transforms, keep opacity.
 
@@ -111,7 +116,8 @@ canvas, a sticky element. No three identical icon cards in a row. Vary section
 layout: after a 50/50 split comes full-bleed or an asymmetric 1/3 and 2/3.
 Icons: ONE coherent family chosen for the brand, one stroke and size,
 ink-colored. Never emoji, never the AI-cliche icons (Sparkles, Rocket, Zap),
-never icons in colored chips.
+never icons in colored chips. Animated icons run under 500ms on click and
+never loop in standard UI.
 
 DETAILS THAT SELL IT: Real running copy. Tracked uppercase eyebrows as
 wayfinding, not 01/02/03 stamped on every section (one deliberate oversized
@@ -181,15 +187,16 @@ Both are installed. Never animate the same property on the same element with bot
 
 ## Workflow (Build and Redesign)
 
-1. **Direction.** Run [references/direction.md](references/direction.md) end to end: intake, brand ([references/brand.md](references/brand.md) when there is none), concept, system, and the site plan via [references/brief-router.md](references/brief-router.md). No brief? The router's wizard asks at most three plain-language rounds. Write `STRUQ.md`, show the summary, ask once: "Veto anything?" Redesigning? First run the asset audit in [references/performance.md](references/performance.md) §2 and read [references/triage.md](references/triage.md).
-2. **Detect the stack.** Next.js App Router is the default; Vite differs in providers, font loading and lazy boundaries. Translate via [references/stack-targets.md](references/stack-targets.md) before writing wiring.
-3. **Brand files and tokens.** Write the logo, mark, favicon set and OG image ([references/brand.md](references/brand.md) §5, [references/seo.md](references/seo.md) §3). Set the root-rem knob, the type system ([references/typography.md](references/typography.md)) and the palette tokens exactly as STRUQ.md records them.
-4. **Structure and SEO skeleton.** Routes, metadata, sitemap, robots and JSON-LD from the PLAN's page list ([references/seo.md](references/seo.md)), before any section is styled.
-5. **Wire providers.** Lenis on the GSAP ticker with the reduced-motion guard ([references/setup.md](references/setup.md)). For multi-page sites, the transition provider ([references/route-transitions.md](references/route-transitions.md)) and optionally a loader ([references/loaders.md](references/loaders.md)).
-6. **Static layout first.** Authored in rem, designed at 1440 and 390 at the same time ([references/mobile-composition.md](references/mobile-composition.md)). Type, spacing and surfaces right **before any motion**; motion cannot rescue a flat layout. Nav per [references/nav-header.md](references/nav-header.md), icons per [references/iconography.md](references/iconography.md).
-7. **Motion in layers.** Reveals, then composition, then the one or two showpieces, then text and SVG choreography, then hover and pointer. WebGL last, as a lazy island with a poster.
-8. **Optimize and sweep.** Every asset through the budgets in [references/performance.md](references/performance.md); then [references/anti-patterns.md](references/anti-patterns.md) as a checklist and the [references/seo.md](references/seo.md) checklist.
-9. **Look at it before calling it done.** Run it and screenshot at **390, 768 and 1440** with whatever browser tool the harness has (Playwright or similar). Run the 30-second tell scan ([references/anti-patterns.md](references/anti-patterns.md)) and the 60-second feel audit ([references/feel-layer.md](references/feel-layer.md) §5) against the screenshots, not the code. Scroll the page end to end once: no dead wheel, no pin jerk, no flash on route change. On a production build, record LCP, CLS and INP. Fix, re-shoot, and write the score under VERIFY in STRUQ.md.
+These step names are the one numbering scheme; [references/brief-router.md](references/brief-router.md) §4 keys its load manifest to them.
+
+1. **Direction.** Run [references/direction.md](references/direction.md) phases 0 to 4: intake (the brief extracted silently, stack detected and recorded as `Stack:`), brand ([references/brand.md](references/brand.md) when there is none), concept, system, and the site plan via [references/brief-router.md](references/brief-router.md) §2. No usable brief? The router's wizard asks at most three plain-language rounds; that is the only early stop. Write `STRUQ.md`, then send the one gate message: summary, materials request, "Veto anything?" Vite? Every later step translates through [references/stack-targets.md](references/stack-targets.md). Redesigning? First run the asset audit in [references/performance.md](references/performance.md) §2 and read [references/triage.md](references/triage.md).
+2. **Brand files and tokens.** Write the logo, mark and favicon set ([references/brand.md](references/brand.md) §5). Set the root-rem knob, the type system ([references/typography.md](references/typography.md)) and the palette tokens exactly as STRUQ.md records them.
+3. **Structure and SEO.** Routes, metadata, sitemap, robots and JSON-LD from the PLAN's page list ([references/seo.md](references/seo.md)), before any section is styled. Then, with the routes in place, the OG image per shared route ([references/seo.md](references/seo.md) §3).
+4. **Wire providers.** Lenis on the GSAP ticker with the reduced-motion guard ([references/setup.md](references/setup.md)). For multi-page sites, the transition provider ([references/route-transitions.md](references/route-transitions.md)) and optionally a loader ([references/loaders.md](references/loaders.md)).
+5. **Static layout.** Authored in rem, designed at 1440 and 390 at the same time ([references/mobile-composition.md](references/mobile-composition.md)). Type, spacing and surfaces right **before any motion**; motion cannot rescue a flat layout. Nav per [references/nav-header.md](references/nav-header.md), icons per [references/iconography.md](references/iconography.md).
+6. **Motion in layers.** Reveals, then composition, then the one or two showpieces, then text and SVG choreography, then hover and pointer. WebGL last, as a lazy island with a poster.
+7. **Optimize and sweep.** Every asset through the budgets in [references/performance.md](references/performance.md); then [references/anti-patterns.md](references/anti-patterns.md) as a checklist and the [references/seo.md](references/seo.md) checklist.
+8. **Verify.** Run it and screenshot at **390, 768, 1440 and 1920** with whatever browser tool the harness has (Playwright or similar). Run the 30-second tell scan ([references/anti-patterns.md](references/anti-patterns.md)) and the 60-second feel audit ([references/feel-layer.md](references/feel-layer.md) §5) against the screenshots, not the code. Scroll the page end to end once: no dead wheel, no pin jerk, no flash on route change. On a production build, record LCP and CLS, plus INP from field data or a manual interaction trace ([references/performance.md](references/performance.md) §8). Fix, re-shoot, and write the score under VERIFY in STRUQ.md.
 
 ## Audit
 
@@ -201,7 +208,3 @@ Both are installed. Never animate the same property on the same element with bot
 4. **The three changes with the most visual payoff**, ordered by the leverage ranking above.
 
 Keep the score honest. An award-tier page lands at 90+; a typical AI-generated page lands under 50.
-
-## Struq on the web
-
-Curated palettes and typography pairings have live previews at **struq.nl**, and each showcase recipe id in [references/showcase.md](references/showcase.md) gets its own scrollable demo page there, so you and your client can see a recipe before you build it. Struq Pro adds niche packets (ready-made direction for specific industries), the curated media and design-system library over MCP, and starter projects.

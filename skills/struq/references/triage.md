@@ -48,7 +48,7 @@ change its dress.
 - **Scaling**: convert px-everything + per-breakpoint size ladders to the fluid root-rem
   system ([scaling.md](scaling.md)).
 - **Icon misuse**: remove Sparkles/Rocket/Zap/emoji, colored chips, decorative filler;
-  consolidate to one Iconify family ([iconography.md](iconography.md)).
+  consolidate to one icon family ([iconography.md](iconography.md)).
 - **Everything in [anti-patterns.md](anti-patterns.md)**: that gallery is the fix list.
 
 ---

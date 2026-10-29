@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type JSX } from 'react';
 import { experienceRegistry } from './registry';
 
 export function ExperienceOverlay(): JSX.Element {

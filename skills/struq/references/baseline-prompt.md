@@ -2,17 +2,17 @@
 
 **The canonical baseline block lives in [SKILL.md](../SKILL.md).** This file does two jobs. It explains **why each rule earns its place** (the rationale below), and it carries the one **standalone copy-paste block** for agents that do not load Struq as a skill: the canonical block plus two role-priming lines.
 
-<!-- GENERATED FROM SKILL.md: the block below is a copy of the canonical baseline block, with two role-priming lines prepended. Do not edit it here. Edit SKILL.md, then re-copy the block and keep the two role-priming lines. -->
+<!-- GENERATED FROM SKILL.md: the block below is a copy of the canonical baseline block, with two role-priming lines above its title and one blank line between them. Do not edit it here. Edit SKILL.md, then re-copy the block and keep the two role-priming lines. -->
 
 ## The paste block (generated, for any LLM, any stack)
 
 Paste this at the top of any project prompt to lift the output into the top tier. Include the rationale section only when the agent has room.
 
 ```
-STRUQ BASELINE: NON-NEGOTIABLES
 Act as a senior design engineer at an award-winning studio (Awwwards SOTD
 caliber). Apply every rule below; they override your defaults.
 
+STRUQ BASELINE: NON-NEGOTIABLES
 
 TYPE: Two faces, max: one display face and one text face. Fluid scale via
 clamp(), ratio 1.25 to 1.333. Display sizes are LARGE: hero h1 =
@@ -24,6 +24,7 @@ Hierarchy comes from scale contrast (huge against small), not from five
 medium sizes. Section eyebrows are uppercase 11 to 12px labels tracked 0.1em+,
 not mid-size subheads. FLOOR: body at least 1rem, muted at least 0.875rem,
 nothing under 12px. CONTRAST: body at least 4.5:1, large text at least 3:1.
+The faintest ink tier is non-essential meta only, never body copy.
 No monospace for display, labels, eyebrows, stats or body. Mono is for literal
 code only. Headings get text-wrap: balance; body gets text-wrap: pretty.
 
@@ -41,8 +42,9 @@ size. Display headlines keep their own clamp() on top for drama.
 SURFACE: Elevation is a tonal step, not a drop shadow. Dark mode: each layer
 steps LIGHTER (#0A0A0B, #111113, #19191C, #232328). Light mode: pick one
 direction and keep it (panels a shade deeper than a toned page, or white lifted
-off a toned page). Hairline borders about 8 to 12% off the surface. Shadows only
-for true floating elements, then large, soft and faint
+off a toned page). Hairline borders about 8 to 12% off the surface; in light
+mode a border is the ink at low alpha (rgb(<ink> / 0.08 to 0.14)), never a
+flat gray hex. Shadows only for true floating elements, then large, soft and faint
 (0 24px 80px -12px rgb(0 0 0 / 0.4)). Never shadow-md or shadow-lg.
 
 COLOR: One accent, used sparingly (links, the key CTA, one highlight per
@@ -55,9 +57,12 @@ MOTION: Lenis smooth scroll (lerp 0.09 to 0.11) on one gsap.ticker clock,
 unless the genre calls for native scroll. Every entrance animates opacity AND
 transform (y 24 to 80px, or a clip or overflow mask). Opacity-only fades are
 forbidden. Stagger siblings 0.06 to 0.1s. Durations: micro 0.2 to 0.3s,
-reveals 0.6 to 1.0s, hero and cinematic 1.0 to 1.6s. Eases: entrances expo-out
-cubic-bezier(0.16, 1, 0.3, 1); exits power2.in; position swaps quart-in-out
-cubic-bezier(0.76, 0, 0.24, 1). Never default ease-in-out everywhere.
+standard UI 0.3 to 0.6s, reveals 0.6 to 1.0s, hero and cinematic 1.0 to 1.6s;
+exits run about 60% of their entrance. Eases: entrances expo-out
+cubic-bezier(0.16, 1, 0.3, 1) (expo.out); exits power2.in; position swaps
+quart-in-out cubic-bezier(0.76, 0, 0.24, 1) (power3.inOut); curtains and
+panels quint-in-out cubic-bezier(0.83, 0, 0.17, 1) (power4.inOut). Never
+default ease-in-out everywhere.
 Scroll-tied effects scrub; they do not fire time-based tweens at a threshold.
 prefers-reduced-motion: gate transforms, keep opacity.
 
@@ -67,7 +72,8 @@ canvas, a sticky element. No three identical icon cards in a row. Vary section
 layout: after a 50/50 split comes full-bleed or an asymmetric 1/3 and 2/3.
 Icons: ONE coherent family chosen for the brand, one stroke and size,
 ink-colored. Never emoji, never the AI-cliche icons (Sparkles, Rocket, Zap),
-never icons in colored chips.
+never icons in colored chips. Animated icons run under 500ms on click and
+never loop in standard UI.
 
 DETAILS THAT SELL IT: Real running copy. Tracked uppercase eyebrows as
 wayfinding, not 01/02/03 stamped on every section (one deliberate oversized
@@ -76,7 +82,7 @@ numeral is fine). The footer is designed as hard as the hero. Custom
 is a designed transition, not a hard cut.
 ```
 
-The block is the floor, not the ceiling. For the full recipe stack (two-face type system, the Lenis + GSAP single clock, showpieces, route transitions, WebGL) start from [brief-router.md](brief-router.md), which turns a brief into a build plan that cites the other reference files.
+The block is the floor, not the ceiling. For the full recipe stack (two-face type system, the Lenis + GSAP single clock, showpieces, route transitions, WebGL) start from [direction.md](direction.md), which turns a brief into one contract file, `STRUQ.md`, that cites the other reference files.
 
 ## Why each rule matters
 

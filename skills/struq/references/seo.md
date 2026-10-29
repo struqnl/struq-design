@@ -5,7 +5,7 @@ A cinematic site that nobody finds, or that shows a blank grey card when it is s
 ## 1. Site structure (decided in the PLAN phase)
 
 - **Flat and named.** Every page is at most two levels deep: `/work`, `/work/<slug>`, `/studio`, `/contact`. Slugs are lowercase words in the site's language, never ids.
-- **One page, one job, one h1.** The h1 says what the page is about in words someone would search; the display headline can be the h1 when it does, otherwise the h1 is a smaller line above it and the display line is a `p` with display styling.
+- **One page, one job, one h1.** By default the hero display line **is** the h1: write it so it says what the page is about in words someone would search. Only when the display line is deliberately not descriptive (a poetic claim, a single word) does the h1 become a smaller line above it, with the display line as a `p` in display styling.
 - **Headings in order.** h1, then h2 per section, h3 inside. A section eyebrow is a `p`, not a heading. Visual size and heading level are separate decisions.
 - **Every important page linked from the nav or the footer** with a real `<a href>` (the `TransitionLink` from [route-transitions.md](route-transitions.md) renders one). A route reachable only through a JavaScript click handler does not exist to a crawler.
 - **A real 404** (`app/not-found.tsx`) designed as hard as the hero, with a way back.
@@ -24,9 +24,19 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://example.com"),
   title: { default: "Name: what it is in five words", template: "%s | Name" },
   description: "One or two plain sentences, 140 to 160 characters, written for a person, not a keyword list.",
-  alternates: { canonical: "/" },
+  // No alternates.canonical here: metadata merges down, so a root canonical of "/"
+  // would mark every page as a duplicate of the home page. Set it per page.
   openGraph: { type: "website", siteName: "Name", locale: "en_US" },
   twitter: { card: "summary_large_image" },
+};
+```
+
+```tsx
+// app/page.tsx: the home page sets its own canonical too
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
 };
 ```
 
@@ -49,7 +59,7 @@ export async function generateMetadata(
 
 - `metadataBase` makes every relative OG and canonical URL absolute. Without it, shared links break.
 - Titles: the page's own name first, the brand after (`%s | Name`). Under about 60 characters.
-- One canonical per page. Multi-language sites add `alternates.languages`.
+- One canonical per page, set in that page's own `metadata` or `generateMetadata`, never in the root layout. Multi-language sites add `alternates.languages`.
 - Add the theme color to `viewport` so mobile browser chrome matches the surface: `export const viewport = { themeColor: "#0A0A0B" }`.
 
 ## 3. Open Graph images: one per route, designed as posters
@@ -102,7 +112,16 @@ export default async function Image() {
 
 - `ImageResponse` renders a flexbox subset of CSS: every element with more than one child needs `display: "flex"`. No grid, no `clamp()`.
 - It needs TTF, OTF or WOFF font data, not WOFF2. Keep a TTF of the display face in the repo for this.
-- Per-project images pull the project's title and, if it reads at card size, its cover image as an `<img>` with an absolute URL.
+- Per-project images pull the project's title and, if it reads at card size, its cover image as an `<img>` with an absolute URL. In a dynamic segment the image receives the params as a promise, like the page does:
+
+```tsx
+// app/work/[slug]/opengraph-image.tsx
+export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const project = await getProject(slug);
+  // ...same ImageResponse as above, with project.title as the line
+}
+```
 - Twitter and X use the same image when `twitter.card` is `summary_large_image`; add `twitter-image.tsx` only when it should differ.
 - Check every card at real size before shipping: text over 60 characters wraps badly at 96px.
 
@@ -179,7 +198,7 @@ Add `BreadcrumbList` on nested pages and `FAQPage` only when the page really has
 | Images without dimensions | `next/image` with width and height or `fill` in a sized frame; descriptive `alt` for content images, empty `alt` for decoration |
 | Fonts swapping and shifting the layout | `next/font` with `adjustFontFallback` ([typography.md](typography.md)) |
 
-**Performance floor to check in verify:** LCP under 2.5s, CLS under 0.1, INP under 200ms on a mid-range phone profile. Run Lighthouse or PageSpeed once on the production build and record the numbers under VERIFY in STRUQ.md.
+**Performance floor to check in verify:** LCP under 2.5s, CLS under 0.1, INP under 200ms on a mid-range phone profile. Run Lighthouse or PageSpeed once on the production build for LCP and CLS; lab Lighthouse reports TBT, not INP, so INP comes from field data or a manual interaction trace ([performance.md](performance.md) §8). Record the numbers under VERIFY in STRUQ.md.
 
 ## 7. Vite
 
@@ -187,10 +206,10 @@ No metadata API: set title, description, canonical and OG tags per route in the 
 
 ## Checklist
 
-- [ ] `metadataBase`, title template, description, canonical on every page
+- [ ] `metadataBase`, title template and description in the root layout; a canonical on every page (home included), none in the layout
 - [ ] An `opengraph-image` per shared route, designed from the system, checked at real size
 - [ ] `sitemap.ts` covers every page; `robots.ts` points at it; staging disallows all
-- [ ] One h1 per page, headings in order, eyebrows are not headings
+- [ ] One h1 per page (the hero display line, unless it is not descriptive), headings in order, eyebrows are not headings
 - [ ] JSON-LD for the page type
 - [ ] Every route reachable by a real link and server-rendered on direct load
 - [ ] Loader and animations never hide content from the server HTML

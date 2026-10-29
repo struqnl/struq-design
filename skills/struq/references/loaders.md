@@ -192,7 +192,7 @@ All are SSR-safe overlays at `z-[10001]`, reveal on exit, respect reduced-motion
 | **ProgressBar** | restrained | hairline fills 0→100% under a wordmark | slide up 0.8s `power4.inOut` |
 | **DrawMark** | crafted | SVG mark draws in (DrawSVG, recipe in [svg-motion.md](svg-motion.md)) + wordmark | layer fades 0.6s |
 
-> ⚠️ **Avoid a scramble / "decode" / terminal-typewriter loader by default.** That monospaced, glitchy-text aesthetic reads as techy filler and collides with the monospace ban ([anti-patterns.md](anti-patterns.md)). Use it only when the brand is genuinely a terminal/dev product.
+> **Warning: avoid a scramble / "decode" / terminal-typewriter loader by default.** That monospaced, glitchy-text aesthetic reads as techy filler and collides with the monospace ban ([anti-patterns.md](anti-patterns.md)). Use it only when the brand is genuinely a terminal/dev product.
 
 Example of the gate wired into a preset (Shutter):
 

@@ -29,13 +29,15 @@ Directed mode extends the main skill, it does not replace it:
 
 This folder adds what those files do not cover: experience state, property ownership, chapters, camera blocking, semantic timelines, handoff contracts, tuning and audit criteria.
 
+**Order of work.** `/struq direct` first runs [`../references/direction.md`](../references/direction.md) phases 0 to 3 (Intake, Brand, Concept, System) into `STRUQ.md`, with `Mode: directed`. Only then do the phases below start, and their lean outputs are appended to the same `STRUQ.md` under a `## DIRECTION` section (see Project artifacts). The direction.md gate still applies: one "Veto anything?" message, after the DIRECTION section is written and before code.
+
 ## Stack rules inherited from the main skill
 
 Three rules from the main skill are binding in directed mode. Nothing in this folder overrides them.
 
 1. **One clock.** Lenis is created with `autoRaf: false` and advanced from `gsap.ticker`. ScrollTrigger reads from Lenis. The R3F canvas is mounted with `frameloop="never"` and advanced from the same ticker (a reactive-only scene with no ambient animation may use `frameloop="demand"` with `invalidate()`, never the default `always`). No other `requestAnimationFrame` loop runs. Scroll progress, elapsed time and pointer input are separate signals, not separate clocks.
 2. **GSAP owns scroll.** Every scroll-linked behavior (pinned stage, scrubbed chapter timelines, activation, velocity and direction signals) is GSAP and ScrollTrigger. Motion never reads scroll progress for the narrative, and `lenis.scrollTo()` is the only scroll command path. High-frequency pointer work on DOM elements runs on the same ticker through `gsap.quickTo`, not through a Motion spring loop. Lenis lerp and scrub smoothing are paired as in [`../references/feel-layer.md`](../references/feel-layer.md).
-3. **Motion owns the React lifecycle.** Mount, unmount, presence, layout and UI state (menus, overlays, controls, hover and press) belong to Motion for React. If a Motion component takes part in a GSAP sequence, one library owns the outer wrapper and the other owns an inner element. Never animate the same transform from both.
+3. **The GSAP vs Motion split is the one in [`../SKILL.md`](../SKILL.md) (GSAP vs Motion: the decision rule).** That table decides who animates menus, overlays, hover and press; this folder does not restate it. If a Motion component takes part in a GSAP sequence, one library owns the outer wrapper and the other owns an inner element. Never animate the same transform from both.
 
 ## Principles
 
@@ -299,7 +301,7 @@ Template: [`templates/07-implementation-slice.md`](templates/07-implementation-s
 9. before and after behavior specification,
 10. validation tests.
 
-Worked example: [`examples/verbose/03-full-audit-example.md`](examples/verbose/03-full-audit-example.md). Short version: [`examples/concise/03-audit-finding-example.md`](examples/concise/03-audit-finding-example.md).
+Worked example: [`examples/verbose/02-full-audit-example.md`](examples/verbose/02-full-audit-example.md). Short version: [`examples/concise/03-audit-finding-example.md`](examples/concise/03-audit-finding-example.md).
 
 ## Prohibited patterns
 
@@ -327,7 +329,20 @@ Flag these unless intentionally justified:
 
 ## Project artifacts
 
-For each experience, keep the direction files in the repository so they become the shared language between design, development and the agent:
+`STRUQ.md` stays the one contract. The lean direction (thesis, chapter map, ownership matrix, shot presets, handoff contracts, acceptance criteria) is appended to it as one section:
+
+```markdown
+## DIRECTION
+Thesis: <one paragraph>
+Chapters: <table: id, name, purpose, main transformation, scroll budget, bridge to next>
+Ownership: <table: property, narrative owner, reactive and ambient channels, transfer cue>
+Shots: <named camera and subject poses, desktop and mobile>
+Handoffs: <one contract per chapter boundary>
+Acceptance: <observable outcomes>
+Mobile / reduced motion: <one line each>
+```
+
+Option for large builds, long-lived projects or teams only: split the full direction into a folder next to `STRUQ.md`, and link it from the DIRECTION section so the contract still points at everything:
 
 ```text
 direction/
@@ -343,7 +358,7 @@ direction/
 └── acceptance-tests.md
 ```
 
-A lean direction needs only the contract (with thesis and chapter map), ownership matrix, shot presets, handoff contracts and acceptance tests.
+A lean direction never needs the folder: the DIRECTION section above is the whole artifact.
 
 ## Reference map
 
@@ -386,7 +401,7 @@ Checklists:
 Examples:
 
 - Concise (minimum useful specificity): [`examples/concise/01-chapter-spec-example.md`](examples/concise/01-chapter-spec-example.md), [`examples/concise/02-handoff-example.md`](examples/concise/02-handoff-example.md), [`examples/concise/03-audit-finding-example.md`](examples/concise/03-audit-finding-example.md)
-- Verbose (complete packages): [`examples/verbose/01-full-experience-direction.md`](examples/verbose/01-full-experience-direction.md), [`examples/verbose/03-full-audit-example.md`](examples/verbose/03-full-audit-example.md)
+- Verbose (complete packages): [`examples/verbose/01-full-experience-direction.md`](examples/verbose/01-full-experience-direction.md), [`examples/verbose/02-full-audit-example.md`](examples/verbose/02-full-audit-example.md)
 - Code (architecture patterns, not a finished design): [`examples/code/shared/README.md`](examples/code/shared/README.md), [`examples/code/nextjs/README.md`](examples/code/nextjs/README.md), [`examples/code/vite/README.md`](examples/code/vite/README.md)
 
 ## A note on pinning

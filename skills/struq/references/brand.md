@@ -1,6 +1,6 @@
 # Brand: name, logo, mark and the files a site needs
 
-Run this when the project has no name or no logo. When a brand exists, do not redesign it; extract it ([direction.md](direction.md) §2). The output is small on purpose: a name, a wordmark, a mark, the favicon and social image set, and one voice line. A brand guideline PDF is not the job. A site that carries the brand is.
+Run this when the project has no name or no logo. When a brand exists, do not redesign it; extract it ([direction.md](direction.md) §2). The output is small on purpose: a name, a wordmark, a mark, the favicon set, and one voice line. A brand guideline PDF is not the job. A site that carries the brand is.
 
 Order matters: **positioning, then name, then type, then logo.** A name chosen first forces the positioning to be bent around it. A logo drawn before the typefaces are chosen never sits right in the site.
 
@@ -14,6 +14,8 @@ Before naming anything, write:
 If these two lines cannot be written, the brief is missing the facts the name depends on. Ask for them (one round) instead of naming in the dark.
 
 ## 2. Naming
+
+**Skip rule.** Sites for a person, a practice or a founder-named business (portfolios, studios named after people, clinics) use the person's name. If the name is unknown, use a placeholder, record it under ASSUMPTIONS in STRUQ.md, skip this section and go straight to the wordmark (§3).
 
 ### Territories
 
@@ -37,7 +39,7 @@ Score every candidate, drop anything that fails a hard rule:
 
 ### The deliverable
 
-A shortlist of five with one line each (territory, why it fits the positioning, the risk), a **recommended top three**, and one recommendation with the reason. Write it to `brand/NAMING.md`. In a non-interactive run, take the recommendation and record it under ASSUMPTIONS.
+A shortlist of five with one line each (territory, why it fits the positioning, the risk), and one recommendation with the reason. Write it to `brand/NAMING.md`. In a non-interactive run, take the recommendation and record it under ASSUMPTIONS.
 
 ## 3. The wordmark
 
@@ -54,10 +56,14 @@ npm i -D opentype.js
 
 ```js
 // scripts/wordmark.mjs: node scripts/wordmark.mjs "Name" path/to/Display-Light.otf > brand/logo.svg
+import { readFile } from "node:fs/promises";
 import opentype from "opentype.js";
 
 const [text, fontPath] = process.argv.slice(2);
-const font = await opentype.load(fontPath);
+// opentype.js 2.0 removed load(); parse the file buffer instead.
+const font = opentype.parse(await readFile(fontPath));
+const escapeAttr = (s) =>
+  s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
 const size = 100;
 const tracking = -0.02 * size; // match the tuned tracking from step 2
 
@@ -70,7 +76,7 @@ for (const glyph of font.stringToGlyphs(text)) {
 const d = parts.join(" ");
 const width = Math.ceil(x - tracking);
 console.log(
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${size}" fill="currentColor" role="img" aria-label="${text}"><path d="${d}"/></svg>`
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${size}" fill="currentColor" role="img" aria-label="${escapeAttr(text)}"><path d="${d}"/></svg>`
 );
 ```
 
@@ -99,9 +105,9 @@ Write these, wired into the framework's conventions (Next.js App Router shown):
 | `components/brand/Logo.tsx` | Both inlined as components with a `title` for accessibility, so they can animate and take color |
 | `app/icon.svg` | The mark on a solid surface tile; check it at 16px |
 | `app/apple-icon.png` | 180 by 180, the mark on the surface color with padding |
-| `app/opengraph-image.tsx` | 1200 by 630 via `next/og` `ImageResponse`: surface color, the wordmark, one line of copy in the display face, generous margins. The OG image is the first impression in every chat app; design it like a poster, not a banner. |
+| `app/opengraph-image.tsx` | Owned by [seo.md](seo.md) §3, and built in the SEO workflow step once the routes exist. The brand supplies the wordmark, surface color and display face it uses. |
 
-Vite: the same SVGs in `public/`, `<link rel="icon" type="image/svg+xml">`, and a static OG PNG.
+Vite: the same SVGs in `public/` and `<link rel="icon" type="image/svg+xml">`; the static OG PNGs are covered in [seo.md](seo.md) §7.
 
 ## 6. Voice
 

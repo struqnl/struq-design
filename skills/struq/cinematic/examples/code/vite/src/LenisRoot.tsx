@@ -1,6 +1,6 @@
-import { ReactLenis, type LenisRef } from 'lenis/react';
+import { ReactLenis, useLenis, type LenisRef } from 'lenis/react';
 import 'lenis/dist/lenis.css';
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, type JSX, type ReactNode } from 'react';
 import { gsap, ScrollTrigger, registerGsap } from './experience/gsap-client';
 
 registerGsap();
@@ -12,24 +12,25 @@ type LenisRootProps = {
 export function LenisRoot({ children }: LenisRootProps): JSX.Element {
   const lenisRef = useRef<LenisRef>(null);
 
+  // ScrollTrigger sync without capturing the instance once.
+  useLenis(() => ScrollTrigger.update());
+
   useEffect(() => {
-    const lenis = lenisRef.current?.lenis;
-    if (!lenis) return;
+    // Registered unconditionally, instance resolved per frame (references/setup.md §2).
+    const update = (time: number) => {
+      lenisRef.current?.lenis?.raf(time * 1000);
+    };
 
-    const update = (time: number) => lenis.raf(time * 1000);
-
-    lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add(update);
     gsap.ticker.lagSmoothing(0);
 
     return () => {
-      lenis.off('scroll', ScrollTrigger.update);
       gsap.ticker.remove(update);
     };
   }, []);
 
   return (
-    <ReactLenis root ref={lenisRef} options={{ autoRaf: false }}>
+    <ReactLenis root ref={lenisRef} options={{ lerp: 0.1, anchors: true, autoRaf: false }}>
       {children}
     </ReactLenis>
   );

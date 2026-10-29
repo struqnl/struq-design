@@ -45,10 +45,20 @@ Mixed rates in one section are the pro move: hero title at `scrub: true` (attach
 
 Full curve table lives in [transitions.md](transitions.md). The shipping system:
 
-**Pick one personality pair and use it everywhere:**
-- *Cinematic*: `expo.out` entrances + `power4.inOut` moves (long tails, committed swaps)
-- *Kinetic*: `power4.out` (quart) entrances + `back.out(1.4)` accents (crisp, springy)
-- *Editorial-calm*: `power3.out` entrances + `power2.inOut` moves (nothing shouts)
+**The default system is the baseline MOTION line in [../SKILL.md](../SKILL.md), and these are the same numbers:**
+
+| Role | Ease | GSAP name | CSS |
+|---|---|---|---|
+| Entrances | expo-out | `expo.out` | `cubic-bezier(0.16, 1, 0.3, 1)` |
+| Exits | power2-in (cubic-in) | `power2.in` | `cubic-bezier(0.32, 0, 0.67, 0)` |
+| Position swaps (A to B moves) | quart-in-out | `power3.inOut` | `cubic-bezier(0.76, 0, 0.24, 1)` |
+| Curtains and panels | quint-in-out | `power4.inOut` | `cubic-bezier(0.83, 0, 0.17, 1)` |
+
+GSAP's names are offset by one from the classic curve names: `power1` = quad, `power2` = cubic, `power3` = quart, `power4` = quint.
+
+**Allowed deviations, recorded in STRUQ.md SYSTEM with a reason.** A preset or concept may swap the pair; it is never a silent per-component choice:
+- *Kinetic*: `power4.out` (quint-out) entrances + `back.out(1.4)` accents (crisp, springy)
+- *Editorial-calm*: `power3.out` (quart-out) entrances + `power2.inOut` moves (nothing shouts)
 
 Then three rules:
 1. Entrances out-ease, exits in-ease (`power2.in`), A→B moves in-out. Never the reverse.
@@ -63,13 +73,15 @@ Durations scale with **visual mass** (size × contrast of the change), not impor
 
 | Tier | Duration | Examples |
 |---|---|---|
-| Micro | 0.15-0.3s | press, toggles, underline, tag slide |
-| Standard | 0.4-0.7s | dropdowns, card hovers, accordion, text swap |
-| Reveal | 0.7-1.1s | section entrances, split lines, masked images |
-| Cinematic | 1.1-1.6s | hero entrance, page curtain + content rise, full-bleed media |
-| >1.6s | n/a | only multi-part timelines; a single tween this long = user waiting |
+| Micro | 0.2 to 0.3s | press, toggles, underline, tag slide |
+| Standard UI | 0.3 to 0.6s | dropdowns, card hovers, accordion, text swap |
+| Reveal | 0.6 to 1.0s | section entrances, split lines, masked images |
+| Hero and cinematic | 1.0 to 1.6s | hero entrance, page curtain + content rise, full-bleed media |
+| Over 1.6s | n/a | only multi-part timelines; a single tween this long = user waiting |
 
-Exits run ~60% of their entrance's duration (leaving is decisive; see [transitions.md](transitions.md) §4).
+These bands are the baseline's, number for number. A different band is a deviation and goes into STRUQ.md SYSTEM with its reason.
+
+Exits run about 60% of their entrance's duration (leaving is decisive; see [transitions.md](transitions.md) §4).
 
 Stagger:
 
@@ -90,6 +102,6 @@ Scroll the build top to bottom once, then:
 
 1. **Stop scrolling abruptly mid-section.** Do scrubbed layers settle softly (good) or freeze instantly (raise scrub) or keep drifting awkwardly (lower it)?
 2. **Watch one entrance.** Can you see it *end*? If you can't perceive the deceleration tail, the ease or duration is too timid. This is the #1 "feels like a template" cause even when the technique is right.
-3. **Count clocks in a hover.** One = cheap, two-three = choreography.
+3. **Count layers in a hover.** One moving layer = cheap, two or three = choreography.
 4. **Flick-scroll the whole page.** Does the site stay composed (Lenis + scrub doing their job) or strobe with triggered animations firing everywhere? If strobing: too many `once` reveals triggered too late (move starts earlier, e.g. `top 85%`).
 5. **Is anything moving that the user didn't cause?** Autonomous looping motion (except one deliberate marquee/ambient element) drains the premium feel. Agency motion is overwhelmingly *response*, not *activity*.

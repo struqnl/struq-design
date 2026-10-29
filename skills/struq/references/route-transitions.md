@@ -18,7 +18,7 @@ The App Router **unmounts the old page on navigation**, so there is nothing left
 
 The user never sees a swap, a layout jump, or an empty frame. The first load is the same gesture with the cover *starting* closed. That's the loader ([loaders.md](loaders.md)).
 
-❌ **Cheap tells this replaces:** route changes that hard-cut; whole-page `opacity` cross-fades; the page visibly reflowing as fonts/images land.
+**Cheap tells this replaces:** route changes that hard-cut; whole-page `opacity` cross-fades; the page visibly reflowing as fonts/images land.
 
 ---
 

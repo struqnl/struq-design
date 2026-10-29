@@ -64,5 +64,5 @@ Design every section at **1440 and 390 simultaneously**, not desktop-then-shrink
 4. Can a thumb reach/operate everything (48px targets, no pin traps)?
 5. Does the showpiece content still exist (as snap-scroll or stacked list), even though the showpiece mechanics don't?
 
-❌ **Cheap tell:** a mobile view where every section is a centered full-width column: same skeleton repeating, overlaps gone, ghost type gone, hero centered. The art direction evaporated below 768px.
-✅ The 390px page still has trespassing elements, alternating indents, one crop, poster-edge heroes, and compressed-but-asymmetric rhythm. It is recognizably the same design, recomposed.
+**Cheap tell:** a mobile view where every section is a centered full-width column: same skeleton repeating, overlaps gone, ghost type gone, hero centered. The art direction evaporated below 768px.
+**Instead:** The 390px page still has trespassing elements, alternating indents, one crop, poster-edge heroes, and compressed-but-asymmetric rhythm. It is recognizably the same design, recomposed.

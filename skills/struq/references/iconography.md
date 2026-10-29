@@ -1,4 +1,18 @@
-# Iconography: Iconify source + craft doctrine
+# Iconography: one icon family + craft doctrine
+
+## Decide here
+
+Planning reads only this section ([direction.md](direction.md) §4); the rest is for the build.
+
+- **Family:** the brand's own drawn set if it exists; otherwise **Phosphor, weight `light`** (`npm i @phosphor-icons/react`). `thin` for luxury. Iconoir or Tabler at stroke 1.25 only when the concept wants a sharper, technical line. Struq Icons is coming soon: do not install it yet.
+- **One icon family per site.** Never two, never Lucide by reflex.
+- **Size and color:** one size token per context (`size-5` inline, `size-6` nav), ink-colored; color only for state and semantics.
+- **Budget:** functional icons only (nav, close, chevrons, form states, CTA anchors). No 3-up feature-card icons, no Sparkles, Rocket or Zap, no emoji, no colored chips.
+- **Motion:** animated icons under 500ms on click, never looping in standard UI, static under reduced motion.
+- **Record in STRUQ.md SYSTEM:** `Icons: Phosphor, @phosphor-icons/react, weight light`.
+
+---
+
 
 Two separate decisions, never collapse them:
 
@@ -45,22 +59,19 @@ something picked per component. Resolve it top to bottom and stop at the first t
 | # | Family | When | Install | Weight to match light display type |
 |---|---|---|---|---|
 | 1 | **The brand's own icons** | The client already has a drawn set | their files, inlined as components | as drawn |
-| 2 | **Struq Icons** | The default for every Struq build: a two-tone set (a base tone plus an accent on the part that carries the meaning), each icon with its own hover motion and a draw-in variant, colors set by CSS custom properties | `npm i @struq/icons` (until it is published, skip to 3) | stroke 2 on a 24 grid; set `strokeWidth={1.5}` next to 300-weight display |
-| 3 | **Phosphor** | Struq Icons lacks icons the site needs, or the concept wants a softer, rounder line | `npm i @phosphor-icons/react`, or Iconify `ph:` | `weight="light"` (or `"thin"` for luxury) |
-| 4 | **Iconoir** or **Tabler** | A sharper, more technical or architectural line | `npm i iconoir-react` / `@tabler/icons-react`, or Iconify `iconoir:` / `tabler:` | Tabler `stroke={1.25}`; Iconoir `strokeWidth={1.25}` |
+| 2 | **Phosphor** | The default for every Struq build: a soft, round line that sits next to light display type | `npm i @phosphor-icons/react`, or Iconify `ph:` | `weight="light"` (or `"thin"` for luxury) |
+| 3 | **Iconoir** or **Tabler** | A sharper, more technical or architectural line | `npm i iconoir-react` / `@tabler/icons-react`, or Iconify `iconoir:` / `tabler:` | Tabler `stroke={1.25}`; Iconoir `strokeWidth={1.25}` |
+| n/a | **Struq Icons** | Coming soon: do not install yet. A two-tone set (a base tone plus an accent on the part that carries the meaning), each icon with its own hover motion and a draw-in variant | not published | not yet |
 
 **Never Lucide as the reflex.** It is the default of every generated UI, so it reads as
-generated. **Never two families on one site.** If Struq Icons is missing an icon, either draw
-the missing icon to its rules (24 grid, 2 to 22 live area, round caps and joins, one accent
-part of 15 to 40% of the ink) or move the whole site to the next family. Patching gaps with a
-second set is the icon version of three display fonts on one page.
+generated. **Never two families on one site.** If the chosen family is missing an icon, either
+draw the missing icon to its rules (its grid, its stroke, its caps and joins) or move the whole
+site to the next family. Patching gaps with a second set is the icon version of three display
+fonts on one page.
 
-Struq Icons' two tones follow one rule: **at rest an icon is one tone** (the accent takes the
-line color); the accent shows on hover, focus, and current or selected state. Set it once in
-CSS on interactive elements, not per component.
-
-**Iconify** is the transport for families 3 and 4 when you want any family through one
-component: one API over about 200k icons across every major set.
+**Iconify** is an optional transport for families 2 and 3 when you want any family through one
+component: one API over about 200k icons across every major set. It is a delivery method, not a
+second family.
 
 ```bash
 # Next / any React              # Vite (compile-time, zero runtime, tree-shaken)
@@ -97,8 +108,9 @@ project's icon component so nothing else can be imported by accident.
 If it's small, it's a system icon. If it's expressive, it's big. Don't mix the registers
 within one role.
 
-One stroke (typically `strokeWidth={1.5}` for line families), one size token per context
-(e.g. `size-5` inline, `size-6` nav), ink-colored by default.
+One stroke across the set, as the §2 table sets it (Phosphor `weight="light"`, Tabler
+`stroke={1.25}`, Iconoir `strokeWidth={1.25}`), one size token per context (e.g. `size-5`
+inline, `size-6` nav), ink-colored by default.
 
 ---
 
@@ -190,9 +202,9 @@ frame, never the animation).
 
 ---
 
-❌ **Cheap tell:** Lucide `Sparkles`/`Rocket`/`Zap` in colored circle chips, 3-up, as
+**Cheap tell:** Lucide `Sparkles`/`Rocket`/`Zap` in colored circle chips, 3-up, as
 feature decoration; an animated icon looping forever in a dashboard; a 500ms+ click
 animation that lags the cursor; a tiny decorative icon turned to mud at 16px.
-✅ One deliberately-chosen Iconify family, system vs decorative registers kept separate,
+**Instead:** One deliberately chosen icon family, system vs decorative registers kept separate,
 ink-colored with color only for state/semantics, animated only where it informs and
 within the timing limits, labeled where not universal, `aria` correct, ≥48px targets.

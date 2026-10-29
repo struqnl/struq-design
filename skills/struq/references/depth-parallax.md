@@ -61,7 +61,7 @@ export function ParallaxSection({ children }: { children: React.ReactNode }) {
 
 `start: "top bottom", end: "bottom top"` makes the drift symmetric around the section's centered position. Elements are at their natural layout spot when the section is mid-viewport. That's why this doesn't break layout the way naive offset parallax does.
 
-❌ **Cheap tell:** one `background-attachment: fixed` image (also broken on iOS), or a single layer at 0.5×. ✅ Three-plus siblings at 0.9 / 1.0 / 1.12, symmetric drift.
+**Cheap tell:** one `background-attachment: fixed` image (also broken on iOS), or a single layer at 0.5×. **Instead:** Three-plus siblings at 0.9 / 1.0 / 1.12, symmetric drift.
 
 ---
 
@@ -107,7 +107,7 @@ export function ParallaxImage({ src, alt, ratio = "4/3" }: { src: string; alt: s
 
 Arithmetic that must hold: pan range (-8% → +8% = 16%) < scale headroom (18%). If edges ever show, scale is too low for the range. Combine freely with the masked-entrance reveal from [scroll-reveals.md](scroll-reveals.md): the entrance plays once and the pan scrubs forever; they don't conflict because the entrance animates the same `yPercent` through GSAP's tween overwrite.
 
-❌ **Cheap tell:** flat `<img>` in a `rounded-xl shadow-lg` card. ✅ Still frame, breathing photo.
+**Cheap tell:** flat `<img>` in a `rounded-xl shadow-lg` card. **Instead:** Still frame, breathing photo.
 
 ---
 
@@ -181,7 +181,7 @@ Load-bearing details:
 - Alternating `bg-surface-1/2` makes each new edge visible the moment it enters.
 - `transform-origin` defaults to center, which is correct here: the card shrinks toward the page's vanishing point.
 
-❌ **Cheap tell:** bare `sticky top-0` cards papering over each other with no recede; covered cards look frozen/glitched rather than layered. ✅ Covered cards scale to 0.92 and dim under a surface veil, scrubbed to the coverer's approach.
+**Cheap tell:** bare `sticky top-0` cards papering over each other with no recede; covered cards look frozen/glitched rather than layered. **Instead:** Covered cards scale to 0.92 and dim under a surface veil, scrubbed to the coverer's approach.
 
 ---
 

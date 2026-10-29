@@ -25,7 +25,7 @@ Rules the arc enforces:
 - **Pacing alternates.** Dense, then breather, then dense. Two dense sections back-to-back read as a wall; two breathers as emptiness. This is the page-level version of the spacing-asymmetry rule.
 - **The page ends where it started, louder.** The Invite beat re-states the Hook's claim as an action ("Studio for durable brands" becomes "Build something durable. Talk to us.").
 
-❌ **Cheap tell:** Hero → 3-card Features → Stats → Testimonials → Pricing → FAQ → CTA. That is the template stack: every section the same weight, no beat structure. ✅ Five beats, alternating density, one showpiece, one ask.
+**Cheap tell:** Hero → 3-card Features → Stats → Testimonials → Pricing → FAQ → CTA. That is the template stack: every section the same weight, no beat structure. **Instead:** Five beats, alternating density, one showpiece, one ask.
 
 ---
 
@@ -86,7 +86,7 @@ The footer is the Invite beat's second half and the most-skipped design surface 
 - Local time (`Intl.DateTimeFormat` with the studio's zone) is a tiny detail that signals "real people, real place."
 - The oversized ask and wordmark are type decisions: see [typography.md](typography.md) for the fluid display scale.
 
-❌ **Cheap tell:** four columns of gray links on `bg-gray-900`, a newsletter input nobody asked for, social icons in circles. ✅ One giant ask, a short nav echo, a meta row, an oversized wordmark, composed like a closing shot.
+**Cheap tell:** four columns of gray links on `bg-gray-900`, a newsletter input nobody asked for, social icons in circles. **Instead:** One giant ask, a short nav echo, a meta row, an oversized wordmark, composed like a closing shot.
 
 ---
 
@@ -111,15 +111,15 @@ Copywriting is its own craft; the *architecture* constrains it so display type s
 2  POSITIONING  [Orient]  one manifesto line, 20rem air above/below (breather)
 3  SELECTED     [Prove]   editorial rows + full-bleed images, dense 6 to 8rem,
    WORK                   sibling-dimming hovers; ghost type crop (grid-break #2)
-4  CAPABILITIES [Prove]   hairline-divided list, quiet after §3's imagery
-5  PROCESS      [Deepen]  ★ showpiece: pinned 3-phase sequence, ≤2.5 viewports,
-                          breathers implied by §4 (quiet) and §6 (vast)
-6  PRINCIPLES   [Deepen]  2 to 3 numbered-ONCE oversized statements, vast spacing
+4  CAPABILITIES [Prove]   hairline-divided list in 16rem breather air after §3's imagery
+5  PROCESS      [Deepen]  SHOWPIECE: pinned 3-phase sequence, ≤2.5 viewports,
+                          flanked by §4 and §6, both breathers
+6  PRINCIPLES   [Deepen]  2 to 3 numbered-ONCE oversized statements, breather spacing (16 to 24rem)
 7  CTA + FOOTER [Invite]  footer-reveal; "Let's build something durable." as
                           the close: the hero's claim, made an action
 ```
 
-Pacing trace: vast → vast → dense → quiet → showpiece → vast → vast. Two grid-breaks, one showpiece, one proof form (the work itself), one ask.
+Pacing trace: vast → breather → dense → breather → showpiece → breather → vast. Two grid-breaks, one showpiece, one proof form (the work itself), one ask.
 
 ---
 

@@ -6,13 +6,13 @@
 > the Lenis+ticker provider, and all `useGSAP` rules below are identical on both stacks;
 > only *where* you mount them changes.
 
-Stack: Next.js 15 App Router · TypeScript · Tailwind v4 · GSAP 3.13+ (all plugins free, including SplitText & ScrollSmoother) · Lenis · Motion (the framer-motion successor, import from `motion/react`) · Radix primitives · Iconify (`@iconify/react`: one coherent family per project, not reflexive Lucide; see [iconography.md](iconography.md)) · Three.js / React Three Fiber / Drei / postprocessing when a WebGL moment is planned.
+Stack: Next.js 15 App Router · TypeScript · Tailwind v4 · GSAP 3.13+ (all plugins free, including SplitText & ScrollSmoother) · Lenis · Motion (the framer-motion successor, import from `motion/react`) · Radix primitives · Phosphor icons (`@phosphor-icons/react`, weight light: one icon family per project, not reflexive Lucide; see [iconography.md](iconography.md)) · Three.js / React Three Fiber / Drei / postprocessing when a WebGL moment is planned.
 
 The whole recipe stack, one place:
 
 ```bash
 # Core: motion, scroll, primitives, icons
-npm i gsap @gsap/react lenis motion @iconify/react radix-ui
+npm i gsap @gsap/react lenis motion @phosphor-icons/react radix-ui
 
 # Only when a WebGL moment is planned (see webgl-r3f.md, webgl-scenes.md)
 npm i three @react-three/fiber @react-three/drei @react-three/postprocessing
@@ -38,23 +38,27 @@ Register plugins once, in one place. Re-registering is harmless, but scattering 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
+import { Flip } from "gsap/Flip";
+import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
+import { MorphSVGPlugin } from "gsap/MorphSVGPlugin";
 import { useGSAP } from "@gsap/react";
 
-gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
+gsap.registerPlugin(ScrollTrigger, SplitText, Flip, DrawSVGPlugin, MorphSVGPlugin, useGSAP);
 
-// Project-wide motion defaults, set once so every tween starts agency-grade
-gsap.defaults({ ease: "power3.out", duration: 0.8 });
+// Project-wide motion defaults: the baseline entrance (expo.out) inside the reveal band
+gsap.defaults({ ease: "expo.out", duration: 0.8 });
 
-export { gsap, ScrollTrigger, SplitText, useGSAP };
+export { gsap, ScrollTrigger, SplitText, Flip, DrawSVGPlugin, MorphSVGPlugin, useGSAP };
 ```
 
 Every snippet in the other reference files imports from `@/lib/gsap`, not from `"gsap"` directly.
 
-**Plugin palette: the agency-register plugins not registered by default.** Every
+**Plugin palette: the agency-register plugins registered above.** Every
 GSAP plugin is **free since 3.13 (Webflow acquisition)**: no license key, no auth
-token, no Club membership. Register exactly the ones a build uses, alongside
-`ScrollTrigger, SplitText` above; the API surface is in [gsap-api.md](gsap-api.md). These three
-punch far above their cost for the cinematic register:
+token, no Club membership. The registry registers these three next to
+`ScrollTrigger, SplitText`; drop any a build never uses (registering is cheap, but an unused
+import still ships). The API surface is in [gsap-api.md](gsap-api.md). These three punch far
+above their cost for the cinematic register:
 
 | Plugin | Reach for it when |
 |---|---|
@@ -130,12 +134,12 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
 }
 ```
 
-> ⚠️ **The dead-scroll trap: read this before "fixing" an unscrollable page.**
+> **Warning: the dead-scroll trap: read this before "fixing" an unscrollable page.**
 > With `autoRaf: false`, Lenis does *nothing* until someone calls `lenis.raf()` every
 > frame. The tempting shape:
 > ```ts
 > const lenis = lenisRef.current?.lenis;
-> if (!lenis) return;                 // ☠️ races ReactLenis's ref assignment
+> if (!lenis) return;                 // BUG: races ReactLenis's ref assignment
 > gsap.ticker.add((t) => lenis.raf(t * 1000));
 > ```
 > reads the ref **once**, but `ReactLenis` populates it during its own mount. When the

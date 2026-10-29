@@ -14,15 +14,19 @@ registerGsap();
  */
 export function GsapFrameLoop(): null {
   const advance = useThree((state) => state.advance);
+  const clock = useThree((state) => state.clock);
 
   useEffect(() => {
     const tick = (time: number) => advance(time);
 
+    // Sync R3F's clock to the ticker before the first tick, or the first frame
+    // sees a delta from 0 to gsap.ticker.time and every useFrame consumer jumps.
+    clock.elapsedTime = gsap.ticker.time;
     gsap.ticker.add(tick);
     return () => {
       gsap.ticker.remove(tick);
     };
-  }, [advance]);
+  }, [advance, clock]);
 
   return null;
 }

@@ -38,7 +38,7 @@ export function HeroToIntro() {
 
 The arithmetic: trespasser gets `-mb-32` + `relative z-10`; receiver gets `pt-56` (≥ the overlap + breathing room). Forgetting the receiver's compensating padding is why naive attempts collide with content.
 
-❌ **Cheap tell:** sections are watertight boxes: each starts where the last ended, every child inside its container. ✅ At least one element per major seam belongs to both sections.
+**Cheap tell:** sections are watertight boxes: each starts where the last ended, every child inside its container. **Instead:** At least one element per major seam belongs to both sections.
 
 ---
 
@@ -75,7 +75,7 @@ The arithmetic: trespasser gets `-mb-32` + `relative z-10`; receiver gets `pt-56
 
 This named-lines grid replaces the `max-w-6xl mx-auto` wrapper-div habit and makes breakouts a one-class decision. Use `wide` for pull-quotes/secondary media, `full` for one hero-grade image per few screens.
 
-❌ **Cheap tell:** everything lives inside the same `max-w-7xl mx-auto px-4`, so the page is a centered column of boxes. ✅ Text contained, media escaping: the page has margins *and* moments that ignore them.
+**Cheap tell:** everything lives inside the same `max-w-7xl mx-auto px-4`, so the page is a centered column of boxes. **Instead:** Text contained, media escaping: the page has margins *and* moments that ignore them.
 
 ---
 
@@ -115,7 +115,7 @@ Load-bearing details:
 - `pointer-events-none` on the overlapping type so the image stays interactive.
 - Type slightly *exceeding* the image (starting left of it, or `-mb-6` below it) is what makes it a lockup instead of a caption accident.
 
-❌ **Cheap tell:** image left, text right, 50/50, `gap-8`, both vertically centered: the eternal "alternating zigzag" section. ✅ Type and image share cells and contest the space.
+**Cheap tell:** image left, text right, 50/50, `gap-8`, both vertically centered: the eternal "alternating zigzag" section. **Instead:** Type and image share cells and contest the space.
 
 ---
 
@@ -137,7 +137,7 @@ Load-bearing details:
 
 Always `aria-hidden` + a real heading elsewhere; this is texture, not content. The `text-ink/[0.06]` ghost-type variant doubles as section wayfinding.
 
-❌ **Cheap tell:** all type fully visible, all centered. ✅ One enormous word cropped by the viewport, content overlapping it.
+**Cheap tell:** all type fully visible, all centered. **Instead:** One enormous word cropped by the viewport, content overlapping it.
 
 ---
 
@@ -177,7 +177,7 @@ Z-order constitution (declare once, never improvise):
 | Sticky UI (nav) | 50 | |
 | Page-transition curtain, cursor | 100 | [transitions.md](transitions.md) |
 
-❌ **Cheap tell:** ad-hoc `z-50`/`z-[999]` sprinkled until things look right. ✅ A declared ladder; every overlap is a decision.
+**Cheap tell:** ad-hoc `z-50`/`z-[999]` sprinkled until things look right. **Instead:** A declared ladder; every overlap is a decision.
 
 ---
 

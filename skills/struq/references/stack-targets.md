@@ -34,7 +34,7 @@ patterns below assume.
 | **Route-change transitions** | `template.tsx` + `PageTransitionProvider` ([route-transitions.md](route-transitions.md)) | `AnimatePresence` driven by the router location; the curtain/overlay logic is identical, only the trigger source changes. |
 | **Images** | `next/image` (auto sizing, lazy, AVIF/WebP) | `<img>` with **explicit `width`/`height`** (or aspect-ratio box) + `loading="lazy"` + `decoding="async"`; for responsive sources use `srcset` or `vite-imagetools`. Keep explicit dims for CLS regardless. |
 | **Metadata / head** | `metadata` export / `generateMetadata` | `react-helmet-async` or set tags in `index.html`. |
-| **Icons** | `@iconify/react` | `@iconify/react` **or** compile-time `unplugin-icons` ([iconography.md](iconography.md)). |
+| **Icons** | `@phosphor-icons/react` (Iconify optional) | `@phosphor-icons/react`, or Iconify via compile-time `unplugin-icons` ([iconography.md](iconography.md)). |
 | **Env / public assets** | `/public`, `process.env.NEXT_PUBLIC_*` | `/public`, `import.meta.env.VITE_*`. |
 
 ---

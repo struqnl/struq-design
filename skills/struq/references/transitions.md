@@ -20,9 +20,9 @@ CSS-side (these go in `@theme`, see [vibe-presets.md](vibe-presets.md)) and thei
 | Name | cubic-bezier | GSAP | Use for | Character |
 |---|---|---|---|---|
 | **expo-out** | `(0.16, 1, 0.3, 1)` | `expo.out` | reveals, hero entrances, masks | the agency default; violent start, infinite-feeling settle |
-| **quart-out** | `(0.25, 1, 0.5, 1)` | `power4.out`-ish | hovers, dropdowns, micro | expo's calmer sibling; snappy without drama |
+| **quart-out** | `(0.25, 1, 0.5, 1)` | `power3.out` | hovers, dropdowns, micro | expo's calmer sibling; snappy without drama |
 | **quint-in-out** | `(0.83, 0, 0.17, 1)` | `power4.inOut` | curtains, wipes, panel slides | holds, then *commits*; the cinematic door |
-| **quart-in-out** | `(0.76, 0, 0.24, 1)` | `power3.inOut`-ish | position swaps, accordions | quint's softer sibling |
+| **quart-in-out** | `(0.76, 0, 0.24, 1)` | `power3.inOut` | position swaps, accordions | quint's softer sibling |
 | **back-out** | `(0.34, 1.56, 0.64, 1)` | `back.out(1.4)` | badges, toasts, playful pops | 5-6% overshoot; personality, so ration it |
 | **circ-out** | `(0, 0.55, 0.45, 1)` | `circ.out` | cursor effects, trailing UI | mechanical-smooth |
 
@@ -30,64 +30,17 @@ Per-vibe personality = picking 2 to 3 of these plus a duration scale ([vibe-pres
 
 For a true signature ease, GSAP `CustomEase.create("brand", "M0,0 C0.2,0 0.1,1 1,1")`. The table covers 99% of shipping needs.
 
-❌ **Cheap tell:** `transition-all duration-300 ease-in-out` on everything, `duration-500` on big things. ✅ Asymmetric curves chosen per role, durations spanning 0.2s→1.4s by element weight.
+**Cheap tell:** `transition-all duration-300 ease-in-out` on everything, `duration-500` on big things. **Instead:** Asymmetric curves chosen per role, durations spanning 0.2s→1.4s by element weight.
 
 ---
 
-## 1. Page transition curtain (App Router)
+## 1. Page transition curtain
 
-> **Canonical system lives in [route-transitions.md](route-transitions.md)** (with [loaders.md](loaders.md) + [page-entrances.md](page-entrances.md)). First-load loaders and route transitions are one seamless system. Use the GSAP `PageTransitionProvider` + `TransitionLink` (cover→swap→reveal, six variants, session-gated loaders, per-zone entrances) as the default. The Motion `template.tsx` version below is a **lighter alternative** for a single quick reveal when you don't want the provider + intercepted-link wiring.
+The route curtain is one system, and it lives in [route-transitions.md](route-transitions.md): the GSAP `PageTransitionProvider` and `TransitionLink` (cover, swap, reveal), with session-gated loaders in [loaders.md](loaders.md) and per-zone entrances in [page-entrances.md](page-entrances.md). Build every multi-page site from there. The ease is quint-in-out for the panel and expo-out for the content rising behind it, per the table above.
 
-**Term:** Curtain / wipe transition.
-**Mechanic:** On route change, a full-screen surface sweeps over the page (cover), navigation happens underneath, then it sweeps off (reveal). The sweep uses `scaleY` with a flipping `transform-origin` so it *wipes* through rather than fading. Two-phase, in-out ease: this is the canonical "agency site" navigation feel.
+**Cheap tell:** route changes hard-cut, or cross-fade via `opacity` on the whole page. **Instead:** A surface with a committed quint-in-out sweep, content rising in its wake.
 
-**When:** Portfolios, studios, campaign sites, anywhere navigation is part of the show.
-**Overkill when:** content/utility sites where users navigate constantly. More than 400ms of blocking per nav gets old fast. Keep total cover+reveal ≤ 900ms.
-**Tooling:** Motion, not GSAP. This is React lifecycle territory (`AnimatePresence` + App Router's `template.tsx`, which re-mounts per navigation; `layout.tsx` does not).
-
-```tsx
-// app/template.tsx
-"use client";
-
-import { motion } from "motion/react";
-
-const QUINT_INOUT = [0.83, 0, 0.17, 1] as const;
-const EXPO_OUT = [0.16, 1, 0.3, 1] as const;
-
-export default function Template({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      {/* Curtain: covers the OLD page (exit isn't possible in template.tsx,
-          so we run reveal-on-mount: curtain starts covering, sweeps away) */}
-      <motion.div
-        aria-hidden
-        className="fixed inset-0 z-[100] bg-surface-2"
-        initial={{ scaleY: 1 }}
-        animate={{ scaleY: 0 }}
-        transition={{ duration: 0.7, ease: QUINT_INOUT }}
-        style={{ transformOrigin: "top" }}    // reveal pulls UP and away
-      />
-      {/* Incoming page rises slightly as it's uncovered */}
-      <motion.div
-        initial={{ y: 24, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, delay: 0.25, ease: EXPO_OUT }}
-      >
-        {children}
-      </motion.div>
-    </>
-  );
-}
-```
-
-Craft notes:
-- **`transformOrigin` choreography is the trick**: cover grows from `bottom` (curtain rises), reveal shrinks to `top` (curtain continues upward), one continuous gesture passing over the screen. With a single origin it reads as a blind bouncing back.
-- The incoming page's `delay: 0.25` lets the curtain mostly clear before content moves: overlap, not sequence.
-- For a true exit phase (animate the *old* page out), wrap routes in `AnimatePresence mode="wait"` keyed on `usePathname()` in a client layout wrapper. That is more wiring, needed only when the old page must visibly leave. The template.tsx reveal alone covers most of the perceived value.
-- A 2-layer curtain (accent sweep 60ms behind the surface sweep) is the deluxe version: a second `motion.div`, same origins, `delay: 0.06`.
-- Kill `ScrollTrigger` confusion: scroll restoration plus re-mount means triggers recalc. `useGSAP` cleanup handles the old page, and the new page mounts fresh.
-
-❌ **Cheap tell:** route changes hard-cut, or cross-fade via `opacity` on the whole page. ✅ A surface with a committed quint-in-out sweep, content rising in its wake.
+<sub>Footnote: a Motion-only `app/template.tsx` that plays a reveal-on-mount curtain (no cover phase, because `template.tsx` cannot animate the old page out) is a valid stopgap for a two-page site that will never grow a provider. It is not the canonical system; prefer [route-transitions.md](route-transitions.md) whenever a site has more than two routes or a loader.</sub>
 
 ---
 
@@ -200,7 +153,7 @@ Entrances get all the attention, but exits sell the system. When content leaves 
 
 | Situation | Tool | Pattern |
 |---|---|---|
-| Route change, narrative site | Motion in `template.tsx` | Curtain (§1) |
+| Route change, narrative site | GSAP `PageTransitionProvider` | Route curtain ([route-transitions.md](route-transitions.md)) |
 | Act-break between sections | GSAP scrub | Section curtain (§2) |
 | List → detail, same route | Motion `layoutId` | Shared element (§3) |
 | Anything mounting/unmounting | Motion `AnimatePresence` | Enter + designed exit (§4) |

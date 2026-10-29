@@ -53,7 +53,7 @@ Notes that separate this from the reflex version:
 - Vary the stagger origin: a centered logo wall feels better with `from: "center"`.
 - Motion swap: for a one-off, `<motion.div initial={{ opacity: 0, y: 48 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-22%" }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}>` is fine. Use GSAP once multiple groups need coordination.
 
-❌ **Cheap tell:** every element fades in with `opacity: 0 → 1`, no transform, all at once, `duration-300 ease-in-out` (the "AOS fade" look). ✅ Transform + stagger + expo-out, triggered at 78%.
+**Cheap tell:** every element fades in with `opacity: 0 → 1`, no transform, all at once, `duration-300 ease-in-out` (the "AOS fade" look). **Instead:** Transform + stagger + expo-out, triggered at 78%.
 
 ---
 
@@ -122,7 +122,7 @@ export function WipeReveal({ children }: { children: React.ReactNode }) {
 
 The **counter-move** in (A) is the load-bearing detail: container and image translate in opposite directions, so the image appears to be revealed *through* a window rather than sliding as a sticker. Same trick powers parallax-in-mask ([depth-parallax.md](depth-parallax.md)).
 
-❌ **Cheap tell:** image scales from 0.8 with a fade ("zoom-in card"), or slides as one rigid block. ✅ Frame and content counter-translate inside an overflow mask.
+**Cheap tell:** image scales from 0.8 with a fade ("zoom-in card"), or slides as one rigid block. **Instead:** Frame and content counter-translate inside an overflow mask.
 
 ---
 
@@ -160,7 +160,7 @@ Details that matter:
 - **Reduced-motion:** register the tween only under `(prefers-reduced-motion: no-preference)` and set no initial clip in CSS, so motion-off renders the image fully visible with zero JS. No FOUC.
 - Pairs with: a parallax drift on `[data-curtain-inner]` ([depth-parallax.md](depth-parallax.md)) and an entrance-drawn connector line between frames (DrawSVG, recipes in [svg-motion.md](svg-motion.md); API surface in [gsap-api.md](gsap-api.md)).
 
-❌ **Cheap tell:** the frame just fades/zooms in as one block, or the clip runs with no scale. ✅ Bottom-up clip on the frame + counter-scale settle on the image, same trigger, image easing a beat longer.
+**Cheap tell:** the frame just fades/zooms in as one block, or the clip runs with no scale. **Instead:** Bottom-up clip on the frame + counter-scale settle on the image, same trigger, image easing a beat longer.
 
 ---
 
@@ -234,7 +234,7 @@ Details that matter:
 - Motion swap: only if you refuse GSAP. Manually wrap lines and animate `y` with `whileInView`. SplitText's measurement/re-split handling is why GSAP wins here.
 - SplitText typography choreography in depth: [typography.md](typography.md).
 
-❌ **Cheap tell:** whole headline fades in as one block; or chars typewriter in one-by-one with uniform linear timing. ✅ Lines rise from individual masks, 0.09s apart, expo-out.
+**Cheap tell:** whole headline fades in as one block; or chars typewriter in one-by-one with uniform linear timing. **Instead:** Lines rise from individual masks, 0.09s apart, expo-out.
 
 ---
 

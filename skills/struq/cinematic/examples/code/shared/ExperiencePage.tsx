@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, type JSX } from 'react';
 import { ExperienceCanvas } from './ExperienceCanvas';
 import { ExperienceDirector } from './ExperienceDirector';
 import { ExperienceOverlay } from './ExperienceOverlay';

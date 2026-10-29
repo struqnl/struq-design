@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { ExperiencePage } from './experience/ExperiencePage';
 import { LenisRoot } from './LenisRoot';
 

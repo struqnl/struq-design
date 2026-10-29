@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { CameraRig } from './CameraRig';
 import { GsapFrameLoop } from './GsapFrameLoop';
