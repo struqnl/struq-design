@@ -4,8 +4,8 @@
 
 Planning reads only this section ([direction.md](direction.md) §4); the rest is for the build.
 
-- **When:** the brief has no photos of its own, or only some. The client's own photos always come first ([imagery.md](imagery.md) §4, rung 1); the beeldbank fills what is left, before generated images and long before stock.
-- **What it is:** Struq's own beeldbank at [struq.nl/beeldbank](https://struq.nl/beeldbank): twenty sector packs of 24 real photographs each, every pack shot and graded as one set. CC0; credit to struq.nl is appreciated, not required, and a Struq build gives it anyway (§5).
+- **When:** the brief has no photos of its own, or only some. The client's own photos always come first ([imagery.md](imagery.md) §4, rung 1); the beeldbank fills what is left, before generating your own images and long before stock.
+- **What it is:** Struq's own beeldbank at [struq.nl/beeldbank](https://struq.nl/beeldbank): twenty sector packs of 24 images each, made and graded as one set per pack (generated, art-directed and checked, so no AI artefacts). CC0; credit to struq.nl is appreciated, not required, and a Struq build gives it anyway (§5).
 - **One pack per site.** Each pack carries one grade, so one pack keeps the page on one grade ([imagery.md](imagery.md) §1). Never mix two packs on one site.
 - **Pick by brief, then by grade:** the pack whose `sector` matches the brief, then the one whose grade sits with the planned palette and preset temperature. If no pack fits both, the beeldbank is out for this site (§6).
 - **Context, never the product.** Beeldbank photos show the world around the client: the place, the material, the work in general. Never the client's own product, team, premises or projects.
@@ -71,6 +71,7 @@ The chosen files live in the project, not on struq.nl. A hotlinked image breaks 
 curl -sL -o public/images/hero.webp "https://struq.nl/media/packs/<slug>/<file>.webp"
 ```
 
+- **Check every download is an image.** `curl -sL -o` saves whatever comes back, including an error page. After each download confirm the file is a real WebP (`file public/images/hero.webp` says "Web/P image", or the first bytes read `RIFF....WEBP`) and is more than a few KB. If any file fails, delete it and fall back to §6 for that slot; never ship a broken image or retry in a loop.
 - Keep a short list of what came from where (role, pack slug, image `id`) under LOG in STRUQ.md, so a later swap for the client's own photo is a lookup, not a hunt.
 - **Optimise per [performance.md](performance.md).** Check each file against the budgets in §1 there (hero 250KB at 1920w, content 150KB at 1440w). Any file over budget goes through the `sharp-cli` line in §4 there to a new file, never over the download. Then serve through `next/image` with `sizes`, width and height or `fill`, and the LCP hint on the hero only.
 - **The grade is already in the pixels.** Tune the `GradedImage` constants against the pack, so the layer unifies the page instead of stacking a second grade on top ([imagery.md](imagery.md) §1).
@@ -84,7 +85,7 @@ curl -sL -o public/images/hero.webp "https://struq.nl/media/packs/<slug>/<file>.
 
   `Beeld: Struq (struq.nl/beeldbank)`
 
-  Set in `text-small`, `ink-muted`, with the address as a plain link. Never a badge, never a logo, never above the fold.
+  On a site in another language, translate the label and keep the name and address: `Images: Struq (struq.nl/beeldbank)`. Set in `text-small`, `ink-muted`, with the address as a plain link. Never a badge, never a logo, never above the fold.
 
 ---
 
