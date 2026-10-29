@@ -133,6 +133,11 @@ function GsapTickerDriver() {
 // <Canvas frameloop="never"> … <GsapTickerDriver /> … </Canvas>
 ```
 
+**One driver per canvas.** This is the minimal driver. When the scene comes from
+webgl-scenes.md, use the `TickerDriver` in [webgl-scenes.md](webgl-scenes.md) §0 instead:
+it is this driver plus an offscreen pause, and it **replaces** `GsapTickerDriver`. Never
+mount both in one canvas, or every frame advances twice.
+
 Cheaper variant for scenes that only change with scroll or pointer (most hero
 backdrops): `frameloop="demand"` and call `invalidate()` from the things that
 change it, so no frames are rendered while the user is idle:
@@ -195,7 +200,7 @@ uniforms, `uTime` (ambient life) and `uProgress` (scroll), not a floating
 mesh. It reacts to the page instead of performing at it:
 
 ```tsx
-// Inside <Canvas>, alongside GsapTickerDriver / ScrollBoundRig
+// Inside <Canvas>, alongside ONE driver (GsapTickerDriver, or webgl-scenes.md's TickerDriver) and ScrollBoundRig
 import { useFrame, useThree } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";

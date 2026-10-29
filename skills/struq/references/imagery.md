@@ -16,8 +16,8 @@ Pick one:
 |---|---|---|
 | **Warm film** | lifted blacks, warm midtones, gentle contrast | Warm Editorial |
 | **Desaturated cool** | -20 to -40% saturation, cool shift, deep blacks | Dark Cinematic |
-| **High-contrast BW** | full monochrome, punchy | Brutalist (color arrives only via the accent) |
-| **Soft neutral** | low contrast, airy highlights, near-monochrome palette subjects | Luxury Minimal |
+| **High-contrast BW** | full monochrome, punchy | the Brutalist genre appendix only, when the brief declares the genre (color arrives only via the accent) |
+| **Soft neutral** | low contrast, airy highlights, near-monochrome palette subjects | Soft Modern (cool-leaning), Luxury Minimal (warm-leaning) |
 | **Duotone** | surface color + ink (or accent) mapped to shadows/highlights | any preset, as the *signature* look |
 
 Apply the grade in one reusable layer, not per-image in an editor:
@@ -119,7 +119,7 @@ export function ImagePlaceholder({ caption, ratio = "4/3", className = "" }: {
     <div role="img" aria-label={`Planned image: ${caption}`}
          className={`relative overflow-hidden bg-linear-to-b from-surface-2 to-surface-3 ${className}`}
          style={{ aspectRatio: ratio }}>
-      <span className="absolute bottom-4 left-4 text-eyebrow uppercase tracking-[0.16em] text-ink-muted">
+      <span className="eyebrow text-eyebrow absolute bottom-4 left-4 text-ink-muted">
         {caption}
       </span>
     </div>

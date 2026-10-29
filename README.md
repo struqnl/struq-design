@@ -30,7 +30,7 @@ Then, in your agent:
 
 | Layer | Tooling |
 |---|---|
-| Typography | Two faces. Display runs large and light (300 to 400). A curated pairing library, a fluid scale, SplitText choreography. |
+| Typography | Two faces from the Signature pairing set, set through role tokens. Display runs large and light (300 to 400). A fluid scale, one typographic signature move per site, SplitText choreography. |
 | Palette | Temperature-shifted neutrals, one accent, light and dark surface ladders |
 | Scroll | Lenis on the GSAP ticker, ScrollTrigger scrub, masked reveals, never opacity-only fades |
 | Showpieces | 23 named recipes, each tagged showpiece or system: pinned scrub timelines, horizontal galleries, sticky stacks, path journeys, manifesto fills |

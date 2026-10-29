@@ -20,8 +20,8 @@ value with the viewport and *every rem in the build scales with it at once.*
 ```css
 /* app/globals.css (Next) or src/index.css (Vite): the ONE knob */
 html {
-  font-size: clamp(0.9375rem, 0.836rem + 0.45vw, 1.1875rem);
-  /* ≈ 15px @ 360w  →  ~17px @ 768w  →  ~19px @ 1600w, frozen at 19px beyond */
+  font-size: clamp(1rem, 0.92rem + 0.2vw, 1.125rem);
+  /* 16px up to about 640w (so 16px at 390), about 17.6px at 1440, frozen at 18px from about 1640 */
 }
 ```
 
@@ -50,7 +50,7 @@ acceptable form. A clamp whose middle term is `vw`-only is the same bug as pure-
 ## 2. Keep the root band narrow, layer the drama on top
 
 The root knob also scales **body text**, so a wide band makes body huge on 4K or tiny on
-mobile. Keep the band **modest and readable** (≈15px to 19px across 360 to 1600). The body
+mobile. Keep the band **modest and readable** (16px to 18px, frozen from about 1640). The body
 should feel basically the same size everywhere; what you want scaling dramatically is the
 *display* type and *section rhythm*, not paragraphs.
 
@@ -61,11 +61,13 @@ So the system is two layers:
 2. **Per-element `clamp()` on the extremes**: the hero/display type keeps its own
    aggressive fluid clamp *on top* of the root:
    ```css
-   .hero-title { font-size: clamp(3rem, 8vw, 9rem); }  /* drama lives here, not in the root */
+   /* the text-display role token (typography.md §2.4): 46px at 390, about 120px at 1440 */
+   @theme { --text-display: clamp(2.875rem, 1.2rem + 6.86vw, 8rem); }  /* drama lives here, not in the root */
    ```
    These two compose cleanly: the root scales the rem baseline gently; the hero's own
-   clamp adds the big swing. They don't fight because the hero clamp is viewport-driven
-   in its own right.
+   clamp adds the big swing. The middle term keeps its `rem` part, so zoom still scales
+   the hero; a `vw`-only middle (`clamp(3rem, 8vw, 9rem)`) is the same bug as a pure-`vw`
+   root. Components use the token (`font-display text-display`), never a hand-written clamp.
 
 Rule of thumb: **if it's body, labels, padding, gaps, radii, use plain rem and let the root
 carry it. If it's a display headline or a showpiece measurement, give it its own
@@ -116,7 +118,7 @@ manual-resize anti-pattern the root knob replaces. One fluid value, no ladder.
   inflating. Past ~1600 to 1920 the design should *stop scaling and start adding margin*,
   not get bigger. (Cap the content container with a rem/`ch` max-width.)
 - **Floor:** the lower arm holds the readable minimum; never let the knob drive body
-  below ~15px effective or labels below the 12px floor ([anti-patterns.md](anti-patterns.md) §12).
+  below 16px effective or labels below the 12px floor ([anti-patterns.md](anti-patterns.md) §12).
 - **Test at 360 / 768 / 1280 / 1920 / 2560.** If every element looks proportional at all
   five *without per-width overrides*, the system is working. If you're adding `lg:`
   size overrides to fix spacing, something was authored in px: find it and convert.
@@ -133,7 +135,7 @@ The knob is just CSS, so it's framework-agnostic. Only the file differs:
 /* Next App Router → app/globals.css   |   Vite → src/index.css (imported in main.tsx) */
 @import "tailwindcss";
 
-html { font-size: clamp(0.9375rem, 0.836rem + 0.45vw, 1.1875rem); }
+html { font-size: clamp(1rem, 0.92rem + 0.2vw, 1.125rem); }
 ```
 
 Full stack-detection and the rest of the primitive translations are in

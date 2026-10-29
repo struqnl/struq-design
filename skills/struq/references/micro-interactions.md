@@ -60,7 +60,7 @@ export function MagneticButton({ children, strength = 0.35 }: { children: React.
   return (
     <div ref={wrap} className="inline-block">
       <button className="group relative overflow-hidden rounded-full border border-line bg-surface-2
-                          px-8 py-4 text-sm tracking-wide text-ink">
+                          px-8 py-4 font-ui text-ui text-ink">
         <span ref={label} className="relative z-10 inline-block">{children}</span>
         {/* fill swell on hover: scales from bottom, CSS-only */}
         <span aria-hidden className="absolute inset-0 origin-bottom scale-y-0 bg-accent
@@ -120,7 +120,7 @@ export function Cursor() {
     <div ref={dot} className="pointer-events-none fixed left-0 top-0 z-[100] -translate-x-1/2 -translate-y-1/2">
       <div className={`flex items-center justify-center rounded-full bg-ink text-surface-0
                        transition-all duration-300 ease-out-expo
-                       ${variant === "view" ? "h-20 w-20 text-xs tracking-wide" : "h-2.5 w-2.5"}`}>
+                       ${variant === "view" ? "eyebrow text-eyebrow h-20 w-20" : "h-2.5 w-2.5"}`}>
         {variant === "view" && "View"}
       </div>
     </div>
@@ -180,8 +180,8 @@ export function WorkCard({ p }: { p: { img: string; title: string; tag: string }
                                              group-hover:scale-[1.06]" />
         </div>
         <div className="mt-4 flex items-baseline justify-between">
-          <h3 className="text-lg">{p.title}</h3>
-          <span className="translate-x-2 text-sm text-ink-muted opacity-0
+          <h3 className="type-h3 text-h3">{p.title}</h3>
+          <span className="text-small translate-x-2 text-ink-muted opacity-0
                            transition-all duration-400 delay-75 ease-out-quart
                            group-hover:translate-x-0 group-hover:opacity-100">
             {p.tag} →

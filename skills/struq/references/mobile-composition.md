@@ -34,7 +34,7 @@ Section padding compresses to roughly **60% of the desktop role values**, keepin
 | Breather | 16-24rem | 10-14rem |
 
 - Express the compression **structurally** (`py-16 md:py-28`, a layout decision and therefore allowed) or via a `--section-pad` token per role. This is not a size ladder, it's one deliberate rhythm change.
-- **Display type floor:** hero h1 bottoms out ~2.5rem. `clamp(2.5rem, 8vw, 9rem)` already handles it; check the *line count* instead: a mobile hero h1 over 4 lines needs shorter copy ([page-architecture.md](page-architecture.md) §5), not smaller type.
+- **Display type floor:** hero h1 bottoms out at 2.875rem (46px at 390), or the pairing's own floor ([typography.md](typography.md) §3.1). The `text-display` token already handles it; check the *line count* instead: a mobile hero h1 over 4 lines needs shorter copy ([page-architecture.md](page-architecture.md) §5), not smaller type.
 - Body measure self-solves via the root knob; check `min-h-[100vh]` sections use `svh` so mobile browser chrome doesn't cause jumps.
 - Horizontal padding: 1.25 to 1.5rem lanes; keep at least one element per screen *ignoring* them (a bleed, a crop) so mobile keeps its grid-breaks too.
 

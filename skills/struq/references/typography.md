@@ -6,6 +6,26 @@ Treat type as a **system, not a font choice**: eight roles, one scale, a weight 
 
 Prerequisites: the GSAP registry, `useGSAP` rules and reduced-motion pattern from [setup.md](setup.md); the root-rem knob from [scaling.md](scaling.md); the token contract from [vibe-presets.md](vibe-presets.md). The masked line reveal is specified in [scroll-reveals.md](scroll-reveals.md) §3. This file builds on it and does not repeat it.
 
+## Decide here
+
+During planning ([direction.md](direction.md) §4) read only this section; the rest of the file is for the build. Three decisions go into STRUQ.md SYSTEM:
+
+1. **The pairing, by temperament.** Read the brief's temperament word and take the Signature row that names it (§3.1). Extended (§3.2) only when no Signature temperament fits, or to keep two sites in one niche apart. "Unsure" is not a temperament; Inter and the other off-list faces (§3.4) are never the answer.
+
+   | Temperament | Signature | Preset it anchors |
+   |---|---|---|
+   | Modern, open, calm (a declared one-family system) | S1 Urbanist + Urbanist | Soft Modern |
+   | Warm, literate, editorial | S2 Fraunces + Urbanist | Warm Editorial |
+   | Soft, friendly, optimistic | S3 Fraunces (SOFT 100) + Outfit | light brands of any preset |
+   | Quiet luxury | S4 Cormorant Garamond + Jost | Luxury Minimal |
+   | Cinematic, dark, literate | S5 Newsreader + Manrope | Dark Cinematic |
+   | Essay-led, sans headlines over book text | S6 Urbanist + Lora | Warm Editorial, Luxury Minimal |
+   | Product, precise, technical | S7 Sora + Instrument Sans | Dark Cinematic, Soft Modern |
+
+2. **The roles are fixed; the pairing only overrides values.** Every string is one of the roles in §2.1, each with its own token: `font-display text-display` (hero), `font-display text-h2`, `type-h3 text-h3`, `text-lead`, `text-body`, `text-small`, `eyebrow text-eyebrow text-ink-muted`, `font-ui text-ui`, `stat text-stat`. The pairing's row writes its weights, tracking, leading, role faces and display clamp into `@theme`; components never change.
+
+3. **One signature move** (§5): `weight-in`, `soft-scrub`, `type-mask-media`, `fit-width-wordmark` or a cropped display. Record it next to the pairing id, with the preset's hero entrance ([vibe-presets.md](vibe-presets.md)).
+
 ---
 
 ## 1. Principles, with the reasons

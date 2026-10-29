@@ -71,9 +71,9 @@ export function ProcessSequence() {
           {PHASES.map((p, i) => (
             <div key={p.kicker} data-phase className="absolute inset-0 flex flex-col justify-center"
                  style={i === 0 ? {} : { opacity: 0 }}>
-              <span className="text-xs tracking-[0.14em] text-ink-faint">{p.kicker}</span>
-              <h3 className="font-display mt-4 text-5xl tracking-tight">{p.title}</h3>
-              <p className="mt-6 max-w-[36ch] text-ink-muted">{p.body}</p>
+              <span className="eyebrow text-eyebrow text-ink-muted">{p.kicker}</span>
+              <h3 className="font-display text-h2 mt-4">{p.title}</h3>
+              <p className="text-body mt-6 max-w-[36ch] text-ink-muted">{p.body}</p>
             </div>
           ))}
         </div>
@@ -156,7 +156,7 @@ export function WorkGallery({ projects }: { projects: { title: string; meta: str
     <section ref={container} className="overflow-hidden bg-surface-0">
       <div ref={track} className="flex h-screen w-max items-center gap-[6vw] px-[8vw]">
         <div className="w-[28vw] shrink-0">
-          <h2 className="font-display text-6xl tracking-tight">Selected<br />work</h2>
+          <h2 className="font-display text-h2">Selected<br />work</h2>
         </div>
         {projects.map((p, i) => (
           <article key={p.title} data-panel className="w-[42vw] shrink-0">
@@ -164,8 +164,8 @@ export function WorkGallery({ projects }: { projects: { title: string; meta: str
               <img src={p.img} alt="" loading={i > 1 ? "lazy" : undefined}
                    className="aspect-[4/3] w-full scale-110 object-cover" />
             </div>
-            <p className="mt-4 flex justify-between text-sm text-ink-muted">
-              <span>{p.title}</span><span className="uppercase tracking-[0.12em] text-ink-faint">{p.meta}</span>
+            <p className="text-small mt-4 flex items-baseline justify-between text-ink-muted">
+              <span>{p.title}</span><span className="eyebrow text-eyebrow">{p.meta}</span>
             </p>
           </article>
         ))}

@@ -55,32 +55,49 @@ npm i -D opentype.js
 ```
 
 ```js
-// scripts/wordmark.mjs: node scripts/wordmark.mjs "Name" path/to/Display-Light.otf > brand/logo.svg
+// scripts/wordmark.mjs:
+//   node scripts/wordmark.mjs "Name" path/to/Display-Light.ttf -0.02 > brand/logo.svg
+// Third argument: tracking in em (the tuned value from step 2). Default -0.02.
 import { readFile } from "node:fs/promises";
 import opentype from "opentype.js";
 
-const [text, fontPath] = process.argv.slice(2);
+const [text, fontPath, trackingEm = "-0.02"] = process.argv.slice(2);
 // opentype.js 2.0 removed load(); parse the file buffer instead.
 const font = opentype.parse(await readFile(fontPath));
 const escapeAttr = (s) =>
   s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
 const size = 100;
-const tracking = -0.02 * size; // match the tuned tracking from step 2
+const tracking = Number(trackingEm) * size;
+
+// One glyph per character, no shaping: font.stringToGlyphs() runs the ccmp feature
+// and throws on GSUB lookups opentype.js does not support yet (seen on variable fonts).
+const glyphs = Array.from(text, (ch) => font.charToGlyph(ch));
+if (glyphs.some((g) => g.index === 0)) console.error("warning: a character is missing from the font");
 
 let x = 0;
 const parts = [];
-for (const glyph of font.stringToGlyphs(text)) {
-  parts.push(glyph.getPath(x, size * 0.8, size).toPathData(2));
-  x += (glyph.advanceWidth / font.unitsPerEm) * size + tracking;
-}
-const d = parts.join(" ");
-const width = Math.ceil(x - tracking);
+const box = { x1: Infinity, y1: Infinity, x2: -Infinity, y2: -Infinity };
+glyphs.forEach((glyph, i) => {
+  const path = glyph.getPath(x, 0, size); // baseline at y = 0
+  const b = path.getBoundingBox();
+  if (!b.isEmpty()) {
+    box.x1 = Math.min(box.x1, b.x1); box.y1 = Math.min(box.y1, b.y1);
+    box.x2 = Math.max(box.x2, b.x2); box.y2 = Math.max(box.y2, b.y2);
+  }
+  parts.push(path.toPathData(2)); // a number keeps y unflipped
+  const kern = glyphs[i + 1] ? font.getKerningValue(glyph, glyphs[i + 1]) : 0;
+  x += ((glyph.advanceWidth + kern) / font.unitsPerEm) * size + tracking;
+});
+
+// The viewBox hugs the ink, descenders included, so the logo aligns by its real edges.
+const vx = Math.floor(box.x1), vy = Math.floor(box.y1);
+const vw = Math.ceil(box.x2) - vx, vh = Math.ceil(box.y2) - vy;
 console.log(
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${size}" fill="currentColor" role="img" aria-label="${escapeAttr(text)}"><path d="${d}"/></svg>`
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vx} ${vy} ${vw} ${vh}" fill="currentColor" role="img" aria-label="${escapeAttr(text)}"><path d="${parts.join(" ")}"/></svg>`
 );
 ```
 
-This keeps per-glyph kerning simple (advance plus tracking). For a hand-kerned result, export each glyph as its own `<path>` and adjust `x` per pair, or finish the outline in a vector editor. Apply the one modification from step 3 on the outlined paths.
+Use a **static** TTF or OTF of the chosen weight (the Google Fonts download has them under `static/`). A variable file outlines its default instance, usually 400, not the light weight the site uses. The script applies the font's own pair kerning plus your tracking; for a hand-kerned result, export each glyph as its own `<path>` and adjust `x` per pair, or finish the outline in a vector editor. Apply the one modification from step 3 on the outlined paths.
 
 5. Use `fill="currentColor"`, so the logo takes the ink color in light and dark surfaces without a second file.
 

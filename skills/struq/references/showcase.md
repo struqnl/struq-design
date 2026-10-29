@@ -34,8 +34,8 @@ Every id carries a **kind**:
 |---|---|---|---|---|---|---|
 | `manifesto-fill` | showpiece | A large paragraph whose words fill from muted to full ink as you scroll | Mission statements, about pages, the "why" | S | Keep | [typography.md](typography.md) |
 | `scrub-headline` | system | An oversized headline tracks, scales or slides with scroll and runs off the canvas | Section openers, editorial sites | S | Smaller travel | [typography.md](typography.md) |
-| `ghost-marquee` | system | Huge outlined or muted type drifting behind content, speed tied to scroll | Breathers between dense sections | S | Keep, slower | [depth-parallax.md](depth-parallax.md) §4 |
-| `line-rise-hero` | system | The hero headline rises line by line out of masks on load | Every site; the default hero entrance | S | Keep | [scroll-reveals.md](scroll-reveals.md) §3, [page-entrances.md](page-entrances.md) |
+| `ghost-marquee` | system | Huge muted solid type (`text-ghost`, never outlined) drifting behind content, speed tied to scroll | Breathers between dense sections | S | Keep, slower | [depth-parallax.md](depth-parallax.md) §4 |
+| `line-rise-hero` | system | The hero headline rises line by line out of masks on load | A fallback entrance, not a default: each preset names its own hero entrance and every hero using this is a tell | S | Keep | [typography.md](typography.md) §5, [scroll-reveals.md](scroll-reveals.md) §3, [page-entrances.md](page-entrances.md) |
 
 ### Media-led
 

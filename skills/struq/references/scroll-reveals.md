@@ -192,19 +192,22 @@ export function SplitHeadline({
 
   useGSAP(
     () => {
-      SplitText.create(container.current!.querySelector("[data-split]"), {
-        type: "lines",
-        mask: "lines",        // wraps each line in an overflow-clipped element
-        autoSplit: true,      // re-splits on font load / resize; animation must live in onSplit
-        linesClass: "split-line",
-        onSplit: (self) =>
-          gsap.from(self.lines, {
-            yPercent: 110,
-            duration: 1.1,
-            ease: "expo.out",
-            stagger: 0.09,
-            scrollTrigger: { trigger: container.current, start: "top 80%", once: true },
-          }),
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        SplitText.create(container.current!.querySelector("[data-split]"), {
+          type: "lines",
+          mask: "lines",        // wraps each line in an overflow-clipped .split-line-mask
+          autoSplit: true,      // re-splits on font load / resize; animation must live in onSplit
+          linesClass: "split-line",
+          onSplit: (self) =>
+            gsap.from(self.lines, {
+              yPercent: 110,
+              duration: 1.1,
+              ease: "expo.out",
+              stagger: 0.09,
+              scrollTrigger: { trigger: container.current, start: "top 80%", once: true },
+            }),
+        });
       });
     },
     { scope: container }
@@ -220,16 +223,23 @@ export function SplitHeadline({
 }
 
 // Usage:
-// <SplitHeadline as="h1" className="font-display text-[clamp(3rem,8vw,9rem)] leading-[0.95] tracking-tight">
+// <SplitHeadline className="font-display text-h2 max-w-[20ch]">
 //   Design that survives contact with reality
 // </SplitHeadline>
+```
+
+```css
+/* globals.css: descender room inside each line mask (class = linesClass + "-mask"), no layout jump */
+.split-line-mask { padding-block: 0.1em; margin-block: -0.1em; }
 ```
 
 Details that matter:
 - `mask: "lines"` + `yPercent: 110` is the whole effect. Without the mask it's just a stagger fade; with it, each line is born at its own baseline.
 - `autoSplit: true` + returning the tween from `onSplit` makes the split responsive and font-safe: GSAP reverts and re-runs on reflow. This is the GSAP 3.13+ API; do not use the old `new SplitText()` + manual resize listeners.
-- Give display type `leading-[0.95]` to `leading-[1.05]` *before* splitting; masks clip to line boxes, so loose leading shows gaps.
-- Descenders: if g/y/p get clipped during the animation, add `padding-bottom: 0.1em` via `linesClass` styling or keep a tiny visible overshoot.
+- Set the headline with its role token (`text-display`, `text-h2`) *before* splitting: the token carries the pairing's tight leading, and masks clip to line boxes, so loose leading shows gaps.
+- Descenders: the `.split-line-mask` rule above pads each mask and pulls the margin back, so g/y/p are never clipped and the layout does not move.
+- Section headlines use this scroll version; the hero has its own load-time variant (`line-rise-hero`, [typography.md](typography.md) §5), and the masked rise is one technique among the presets' named entrances, not every hero.
+- Reduced motion: the split and the tween exist only in the `no-preference` branch, so the server markup stays the final state.
 - Scrub variant for manifesto paragraphs: split into `words`, set initial `opacity: 0.15`, and `gsap.to(words, { opacity: 1, stagger: 0.05, scrollTrigger: { scrub: true, start: "top 70%", end: "top 20%" } })`, the "reading highlights itself" effect.
 - Motion swap: only if you refuse GSAP. Manually wrap lines and animate `y` with `whileInView`. SplitText's measurement/re-split handling is why GSAP wins here.
 - SplitText typography choreography in depth: [typography.md](typography.md).

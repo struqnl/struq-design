@@ -4,8 +4,6 @@ The skeleton (composition, motion techniques, type *scale*) stays constant; the 
 
 **Typography is the most important lever in this skill.** The face pairing decides more of a vibe than the palette does. Every preset below names its pairing (one display face and one text face, or one family in both roles), all free Google Fonts drawn from the **Struq Signature** set in [typography.md](typography.md) §3.1, and the display face runs **light (300 to 400)**. None of them uses Inter, Space Grotesk or another starter default; when a brand has no fonts of its own, swap within Signature, never back to a default. For pairing alternatives, the fluid scale, tracking and leading per tier, and SplitText typography, see [typography.md](typography.md).
 
-More curated palettes, with live previews, are at struq.nl.
-
 ## The token contract
 
 Every preset defines exactly this surface area. Components may use nothing outside it (plus neutral utilities like grid/flex/spacing):
@@ -145,7 +143,7 @@ Magazine confidence: cream paper, warm ink, a serif with personality. For studio
 | Fonts | **Fraunces** (display, `opsz` axis: bookish at h3 size, razor at the hero; `SOFT` around 50 for warmth) + **Urbanist** (text, 400 at 1.0625rem). Signature S2. Display weight 300-400, not bold: the serif's shapes do the work. Accent word in Fraunces italic. Role values in [typography.md](typography.md) §3.1 |
 | Spacing bias | generous but bounded: sections 8-14rem; text measure lead 44ch, body 62ch; dense hairline-divided lists ([anti-patterns.md](anti-patterns.md) §2 layout is native here) |
 | Border/shadow | hairlines everywhere, zero shadows; `divide-y divide-line` is the signature texture |
-| Motion personality | *editorial-calm*: `power3.out` entrances 0.7 to 0.9s, stagger 0.1; Lenis lerp **0.1**; scrub 1; no springs anywhere |
+| Motion personality | *editorial-calm*: `power3.out` entrances 0.7 to 0.9s, stagger 0.1; Lenis lerp **0.1**; scrub 1; no springs anywhere. **Declared deviation:** the baseline entrance ease is `expo.out`; this preset swaps it for the gentler `power3.out` inside the reveal band. A site on this preset records it in STRUQ.md under `Motion: deviations: entrances power3.out 0.7 to 0.9s (Warm Editorial's editorial-calm)` ([direction.md](direction.md) §4) |
 | Hero entrance | **soft-scrub plus line rise**: the h1 rises line by line on load, then softens (`SOFT` 0 to 100) as the reader scrolls away ([typography.md](typography.md) §5) |
 | Signature move | soft-scrub |
 | Distinctive moves | drop caps, a single oversized serif numeral in accent (as a one-off flourish, never a per-section counter), italic opsz pull-quotes at `wide` bleed with oldstyle figures, image frames with 2px radius |
@@ -190,7 +188,7 @@ Film-title gravity: a warm near-black tonal ladder, soft light, one signal accen
 | Spacing bias | extreme: heroes 16-20rem, full-viewport breathers with a single line of type; darkness needs emptiness to read as cinema |
 | Border/shadow | tonal ladder does *all* elevation (this is the preset the surface system was born for); hairlines at 8% warm white; glow only as `accent/20` blur behind one hero element, max |
 | Motion personality | *cinematic-heavy*: `expo.out` 1.0 to 1.4s entrances, `quint-in-out` curtains; Lenis lerp **0.08**; scrub 1 to 1.5; departure scrubs and curtains are core, nothing bounces |
-| Hero entrance | **image-to-type match cut**: the hero opens on a full-bleed image for about a second, then cuts on a shared shape (a horizon, an edge, a bright band) to the h1 sitting exactly where that shape was. A hard cut or a 0.3s crossfade, never a slow dissolve; the type itself does not rise |
+| Hero entrance | **image-to-type match cut**: the hero opens on a full-bleed image for about a second, then cuts on a shared shape (a horizon, an edge, a bright band) to the h1 sitting exactly where that shape was. A hard cut or a 0.3s crossfade, never a slow dissolve; the type itself does not rise. Recipe: `match-cut-hero` in [page-entrances.md](page-entrances.md) |
 | Signature move | type-mask-media or a cropped display |
 | Distinctive moves | ghost type at `text-ink/[0.05]` in muted solid (never outlined), scrubbed veils, tracked-uppercase label wayfinding, the footer-reveal ([composition.md](composition.md) §5) |
 
@@ -232,7 +230,7 @@ Almost nothing, perfectly placed: warm greige, hairline serif, bronze accent, sl
 | Spacing bias | maximal: sections 16-24rem, one idea per viewport, measures ≤ `40ch`; the emptiness *is* the brand |
 | Border/shadow | almost none: hairlines only at content boundaries (header rule, footer rule); imagery sits frameless on the surface; no cards, ever |
 | Motion personality | *heavy-luxurious*: `expo.out` at 1.2 to 1.6s, stagger 0.12 to 0.15; Lenis lerp **0.06 to 0.07** (the syrup is on-brand here and nowhere else); window-parallax on every image at gentle ±6%; absolutely no springs, no marquees |
-| Hero entrance | **1.6s single-line clip**: one line of display type, revealed by a single slow `clip-path` wipe, no split, no stagger |
+| Hero entrance | **1.6s single-line clip**: one line of display type, revealed by a single slow `clip-path` wipe, no split, no stagger. Recipe: `clip-line-hero` in [page-entrances.md](page-entrances.md) |
 | Signature move | a cropped display or fit-width-wordmark |
 | Contrast note | `ink-muted` on `surface-3` is 3.7:1: muted text never sits on surface-3 |
 | Distinctive moves | single centered serif lines in vast space, image + one caption line per viewport, accent used only for ~2 words per page, slow crossfade galleries |

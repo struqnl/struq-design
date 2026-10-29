@@ -90,9 +90,9 @@ npx @gltf-transform/cli optimize input.glb public/models/product.glb \
 ```
 
 - `--flatten false --join false` keep the node hierarchy and names. The defaults flatten the scene and merge meshes, which drops the node names that rigs, `useGLTF` lookups and per-part animation target. Drop the two flags only for a static, single-object model that nothing addresses by name.
-- drei's `useGLTF` takes meshopt as a boolean and ships its own decoder: `useGLTF(url, true, true)` (Draco on, meshopt on). The Draco decoder path is optional (a string in place of the second argument); without it drei loads the decoder from its default CDN. See [webgl-scenes.md](webgl-scenes.md).
+- drei's `useGLTF` takes meshopt as a boolean and ships its own decoder: `useGLTF(url, true, true)` (Draco on, meshopt on). The Draco decoder is fetched only for a Draco-compressed file; self-host it once with `useGLTF.setDecoderPath("/draco/")` at module level in the island. See [webgl-scenes.md](webgl-scenes.md) §1.
 - Textures are usually the weight, not geometry: 2048 max on desktop, 1024 for mobile variants.
-- `useGLTF.preload` only for the model in the first viewport; everything else loads when its island mounts.
+- Every model loads when its island mounts. `useGLTF.preload` buys nothing inside the lazy island (it runs only when the island chunk loads), and calling it from the section pulls three into the page bundle; the poster covers the wait.
 - Always ship the poster image that stands in before and instead of the canvas ([webgl-r3f.md](webgl-r3f.md)).
 
 ## 6. Fonts

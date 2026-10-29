@@ -26,7 +26,7 @@ npm i -D @types/three
 
 ```css
 /* app/globals.css (Next): top of file, after the Tailwind import */
-html { font-size: clamp(0.9375rem, 0.836rem + 0.45vw, 1.1875rem); } /* a11y-safe: keeps a rem term */
+html { font-size: clamp(1rem, 0.92rem + 0.2vw, 1.125rem); } /* 16px to 18px; a11y-safe: keeps a rem term */
 ```
 
 ## 1. The GSAP registry (one module, imported everywhere)
@@ -186,8 +186,9 @@ import { SmoothScrollProvider } from "@/components/providers/smooth-scroll";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
+    // className: the pairing's font variables, per vibe-presets.md Wiring
     <html lang="en">
-      <body className="bg-surface-0 text-ink antialiased">
+      <body className="bg-surface-0 font-body text-ink antialiased">
         <SmoothScrollProvider>{children}</SmoothScrollProvider>
       </body>
     </html>

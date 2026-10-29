@@ -14,19 +14,31 @@ caliber). Apply every rule below; they override your defaults.
 
 STRUQ BASELINE: NON-NEGOTIABLES
 
-TYPE: Two faces, max: one display face and one text face. Fluid scale via
-clamp(), ratio 1.25 to 1.333. Display sizes are LARGE: hero h1 =
-clamp(3rem, 8vw, 9rem), tracking -0.02em to -0.04em, leading 0.95 to 1.05.
-Display weight runs LIGHT (300 to 400). Large and light is the agency signal;
-heavy display (600+) only as a declared genre choice (brutalist, poster),
-never a reflex. Body 1rem to 1.125rem, leading 1.6+, line length 55 to 75ch.
-Hierarchy comes from scale contrast (huge against small), not from five
-medium sizes. Section eyebrows are uppercase 11 to 12px labels tracked 0.1em+,
-not mid-size subheads. FLOOR: body at least 1rem, muted at least 0.875rem,
-nothing under 12px. CONTRAST: body at least 4.5:1, large text at least 3:1.
-The faintest ink tier is non-essential meta only, never body copy.
-No monospace for display, labels, eyebrows, stats or body. Mono is for literal
-code only. Headings get text-wrap: balance; body gets text-wrap: pretty.
+TYPE: Signature first: one pairing id from typography.md §3.1 (S1 to S7;
+Extended E1 to E6 only when no Signature temperament fits), two faces max.
+Never Inter, Roboto, Open Sans, Poppins, Montserrat or Lato; never Space
+Grotesk or Geist as a reflex. Scale 1.333 with skipped steps (body 1, lead
+1.25, h3 1.78, h2 3.16, display 7 to 8). Hero h1 = text-display,
+clamp(2.875rem, 1.2rem + 6.86vw, 8rem), leading 0.92 to 1.0; S4 and S5 set
+larger, S7 smaller (typography.md §3.1). Display runs LIGHT (300 to 400);
+heavy display only as a declared genre (the Brutalist appendix), never a
+reflex. Tracking per face, never one tracking-tight on every size: sans
+display about -0.025 to -0.03em, serif display about -0.01 to -0.025em, h2
+about half that. Body 1rem to 1.0625rem at 400, leading 1.6+, 55 to 75ch;
+emphasis 500, never 700. Hierarchy from scale contrast, not medium sizes.
+ROLES: every string takes a role token, never text-xs, text-lg or text-5xl:
+font-display text-display, font-display text-h2, type-h3 text-h3,
+text-lead, text-body, text-small, eyebrow text-eyebrow, font-ui text-ui,
+stat text-stat. Eyebrows: uppercase 0.75rem (the 12px floor), tracked 0.12
+to 0.18em per face, ink-muted, one per section, never ink-faint.
+FLOOR: body at least 1rem, muted at least 0.875rem, nothing under 12px.
+CONTRAST: body at least 4.5:1, large text at least 3:1. ink-faint is never
+text: hairlines and disabled states only.
+SIGNATURE: every STRUQ.md declares one typographic signature move
+(typography.md §5: weight-in, soft-scrub, type-mask-media,
+fit-width-wordmark, a cropped display). The masked line rise is a
+technique, not the default hero. Mono only for literal code. Headings get
+text-wrap: balance; body gets text-wrap: pretty.
 
 SPACING: Base-8 rhythm with deliberate asymmetry. Section padding varies by
 role: hero 12 to 20rem, dense content 6 to 8rem, breathers 16 to 24rem. NEVER
@@ -34,10 +46,12 @@ uniform py-16 on every section. Whitespace is a material: at least one section
 should feel "too empty" by SaaS standards.
 
 SCALING: One fluid root-rem knob, not per-breakpoint size ladders:
-html { font-size: clamp(0.9375rem, 0.836rem + 0.45vw, 1.1875rem); }
-The rem term keeps browser zoom working. Author everything in rem; px only
-for 1px hairlines. Breakpoints change LAYOUT (columns, stack or row), never
-size. Display headlines keep their own clamp() on top for drama.
+html { font-size: clamp(1rem, 0.92rem + 0.2vw, 1.125rem); }
+16px at 390, about 17.6px at 1440, frozen at 18px from about 1640. Every
+clamp() keeps a rem term in its middle so zoom works; a vw-only middle is a
+bug. Author everything in rem; px only for 1px hairlines. Breakpoints change
+LAYOUT (columns, stack or row), never size. Display roles carry their own
+clamp() on top.
 
 SURFACE: Elevation is a tonal step, not a drop shadow. Dark mode: each layer
 steps LIGHTER (#0A0A0B, #111113, #19191C, #232328). Light mode: pick one
@@ -88,7 +102,7 @@ The block is the floor, not the ceiling. For the full recipe stack (two-face typ
 
 **Spacing asymmetry.** Uniform `py-16` is the single most reliable template tell. Real art direction treats vertical rhythm as pacing: a hero breathes, a feature block is dense, a manifesto line sits in 20rem of air. Varying section padding by role is free and reads instantly as "someone decided this." The "too empty" instruction exists because LLMs systematically under-use whitespace; what feels wasteful in code feels expensive in the browser.
 
-**Type scale contrast.** Templates use five sizes between 16 and 36px, so nothing leads. Agencies compress hierarchy into two extremes: enormous display type (it is the visual, not decoration around the visual) and small, quiet everything else. Negative tracking matters because display faces are spaced for 16px, and at 96px+ the gaps look broken without -0.02em or tighter. The tracked-uppercase eyebrow replaces the "medium subhead" that flattens hierarchy. The deeper type system (pairings, light display weights, fluid scale, SplitText typography) lives in [typography.md](typography.md).
+**Type scale contrast.** Templates use five sizes between 16 and 36px, so nothing leads. Agencies compress hierarchy into two extremes: enormous display type (it is the visual, not decoration around the visual) and small, quiet everything else. Negative tracking matters because text faces are spaced for 16px, and at 96px+ the gaps look broken; how much depends on the face (a geometric sans takes about -0.03em, a hairline serif about -0.01em), which is why tracking lives in the pairing row and not in one `tracking-tight`. The tracked-uppercase eyebrow replaces the "medium subhead" that flattens hierarchy. Role tokens (`text-display`, `text-h2`, `eyebrow text-eyebrow`) exist so no component improvises a size, and the one signature move exists so two Struq sites never open the same way. The deeper type system (Signature pairings, roles, fluid scale, SplitText typography) lives in [typography.md](typography.md).
 
 **Tonal elevation.** Drop shadows on light cards are the Bootstrap-era elevation model; design-led products (Linear, Vercel, Arc) moved to tonal ladders, where closer surfaces are lighter (dark mode) or distinguished by hairline borders and a subtle tone step (light mode). The light-mode direction is a preset decision: editorial/luxury pages are the lightest layer with panels stepping deeper; brutalist pages are toned with white panels lifting off them. One step per layer keeps depth legible either way. When you do shadow a floating element, the large/soft/low-opacity recipe reads as ambient light, while `shadow-lg` reads as a 2015 component library.
 

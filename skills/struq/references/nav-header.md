@@ -118,7 +118,7 @@ export function OverlayMenu() {
   return (
     <div ref={scope}>
       <button onClick={toggle} aria-expanded={open} aria-controls="site-menu"
-              className="relative z-[60] text-sm uppercase tracking-[0.14em]">
+              className="font-ui text-ui relative z-[60]">
         {open ? "Close" : "Menu"}
       </button>
 
@@ -127,15 +127,15 @@ export function OverlayMenu() {
         <nav className="flex h-full flex-col justify-between px-6 pb-10 pt-32">
           <ul>
             {LINKS.map((l) => (
-              <li key={l.href} className="overflow-hidden">{/* the mask */}
+              <li key={l.href} className="-my-[0.1em] overflow-hidden py-[0.1em]">{/* the mask, with descender room */}
                 <a data-menu-link href={l.href}
-                   className="font-display block text-[clamp(2.5rem,7vw,6rem)] leading-[1.05] tracking-tight">
+                   className="font-display text-display block">
                   {l.label}
                 </a>
               </li>
             ))}
           </ul>
-          <div data-menu-meta className="flex justify-between text-sm opacity-70">
+          <div data-menu-meta className="text-small flex justify-between">
             <span>hello@studio.com</span><span>Oslo, 14:32</span>
           </div>
         </nav>
@@ -147,7 +147,7 @@ export function OverlayMenu() {
 
 Load-bearing details:
 - **`lenis.stop()` / `lenis.start()`** is the scroll lock. Never `overflow: hidden` on body, which fights the smooth-scroll provider and jumps the page.
-- Links live in `overflow-hidden` `<li>` masks: the masked line reveal ([scroll-reveals.md](scroll-reveals.md) §2) at menu scale. The exit reverses with `power2.in` at ~60% duration and `from: "end"`, the designed exit rule ([transitions.md](transitions.md) §4).
+- Links live in `overflow-hidden` `<li>` masks: the masked line reveal ([scroll-reveals.md](scroll-reveals.md) §3) at menu scale, with the same 0.1em descender padding as `.split-line-mask`. The exit reverses with `power2.in` at ~60% duration and `from: "end"`, the designed exit rule ([transitions.md](transitions.md) §4).
 - The menu button sits **above** the panel (`z-[60]`) and swaps its label. The close affordance is designed, not a reflexive close-icon glyph.
 - Menu links can navigate through the page-flow wipe ([route-transitions.md](route-transitions.md)): close the menu, then `push(href)`, never both animations at once.
 - **A11y is non-optional:** `role="dialog"` + `aria-modal`, `aria-expanded`/`aria-controls` on the trigger, `Esc` closes, focus moves into the panel on open and returns to the trigger on close, and focus is trapped while open. The sketch above declares the semantics but does not implement the trap or Escape; §3b gets all of it from the primitive. Reduced motion: panel and links fade 0.2s, no travel.
@@ -223,7 +223,7 @@ export function OverlayMenu() {
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Trigger className="text-sm uppercase tracking-[0.14em]">Menu</Dialog.Trigger>
+      <Dialog.Trigger className="font-ui text-ui">Menu</Dialog.Trigger>
 
       <Dialog.Portal>
         <Dialog.Content ref={setPanel} aria-describedby={undefined}
@@ -232,22 +232,22 @@ export function OverlayMenu() {
 
           {/* The trigger is inert while the modal is open, so Close lives inside the panel,
               pinned to the same spot as the header button. */}
-          <Dialog.Close className="absolute right-6 top-5 text-sm uppercase tracking-[0.14em]">
+          <Dialog.Close className="font-ui text-ui absolute right-6 top-5">
             Close
           </Dialog.Close>
 
           <nav className="flex h-full flex-col justify-between px-6 pb-10 pt-32">
             <ul>
               {LINKS.map((l) => (
-                <li key={l.href} className="overflow-hidden">
+                <li key={l.href} className="-my-[0.1em] overflow-hidden py-[0.1em]">
                   <a data-menu-link href={l.href} onClick={(e) => onLinkClick(e, l.href)}
-                     className="font-display block text-[clamp(2.5rem,7vw,6rem)] leading-[1.05] tracking-tight">
+                     className="font-display text-display block">
                     {l.label}
                   </a>
                 </li>
               ))}
             </ul>
-            <div data-menu-meta className="flex justify-between text-sm opacity-70">
+            <div data-menu-meta className="text-small flex justify-between">
               <span>hello@studio.com</span><span>Oslo, 14:32</span>
             </div>
           </nav>

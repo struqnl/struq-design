@@ -18,7 +18,7 @@ export function HeroToIntro() {
   return (
     <>
       <section className="bg-surface-1 px-6 pb-0 pt-40">
-        <h1 className="font-display max-w-[12ch] text-[clamp(3rem,8vw,9rem)] leading-[0.95] tracking-tight">
+        <h1 className="font-display text-display max-w-[12ch]">
           Studio for durable brands
         </h1>
         {/* The trespasser: pulled down across the boundary */}
@@ -29,7 +29,7 @@ export function HeroToIntro() {
 
       {/* Receiving section pays for the overlap with top padding */}
       <section className="bg-surface-0 px-6 pb-28 pt-56">
-        <p className="max-w-[44ch] text-lg leading-relaxed text-ink-muted">…</p>
+        <p className="text-lead max-w-[44ch] text-ink-muted">…</p>
       </section>
     </>
   );
@@ -65,11 +65,11 @@ The arithmetic: trespasser gets `-mb-32` + `relative z-10`; receiver gets `pt-56
 
 ```tsx
 <section className="content-grid gap-y-10 py-32">
-  <p className="text-xs uppercase tracking-[0.14em] text-ink-faint">Selected Work</p>
-  <h2 className="font-display text-5xl tracking-tight">Selected projects</h2>
-  <p className="max-w-[52ch] text-ink-muted">…</p>
+  <p className="eyebrow text-eyebrow text-ink-muted">Selected Work</p>
+  <h2 className="font-display text-h2">Selected projects</h2>
+  <p className="text-body max-w-[52ch] text-ink-muted">…</p>
   <img className="bleed-full aspect-[21/9] w-full object-cover" src="/wide.jpg" alt="" />
-  <blockquote className="bleed-wide font-display text-3xl leading-snug">…</blockquote>
+  <blockquote className="bleed-wide type-h3 text-h3 max-w-[40ch]">…</blockquote>
 </section>
 ```
 
@@ -96,12 +96,12 @@ export function ProjectHeader() {
       </div>
 
       {/* Headline occupies cols 1-9 in the SAME row: overlap is the design */}
-      <h1 className="font-display pointer-events-none relative z-10 col-span-9 col-start-1 row-start-1
-                     -mb-6 text-[clamp(3.5rem,10vw,11rem)] leading-[0.9] tracking-tight mix-blend-difference text-white">
+      <h1 className="font-display text-display pointer-events-none relative z-10 col-span-9 col-start-1 row-start-1
+                     -mb-6 mix-blend-difference text-white">
         Atelier Nord
       </h1>
 
-      <p className="col-span-3 col-start-1 mt-10 text-sm leading-relaxed text-ink-muted">
+      <p className="text-small col-span-3 col-start-1 mt-10 text-ink-muted">
         Identity & digital flagship for a Scandinavian furniture house.
       </p>
     </header>
@@ -122,12 +122,12 @@ Load-bearing details:
 ## 4. Off-canvas type (deliberate crop)
 
 **Term:** Cropped display type.
-**Mechanic:** Display type intentionally runs off the viewport edge. The crop signals the word is bigger than the page, i.e. confidence. Usually paired with a scrub-tied drift ([depth-parallax.md](depth-parallax.md) §marquee).
+**Mechanic:** Display type intentionally runs off the viewport edge. The crop signals the word is bigger than the page, i.e. confidence. Usually paired with a scrub-tied drift ([depth-parallax.md](depth-parallax.md) §4).
 
 ```tsx
 <div className="relative overflow-hidden py-24">
-  <span aria-hidden className="font-display block whitespace-nowrap text-[18vw] leading-none
-                               tracking-tight text-ink/[0.06] -translate-x-[6%] select-none">
+  <span aria-hidden className="font-display text-ghost block whitespace-nowrap font-light
+                               text-ink/[0.05] -translate-x-[6%] select-none">
     PORTFOLIO / PORTFOLIO /
   </span>
   {/* real content layered above */}
@@ -135,7 +135,7 @@ Load-bearing details:
 </div>
 ```
 
-Always `aria-hidden` + a real heading elsewhere; this is texture, not content. The `text-ink/[0.06]` ghost-type variant doubles as section wayfinding.
+Always `aria-hidden` + a real heading elsewhere; this is texture, not content. `text-ghost` is the role token for texture type ([typography.md](typography.md) §2.4); the `text-ink/[0.05]` muted solid fill (0.04 to 0.06) doubles as section wayfinding.
 
 **Cheap tell:** all type fully visible, all centered. **Instead:** One enormous word cropped by the viewport, content overlapping it.
 
@@ -156,8 +156,8 @@ export function FooterReveal() {
 
       <footer className="fixed bottom-0 left-0 z-0 h-[60vh] w-full bg-surface-1">
         <div className="flex h-full flex-col justify-between p-10">
-          <p className="font-display text-[clamp(2.5rem,6vw,6rem)] tracking-tight">Let's talk.</p>
-          <div className="flex justify-between text-sm text-ink-muted">…</div>
+          <p className="font-display text-display">Let’s talk.</p>
+          <div className="text-small flex justify-between text-ink-muted">…</div>
         </div>
       </footer>
     </>

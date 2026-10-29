@@ -162,10 +162,10 @@ export function StackingCards({ items }: { items: { kicker: string; title: strin
         <section key={item.title} data-card
                  className={`sticky top-0 flex h-screen flex-col justify-between overflow-hidden
                              px-8 py-12 ${SURFACES[i % SURFACES.length]}`}>
-          <span className="text-xs uppercase tracking-[0.14em] text-ink-faint">{item.kicker}</span>
+          <span className="eyebrow text-eyebrow text-ink-muted">{item.kicker}</span>
           <div className="max-w-3xl">
-            <h3 className="font-display text-[clamp(2.5rem,5vw,5rem)] tracking-tight">{item.title}</h3>
-            <p className="mt-6 max-w-[48ch] text-lg text-ink-muted">{item.body}</p>
+            <h3 className="font-display text-h2">{item.title}</h3>
+            <p className="text-lead mt-6 max-w-[48ch] text-ink-muted">{item.body}</p>
           </div>
           <div data-veil className="pointer-events-none absolute inset-0 bg-surface-0 opacity-0" />
         </section>
@@ -192,13 +192,24 @@ Load-bearing details:
 
 ```tsx
 useGSAP(() => {
-  gsap.to("[data-marquee]", {
-    xPercent: -18,
-    ease: "none",
-    scrollTrigger: { trigger: container.current, start: "top bottom", end: "bottom top", scrub: true },
+  const mm = gsap.matchMedia();
+  mm.add("(prefers-reduced-motion: no-preference)", () => {
+    gsap.to("[data-marquee]", {
+      xPercent: -18,
+      ease: "none",
+      scrollTrigger: { trigger: container.current, start: "top bottom", end: "bottom top", scrub: true },
+    });
   });
 }, { scope: container });
+
+// <div aria-hidden className="overflow-clip">
+//   <p data-marquee className="font-display text-ghost whitespace-nowrap font-light text-ink/[0.05]">
+//     Studio Nord · Studio Nord · Studio Nord ·
+//   </p>
+// </div>
 ```
+
+The type is muted solid: `text-ghost` in the display face at its lightest loaded weight, `text-ink/[0.05]` (0.04 to 0.06), the phrase repeated three times ([typography.md](typography.md) §5, Ghost marquee). Never outlined (`-webkit-text-stroke` with a transparent fill): that is a dated template move.
 
 Scroll-tied drift beats an autonomous CSS `@keyframes` marquee for section texture: it's still when the user is still (calmer, and free under reduced motion if you gate it). Use the looping CSS marquee only for genuinely continuous content like logo walls.
 
@@ -210,7 +221,7 @@ For a hero or any showpiece section, stack the techniques as planes:
 
 | Plane | Element | Treatment |
 |---|---|---|
-| -2 | ghost numeral / marquee type | `data-speed 0.9` or x-drift, `text-ink/[0.06]` |
+| -2 | ghost numeral / marquee type | `data-speed 0.9` or x-drift, `text-ghost text-ink/[0.05]`, muted solid |
 | -1 | full-bleed media | window parallax (§2) |
 | 0 | headline, body | normal flow, text never parallaxes |
 | +1 | caption card, badge overlapping media | `data-speed 1.1`, `z-20` |

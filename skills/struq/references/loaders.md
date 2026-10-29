@@ -235,7 +235,7 @@ export function LoaderShutter({ id, brand = "Brand", rows = 3, cols = 4 }: {
           <div key={i} className="sh-tile bg-surface-0 will-change-transform" />
         ))}
       </div>
-      <div className="sh-word pointer-events-none absolute inset-0 grid place-items-center font-display text-4xl tracking-tight text-ink"
+      <div className="sh-word pointer-events-none absolute inset-0 grid place-items-center font-display text-h2 text-ink"
            style={{ mixBlendMode: "difference" }}>{brand}</div>
     </div>
   );

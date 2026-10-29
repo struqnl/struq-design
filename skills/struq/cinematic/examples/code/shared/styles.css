@@ -47,18 +47,21 @@ a {
   pointer-events: none;
   display: grid;
   align-items: center;
-  padding: clamp(1rem, 4vw, 4rem);
+  padding: clamp(1rem, 0.5rem + 3.5vw, 4rem);
 }
 
 .experience-copy {
   width: min(34rem, 80vw);
 }
 
+/* Demo values. In a Struq build the h1 takes `font-display text-display` and the
+   pairing's tracking from typography.md §3.1; the clamp keeps a rem term for zoom. */
 .experience-copy h1 {
   margin: 0;
-  font-size: clamp(2.7rem, 7vw, 7rem);
-  line-height: 0.92;
-  letter-spacing: -0.055em;
+  font-size: clamp(2.875rem, 1.2rem + 6.86vw, 8rem);
+  font-weight: 300;
+  line-height: 0.96;
+  letter-spacing: -0.03em;
 }
 
 .experience-bridge {
@@ -70,7 +73,7 @@ a {
 
 .local-ui-button {
   position: absolute;
-  left: clamp(1rem, 4vw, 4rem);
+  left: clamp(1rem, 0.5rem + 3.5vw, 4rem);
   bottom: 4vh;
   pointer-events: auto;
 }

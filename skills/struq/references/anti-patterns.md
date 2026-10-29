@@ -44,12 +44,12 @@ Surface ladder steps (`surface-0 → 1 → 2`) signal depth tonally. Real shadow
 **Agency:** kill the cards; let type and rhythm carry it:
 ```tsx
 <section className="content-grid py-40 gap-y-0">
-  <p className="text-xs uppercase tracking-[0.14em] text-ink-faint">Capabilities</p>
+  <p className="eyebrow text-eyebrow text-ink-muted">Capabilities</p>
   <div className="mt-16 divide-y divide-line">
     {features.map((f) => (
       <div key={f.title} className="group grid grid-cols-12 items-baseline gap-4 py-10">
-        <h3 className="font-display col-span-6 text-3xl tracking-tight">{f.title}</h3>
-        <p className="col-span-5 col-start-8 max-w-[44ch] text-ink-muted">{f.body}</p>
+        <h3 className="type-h3 text-h3 col-span-6">{f.title}</h3>
+        <p className="text-body col-span-5 col-start-8 max-w-[44ch] text-ink-muted">{f.body}</p>
       </div>
     ))}
   </div>
@@ -103,7 +103,7 @@ Lines rising from individual overflow masks. ([scroll-reveals.md](scroll-reveals
 **Reflex:** centered h1, gray subhead, two buttons (one blue, one outline), then a product screenshot in a browser-chrome mockup, possibly tilted with a purple glow.
 **The tell:** the symmetric "SaaS hero stack," gradient text on the keyword, floating screenshot.
 
-**Agency (structure, not just styling):** left-aligned or compositionally split; h1 at `clamp(3rem,8vw,9rem)` doing the visual work; media bleeding off-grid or punching into the next section; meta-information (location, availability, scroll cue) placed at the hero's edges like a poster; scrub-tied departure ([pinning-scrub.md](pinning-scrub.md) §3). A hero is a *composition*, not a stack. For ready-made hero showpieces, see [showcase.md](showcase.md).
+**Agency (structure, not just styling):** left-aligned or compositionally split; h1 as `font-display text-display` (the pairing's display clamp, [typography.md](typography.md) §2.4) doing the visual work; media bleeding off-grid or punching into the next section; meta-information (location, availability, scroll cue) placed at the hero's edges like a poster; scrub-tied departure ([pinning-scrub.md](pinning-scrub.md) §3). A hero is a *composition*, not a stack. For ready-made hero showpieces, see [showcase.md](showcase.md).
 
 ---
 
@@ -178,7 +178,7 @@ Lines rising from individual overflow masks. ([scroll-reveals.md](scroll-reveals
 **Reflex:** h1 `text-4xl`, h2 `text-3xl`, h3 `text-2xl`, h4 `text-xl`: five steps between 20 and 36px, all `font-bold`, default tracking.
 **The tell:** compressed mid-range hierarchy. Nothing leads, everything is "kind of big."
 
-**Agency:** two extremes. Display at `clamp(3rem,8vw,9rem)` with `tracking-tight leading-[0.95]`, then body at 1 to 1.125rem, with 11px tracked-uppercase eyebrows between. Weight contrast over size proliferation: **hero/display runs light (300 to 400)**. Large + light is the agency signal; heavy display (600+) is a deliberate genre choice only, never the reflex. **Floor:** body ≥1rem, muted ≥0.875rem, nothing below 12px (labels excepted only when uppercase+tracked+short). **Contrast:** body ≥4.5:1 (WCAG AA), large/≥24px ≥3:1; the faintest ink tier is meta-only, never body copy. ([baseline-prompt.md](baseline-prompt.md); the full two-face system, light display weights and fluid scale are in [typography.md](typography.md))
+**Agency:** two extremes, set through the role tokens so nothing is improvised: `font-display text-display` for the hero (the token carries the pairing's clamp, tracking and leading), `font-display text-h2` per section, `type-h3 text-h3` for items, `text-body` at 1 to 1.0625rem, and `eyebrow text-eyebrow text-ink-muted` (uppercase 0.75rem, tracked 0.12 to 0.18em per face) as wayfinding between. No `tracking-tight`: tracking belongs to the face and the role ([typography.md](typography.md) §3.1). **Hero/display runs light (300 to 400)**. Large + light is the agency signal; heavy display (600+) is a deliberate genre choice only, never the reflex. **Floor:** body ≥1rem, muted ≥0.875rem, nothing below 12px. **Contrast:** body ≥4.5:1 (WCAG AA), large/≥24px ≥3:1; `ink-faint` is never text. ([baseline-prompt.md](baseline-prompt.md); the Signature pairings, roles and fluid scale are in [typography.md](typography.md))
 
 ---
 
@@ -260,3 +260,4 @@ Before shipping, run these grep-level checks:
 - `font-bold` on the hero/`h1` / largest size = `text-4xl` → §12 · faint text on body copy / contrast below AA → §12
 - size ladders like `text-2xl md:text-4xl lg:text-6xl`, `px-`/`py-` tuned per breakpoint, fixed-`px` layout widths, or no fluid root font-size → §18
 - `text-4xl` as the largest size on the page → §12 · "Lorem|Acme|John Doe" → §15
+- `tracking-tight`, `text-ink-faint`, or `text-xs uppercase tracking-[` on headings and eyebrows (role tokens bypassed) → §12 · `Inter|Roboto|Open_Sans|Poppins|Montserrat|Lato|Space_Grotesk|Geist` in `next/font` imports → [typography.md](typography.md) §3.4

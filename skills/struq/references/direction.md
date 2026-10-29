@@ -68,7 +68,7 @@ This section is the only place SYSTEM is decided. Other files point here.
 Decide in this order:
 
 0. **Niche.** Buyer, genre and preset from [brief-router.md](brief-router.md) §2 step 1, plus the one borrowed field (TYPE or PALETTE) if any.
-1. **Type.** Exactly two faces: display (run light, 300 to 400, unless the concept is a declared heavy genre) and text. Take a pairing id from [typography.md](typography.md) §3, Signature first. Name the faces, the role weights, the source and the license.
+1. **Type.** Exactly two faces: display (run light, 300 to 400, unless the concept is a declared heavy genre) and text. Take a pairing id from the brand's temperament per [typography.md](typography.md) Decide here: Signature (S1 to S7) first, Extended (E1 to E6) only when no Signature temperament fits. "Unsure" is not a temperament and never a reason to take S1. Name the faces, the role weights, the source and the license, the **one signature move** ([typography.md](typography.md) §5) and the **hero entrance** (the preset's named entrance, or a declared different one).
 2. **Palette.** Surface ladder (four steps), ink tiers (ink, muted, faint), one accent and the line color, written as tokens. Existing brand colors pour into this structure. Add the radius. [vibe-presets.md](vibe-presets.md)
 3. **Icons.** One icon family for the whole site, chosen by the order in [iconography.md](iconography.md) §2. Name the package and the weight.
 4. **Imagery.** One grade, the declared ratio set (2 to 3), grain yes or no. [imagery.md](imagery.md)
@@ -76,7 +76,7 @@ Decide in this order:
 
 ## 5. The gate
 
-Write `STRUQ.md` (template below), then send one message with: the name, the idea line, the two typefaces and pairing id, the palette as hex, the icon family, the arc as one line, the showpiece ids, the open assumptions, and the materials request. End it with exactly this:
+Write `STRUQ.md` (template below), then send one message with: the name, the idea line, the two typefaces and pairing id, the signature move and hero entrance, the palette as hex, the icon family, the arc as one line, the showpiece ids, the open assumptions, and the materials request. End it with exactly this:
 
 > **Veto anything? If you have a logo, photos or real numbers, send them now.**
 
@@ -116,15 +116,18 @@ Motif: <the one recurring device>
 
 ## SYSTEM
 Niche: <buyer + business model> · genre <Portfolio | Studio | Product launch | Campaign>
-  · preset <Warm Editorial | Dark Cinematic | Brutalist | Luxury Minimal> [+ borrowed TYPE or PALETTE from <preset>]
-Display: <face> <weight> (<source>, <license>) · pairing <S1 to S7 | E1 to E5>
+  · preset <Soft Modern | Warm Editorial | Dark Cinematic | Luxury Minimal | Brutalist (genre appendix, declared genre only)>
+  [+ borrowed TYPE or PALETTE from <preset>]
+Display: <face> <weight> (<source>, <license>) · pairing <S1 to S7 | E1 to E6>
 Text: <face> <weights> (<source>, <license>)
+Signature move: <weight-in | soft-scrub | type-mask-media | fit-width-wordmark | cropped display>
+Hero entrance: <the preset's named entrance, or a declared different one>
 Palette: <light | dark> · --surface-0 #... --surface-1 #... --surface-2 #... --surface-3 #...
-  --ink #... --ink-muted #... --ink-faint #... (meta only) --accent #... --line <...>
+  --ink #... --ink-muted #... --ink-faint #... (non-text only) --accent #... --line <...>
 Radius: <n>px
 Icons: <family, package, weight>
 Imagery: <grade>, ratios <2 to 3>, grain <opacity | none>
-Scroll: Lenis lerp <0.09 to 0.11 | native, because ...> on gsap.ticker
+Scroll: Lenis lerp <the preset's stated value | native, because ...> on gsap.ticker
 Motion: baseline | deviations: <each one, with its reason>
 
 ## PLAN

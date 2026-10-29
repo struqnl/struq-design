@@ -76,8 +76,8 @@ The footer is the Invite beat's second half and the most-skipped design surface 
 
 | Zone | Content | Treatment |
 |---|---|---|
-| **The ask** | One oversized CTA line ("Let's talk.", "Start a project") | display type at `clamp(2.5rem,6vw,6rem)`, the footer's hero |
-| **Nav echo** | 4 to 7 links max: the header nav repeated, not every route | small, tracked, one column |
+| **The ask** | One oversized CTA line ("Let's talk.", "Start a project") | `font-display text-display`, the footer's hero (the page's one other display line) |
+| **Nav echo** | 4 to 7 links max: the header nav repeated, not every route | `font-ui text-ui`, one column |
 | **Meta row** | location + local time, email, 2 to 4 socials, legal | `text-ink-muted`, baseline-aligned row |
 | **Signature** | wordmark (often oversized/cropped off the bottom edge), © year | the one place giant ghost type is almost always right |
 
@@ -106,7 +106,7 @@ Copywriting is its own craft; the *architecture* constrains it so display type s
 ## 6. Worked example: 7-section studio site, arc annotated
 
 ```
-1  HERO         [Hook]    "Studio for durable brands", clamp(3rem,8vw,9rem),
+1  HERO         [Hook]    "Studio for durable brands", font-display text-display,
                           departure scrub; media punches into §2 (seam #1)
 2  POSITIONING  [Orient]  one manifesto line, 20rem air above/below (breather)
 3  SELECTED     [Prove]   editorial rows + full-bleed images, dense 6 to 8rem,

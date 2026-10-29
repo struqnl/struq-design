@@ -57,7 +57,9 @@ This is the only case that blocks before the gate. Switch from silent extraction
    - *"A white gallery: huge quiet type, your work does the talking."* (Luxury Minimal)
    - *"Warm paper and ink: editorial, opinionated, a magazine about you."* (Warm Editorial)
    - *"A dark cinema: slow, heavy, one image at a time."* (Dark Cinematic)
-   - *"Loud poster walls: thick type, hard edges."* (the outlier: Brutalist)
+   - *"Loud poster walls: thick type, hard edges."* (the outlier: the Brutalist genre appendix, taken only when the user picks this scene)
+
+   For any other cluster, draw the scenes from the four presets: Soft Modern (*"a calm, exact studio: cool stone, one green note"*), Warm Editorial, Dark Cinematic, Luxury Minimal.
 5. *"One long page, or several?"* Plus any must-have sections (pricing, menu, booking, careers). Demanded sections are reconciled against the arc in §2. "Several" switches on route transitions.
 6. Optional, free text: *"Name one site or brand whose vibe you envy."* Used to bias type and palette *inside* the chosen preset, never to clone.
 
@@ -71,9 +73,9 @@ This is the only case that blocks before the gate. Switch from silent extraction
 
 Steps marked **SYSTEM** are decided in [direction.md](direction.md) §4; they are listed here only so the order is visible.
 
-1. **Niche read.** Pick the genre row in [page-architecture.md](page-architecture.md) §2 using the §2b mapping, then choose the nearest preset in [vibe-presets.md](vibe-presets.md): **Warm Editorial**, **Dark Cinematic**, **Brutalist** or **Luxury Minimal**. Fill its seven axes with the TENSION written first. Primary preset = the buyer's; borrow at most TYPE *or* PALETTE from a second preset, never both and never anything else (not imagery, not motion). Both presets' "never signal" lines join the audit. Ready-made niche packets that pre-solve this step per industry are part of Struq Pro; the free path here is complete on its own.
+1. **Niche read.** Pick the genre row in [page-architecture.md](page-architecture.md) §2 and §2b (the niche-to-genre mapping), then choose the nearest preset in [vibe-presets.md](vibe-presets.md): **Soft Modern** (the default), **Warm Editorial**, **Dark Cinematic** or **Luxury Minimal**. **Brutalist** is a genre appendix, taken only when the brief declares the genre. Fill its seven axes with the TENSION written first. Primary preset = the buyer's; borrow at most TYPE *or* PALETTE from a second preset, never both and never anything else (not imagery, not motion). Both presets' "never signal" lines join the audit. Ready-made niche packets that pre-solve this step per industry are part of Struq Pro; the free path here is complete on its own.
 2. **Palette and tokens.** SYSTEM. The preset's palette unless real brand colors exist, in which case they pour into the preset's token structure.
-3. **Type.** SYSTEM. Exactly two faces, taken from [typography.md](typography.md) §3: the Signature pairing that matches the brand's temperament first (it is usually the preset's own pairing), Extended only when no Signature temperament fits. Record the pairing id (S1 to S7, E1 to E5) and its role weights.
+3. **Type.** SYSTEM. Exactly two faces, picked in [typography.md](typography.md) Decide here: the Signature pairing that matches the brand's temperament first (it is usually the preset's own pairing), Extended only when no Signature temperament fits. Record the pairing id (S1 to S7, E1 to E6), its role weights, the one signature move and the hero entrance.
 4. **Arc.** Start from the genre's inventory, then reconcile it with the client's demanded sections via [page-architecture.md](page-architecture.md): beats in the §1 order (Hook, Orient, Prove, Deepen, Invite); every section gets a beat or gets cut; 5 to 8 sections; density alternates; exactly one proof form; at least two grid-breaks marked.
 5. **Reveals.** Name the reveals the build uses ([scroll-reveals.md](scroll-reveals.md)): which headlines get SplitText line masks, which blocks get the transform and autoAlpha stagger, what images do on entry. If the plan has drawn or morphing line art, note the [svg-motion.md](svg-motion.md) moment here. Lenis lerp is SYSTEM.
 6. **Showpieces.** Budget 1 to 2 ids tagged `showpiece` in [showcase.md](showcase.md); ids tagged `system` (route curtain, menu, hero line rise and the like) do not count. Fewer is stronger, and for some genres 0 is correct (utility and brutalist pages, tight deadlines). Place each at an act break per [page-architecture.md](page-architecture.md) §3: a breather before it and after it, never directly under the hero, never in the Invite beat, never back to back. Name the technique section ([pinning-scrub.md](pinning-scrub.md) §1 or §2, [depth-parallax.md](depth-parallax.md) §3) so the mobile fallback is planned, not patched. No real imagery? Prefer a type-led showpiece ([showcase.md](showcase.md) Choosing).
@@ -159,15 +161,18 @@ Niche: food and drink product brand, buyer = the person buying beans · genre Pr
 Display: Fraunces 300, SOFT 50 (Google Fonts, OFL) · pairing S2
 Text: Urbanist 400 body, 500 eyebrow and UI (Google Fonts, OFL)
   · roles per typography.md §3.1 S2: display 300, h2 300, h3 400, eyebrow 500, body 400
+Signature move: soft-scrub (the roast date headline softens as the reader leaves the hero)
+Hero entrance: Warm Editorial's soft-scrub plus line rise
 Palette: light · --surface-0 #FAF6F0 --surface-1 #F3EDE2 --surface-2 #EAE1D2 --surface-3 #DFD3BF
-  --ink #1C1917 --ink-muted #6B6259 --ink-faint #A59C8F (meta only) --accent #A33B20
-  --line rgb(28 25 23 / 0.14)
+  --ink #1E1A16 --ink-muted #5E554C --ink-faint #A59C8F (non-text only) --accent #7A2230
+  --line rgb(30 26 22 / 0.14)
 Radius: 2px buttons and frames
 Icons: Phosphor, @phosphor-icons/react, weight light (iconography.md §2 default)
 Imagery: warm film grade, ratios 21/9, 4/5, 1/1, grain 0.04
 Scroll: Lenis lerp 0.1 on gsap.ticker
-Motion: baseline (micro 0.2 to 0.3s, reveals 0.6 to 1.0s expo-out, hero 1.0 to 1.6s,
-  exits power2.in, swaps quart-in-out, curtains quint-in-out); deviations: none
+Motion: baseline (micro 0.2 to 0.3s, hero 1.0 to 1.6s, exits power2.in, swaps
+  quart-in-out, curtains quint-in-out); deviations: reveals power3.out 0.7 to 0.9s
+  in place of expo.out (Warm Editorial's editorial-calm, its declared deviation)
 
 ## PLAN
 Pages: / (one-pager now); /shop reserved in the nav
@@ -181,11 +186,11 @@ Arc (home):
   6 VISIT     [Invite]  address, hours, newsletter (shop CTA when /shop ships), footer
                         per page-architecture §4, 14rem
   Proof form: the roasts themselves. Pacing: vast, breather, dense, breather, dense, vast.
-Reveals: hero h1 line-rise-hero · rows and roast frames transform + autoAlpha stagger 0.08
+Reveals: hero h1 line-rise-hero then soft-scrub (the preset's named entrance) · rows and roast frames transform + autoAlpha stagger 0.08
   · images curtain-reveal · svg none
 Showpieces: pin-horizontal-gallery at arc row 3 (breather 2 before it, breather 4 after it),
   mobile: native horizontal swipe with snap (pinning-scrub.md §2 and §4). Total 1.
-System recipes: line-rise-hero, curtain-reveal, fullscreen-menu
+System recipes: line-rise-hero, soft-scrub, curtain-reveal, fullscreen-menu
 Transitions: none now (one-pager); route-curtain added when /shop ships · loader none (shop-bound)
 WebGL: none
 Copy budget: h1 at most 8 words ("Roasted Tuesday. Gone by Friday."), manifesto = row 2's
@@ -199,14 +204,15 @@ Assets to produce (8 images):
   all through one warm film grading pass (imagery.md §1)
 
 ## ASSUMPTIONS
-- "best roaster in the city" read as craft-serious: one accent (sienna), no second accent
-- wordmark stays black on cream (ink #1C1917)
+- "best roaster in the city" read as craft-serious: one accent (the preset's oxblood, not the
+  cream-plus-terracotta reflex), no second accent
+- wordmark stays black on cream (ink #1E1A16)
 - the gallery is never staged on placeholders: until the 4 roast shots exist, row 3 is a
   static 2 by 2 grid of placeholder frames (no pin), and the pin switches on when they land
 - shop deferred: row 6 collects newsletter sign-ups instead of a cart
 - one-pager now, /shop reserved in the nav
 ```
 
-The gate message then reads: name, idea line, Fraunces and Urbanist (S2), the eight hex values, Phosphor light, the arc in one line, `pin-horizontal-gallery`, the five assumptions, and: "Veto anything? If you have the roast bag photos or real numbers (kilos a week, years roasting), send them now."
+The gate message then reads: name, idea line, Fraunces and Urbanist (S2), soft-scrub as the signature move, the eight hex values, Phosphor light, the arc in one line, `pin-horizontal-gallery`, the five assumptions, and: "Veto anything? If you have the roast bag photos or real numbers (kilos a week, years roasting), send them now."
 
 Note what the router did that a template could not: it kept the display face light in a consumer genre that pulls toward weight; it refused to borrow imagery from a hospitality direction because only TYPE or PALETTE may be borrowed; it spent exactly one showpiece and sat it between two breathers instead of under the hero; it deferred route transitions and the shop without losing their arc slots; and it turned "no copy written" into a copy-budget line instead of lorem. That judgment is the router's job; the reference files supply the raw material.

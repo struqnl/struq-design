@@ -32,7 +32,7 @@ This is the stack and the layer each tool owns. It is fixed on purpose: the "wei
 | Layer | Tool | Rule of thumb | Reference |
 |---|---|---|---|
 | Brand | Name, SVG wordmark and mark, favicon set | Positioning before name; the wordmark is drawn from the display face | [brand.md](references/brand.md) |
-| Typography | Two faces: one display, one text | Display runs **large and light (300 to 400)**. Hierarchy from scale contrast, not weight. | [typography.md](references/typography.md) |
+| Typography | Signature first: one pairing id (S1 to S7), one display face and one text face, set through role tokens | Display runs **large and light (300 to 400)**. Hierarchy from scale contrast, not weight. One signature move per site. | [typography.md](references/typography.md) |
 | Palette | Tokens on `:root` via Tailwind v4 `@theme` | Temperature-shifted neutrals do 95% of the work, one accent | [vibe-presets.md](references/vibe-presets.md) |
 | Scale | One fluid root-rem knob | Everything in rem; breakpoints change layout, never size | [scaling.md](references/scaling.md) |
 | Smooth scroll | Lenis, driven by `gsap.ticker` | One requestAnimationFrame for the whole page | [setup.md](references/setup.md), [feel-layer.md](references/feel-layer.md) |
@@ -58,19 +58,31 @@ Install line and provider wiring: [references/setup.md](references/setup.md). Al
 ```
 STRUQ BASELINE: NON-NEGOTIABLES
 
-TYPE: Two faces, max: one display face and one text face. Fluid scale via
-clamp(), ratio 1.25 to 1.333. Display sizes are LARGE: hero h1 =
-clamp(3rem, 8vw, 9rem), tracking -0.02em to -0.04em, leading 0.95 to 1.05.
-Display weight runs LIGHT (300 to 400). Large and light is the agency signal;
-heavy display (600+) only as a declared genre choice (brutalist, poster),
-never a reflex. Body 1rem to 1.125rem, leading 1.6+, line length 55 to 75ch.
-Hierarchy comes from scale contrast (huge against small), not from five
-medium sizes. Section eyebrows are uppercase 11 to 12px labels tracked 0.1em+,
-not mid-size subheads. FLOOR: body at least 1rem, muted at least 0.875rem,
-nothing under 12px. CONTRAST: body at least 4.5:1, large text at least 3:1.
-The faintest ink tier is non-essential meta only, never body copy.
-No monospace for display, labels, eyebrows, stats or body. Mono is for literal
-code only. Headings get text-wrap: balance; body gets text-wrap: pretty.
+TYPE: Signature first: one pairing id from typography.md §3.1 (S1 to S7;
+Extended E1 to E6 only when no Signature temperament fits), two faces max.
+Never Inter, Roboto, Open Sans, Poppins, Montserrat or Lato; never Space
+Grotesk or Geist as a reflex. Scale 1.333 with skipped steps (body 1, lead
+1.25, h3 1.78, h2 3.16, display 7 to 8). Hero h1 = text-display,
+clamp(2.875rem, 1.2rem + 6.86vw, 8rem), leading 0.92 to 1.0; S4 and S5 set
+larger, S7 smaller (typography.md §3.1). Display runs LIGHT (300 to 400);
+heavy display only as a declared genre (the Brutalist appendix), never a
+reflex. Tracking per face, never one tracking-tight on every size: sans
+display about -0.025 to -0.03em, serif display about -0.01 to -0.025em, h2
+about half that. Body 1rem to 1.0625rem at 400, leading 1.6+, 55 to 75ch;
+emphasis 500, never 700. Hierarchy from scale contrast, not medium sizes.
+ROLES: every string takes a role token, never text-xs, text-lg or text-5xl:
+font-display text-display, font-display text-h2, type-h3 text-h3,
+text-lead, text-body, text-small, eyebrow text-eyebrow, font-ui text-ui,
+stat text-stat. Eyebrows: uppercase 0.75rem (the 12px floor), tracked 0.12
+to 0.18em per face, ink-muted, one per section, never ink-faint.
+FLOOR: body at least 1rem, muted at least 0.875rem, nothing under 12px.
+CONTRAST: body at least 4.5:1, large text at least 3:1. ink-faint is never
+text: hairlines and disabled states only.
+SIGNATURE: every STRUQ.md declares one typographic signature move
+(typography.md §5: weight-in, soft-scrub, type-mask-media,
+fit-width-wordmark, a cropped display). The masked line rise is a
+technique, not the default hero. Mono only for literal code. Headings get
+text-wrap: balance; body gets text-wrap: pretty.
 
 SPACING: Base-8 rhythm with deliberate asymmetry. Section padding varies by
 role: hero 12 to 20rem, dense content 6 to 8rem, breathers 16 to 24rem. NEVER
@@ -78,10 +90,12 @@ uniform py-16 on every section. Whitespace is a material: at least one section
 should feel "too empty" by SaaS standards.
 
 SCALING: One fluid root-rem knob, not per-breakpoint size ladders:
-html { font-size: clamp(0.9375rem, 0.836rem + 0.45vw, 1.1875rem); }
-The rem term keeps browser zoom working. Author everything in rem; px only
-for 1px hairlines. Breakpoints change LAYOUT (columns, stack or row), never
-size. Display headlines keep their own clamp() on top for drama.
+html { font-size: clamp(1rem, 0.92rem + 0.2vw, 1.125rem); }
+16px at 390, about 17.6px at 1440, frozen at 18px from about 1640. Every
+clamp() keeps a rem term in its middle so zoom works; a vw-only middle is a
+bug. Author everything in rem; px only for 1px hairlines. Breakpoints change
+LAYOUT (columns, stack or row), never size. Display roles carry their own
+clamp() on top.
 
 SURFACE: Elevation is a tonal step, not a drop shadow. Dark mode: each layer
 steps LIGHTER (#0A0A0B, #111113, #19191C, #232328). Light mode: pick one
@@ -133,7 +147,7 @@ Why each rule earns its place: [references/baseline-prompt.md](references/baseli
 Ordered by visual payoff divided by implementation cost. Do 1 to 7 on every build; 8 to 13 when the page calls for them.
 
 1. **Page architecture.** Which sections exist, in what order, and where the showpiece sits. Free, and it decides everything downstream. A perfect section inside a template arc still reads as a template. [references/page-architecture.md](references/page-architecture.md)
-2. **Typography.** The pairing, the light display weight, the fluid scale, the eyebrow system. This is 70% of "looks designed". Set the root-rem knob ([references/scaling.md](references/scaling.md)) first, then the type system ([references/typography.md](references/typography.md)).
+2. **Typography.** The Signature pairing, the light display weight, the role tokens, the eyebrow system, the one signature move. This is 70% of "looks designed". Set the root-rem knob ([references/scaling.md](references/scaling.md)) first, then the type system ([references/typography.md](references/typography.md)).
 3. **Palette and surfaces.** Kills the "Tailwind default" look instantly. [references/vibe-presets.md](references/vibe-presets.md)
 4. **Masked, staggered scroll reveals.** The single highest-payoff motion technique, including the curtain section reveal. [references/scroll-reveals.md](references/scroll-reveals.md)
 5. **The feel layer.** Lenis lerp, scrub smoothing, ease selection. Wrong values make good techniques feel cheap. [references/feel-layer.md](references/feel-layer.md)
@@ -157,7 +171,9 @@ These scream "generated". Never ship them:
 - A three-column grid of identical `rounded-xl border shadow-sm` cards with a centered icon, an h3 and two lines of gray text
 - Blue to purple (or teal to violet) gradients on backgrounds, buttons or `bg-clip-text` headlines
 - Uniform `py-16` or `py-24` on every section, where every section is a centered h2, a subhead and a grid
-- Inter (or the system stack) for everything, bold 700 display headlines, five medium heading sizes
+- Off-list faces: Inter, Roboto, Open Sans, Poppins or Montserrat (or Lato, or the system stack) for everything, or Space Grotesk or Geist as the reflex "technical" face, instead of a Signature pairing
+- Bold 700 display headlines, five medium heading sizes, one `tracking-tight` on every size, ad-hoc `text-xs uppercase tracking-[...]` eyebrows instead of the role tokens
+- `text-ink-faint` on any text
 - `shadow-md` or `shadow-lg` as the elevation system on gray-50 cards
 - Opacity-only fade-ins, all fired at once, with default `ease-in-out` and `duration-300`
 - `bg-white` page, `text-gray-500` body, `border-gray-200` everywhere
