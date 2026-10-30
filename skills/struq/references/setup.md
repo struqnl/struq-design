@@ -6,7 +6,7 @@
 > the Lenis+ticker provider, and all `useGSAP` rules below are identical on both stacks;
 > only *where* you mount them changes.
 
-Stack: Next.js App Router · TypeScript · Tailwind (v4 or later, for `@theme`) · GSAP (3.13 or later, when every plugin became free, including SplitText and ScrollSmoother) · Lenis · Motion (the framer-motion successor, import from `motion/react`) · Radix primitives · Struq Icons (`@deckdot/struq-icons`, the default family; Phosphor light is the fallback; one icon family per project, never mixed, never reflexive Lucide; see [iconography.md](iconography.md)) · Three.js / React Three Fiber / Drei / postprocessing when a WebGL moment is planned. No other version is assumed: the project's installed versions decide (§0).
+Stack: Next.js App Router · TypeScript · Tailwind (v4 or later, for `@theme`) · GSAP (3.13 or later, when every plugin became free, including SplitText and ScrollSmoother) · Lenis · Motion (the framer-motion successor, import from `motion/react`) · Radix primitives · Struq Icons (`@struq/icons`, the default family; Phosphor light is the fallback; one icon family per project, never mixed, never reflexive Lucide; see [iconography.md](iconography.md)) · Three.js / React Three Fiber / Drei / postprocessing when a WebGL moment is planned. No other version is assumed: the project's installed versions decide (§0).
 
 ## 0. Detect versions before writing code
 
@@ -46,7 +46,7 @@ Run it after §0, so every package resolves against the scaffold's installed Rea
 
 ```bash
 # Core: motion, scroll, primitives, icons (Struq Icons is the default family)
-npm i gsap @gsap/react lenis motion radix-ui @deckdot/struq-icons
+npm i gsap @gsap/react lenis motion radix-ui @struq/icons
 
 # Fallback icon family, only when iconography.md §2 resolves past Struq Icons
 # npm i @phosphor-icons/react
@@ -227,9 +227,9 @@ Mount the provider in the root layout (it's a client component wrapping server c
 
 ```tsx
 // app/layout.tsx
-import "@deckdot/struq-icons/tokens.css"; // icon colour variables (iconography.md §2)
-import "@deckdot/struq-icons/icons.css";  // hover motion, reduced motion handled by the set
-import "@deckdot/struq-icons/states.css"; // optional: one tone at rest, accent where you act
+import "@struq/icons/tokens.css"; // icon colour variables (iconography.md §2)
+import "@struq/icons/icons.css";  // hover motion, reduced motion handled by the set
+import "@struq/icons/states.css"; // optional: one tone at rest, accent where you act
 import "./globals.css";                   // after the icon CSS, so the site's tokens win
 import { SmoothScrollProvider } from "@/components/providers/smooth-scroll";
 

@@ -168,7 +168,7 @@ Palette: light · --surface-0 #FAF6F0 --surface-1 #F3EDE2 --surface-2 #EAE1D2 --
   --ink #1E1A16 --ink-muted #5E554C --ink-faint #A59C8F (non-text only) --accent #7A2230
   --line rgb(30 26 22 / 0.14)
 Radius: 2px buttons and frames
-Icons: Struq Icons, @deckdot/struq-icons, strokeWidth 1.5, accent = --color-accent (iconography.md §2 default)
+Icons: Struq Icons, @struq/icons, strokeWidth 1.5, accent = --color-accent (iconography.md §2 default)
 Imagery: warm film grade, ratios 21/9, 4/5, 1/1, grain 0.04
 Scroll: Lenis lerp 0.1 on gsap.ticker
 Motion: baseline (micro 0.2 to 0.3s, hero 1.0 to 1.6s, exits power2.in, swaps
