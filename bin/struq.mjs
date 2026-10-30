@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// npx struq@latest: copies the Struq skill into every AI coding tool found on this machine.
+// npx @struq/skill@latest: copies the Struq skill into every AI coding tool found on this machine.
 // No dependencies, no prompts (an agent can run it unattended), and nothing is fetched beyond
 // this package: the skill ships inside it, in skills/struq.
 
@@ -28,11 +28,11 @@ const TOOLS = [
 const HELP = `Struq skill ${version}: websites at the level of a design studio, built by your own AI.
 
 Usage
-  npx struq@latest              install for every AI tool found on this machine
-  npx struq@latest --claude     only for one tool: ${TOOLS.map((t) => `--${t.flag}`).join(', ')}
-  npx struq@latest --project    into this project instead of your home folder
-  npx struq@latest remove       remove the skill again (takes the same flags)
-  npx struq@latest --help       show this
+  npx @struq/skill@latest              install for every AI tool found on this machine
+  npx @struq/skill@latest --claude     only for one tool: ${TOOLS.map((t) => `--${t.flag}`).join(', ')}
+  npx @struq/skill@latest --project    into this project instead of your home folder
+  npx @struq/skill@latest remove       remove the skill again (takes the same flags)
+  npx @struq/skill@latest --help       show this
 
 Run it again at any time to update. More: https://struq.nl/skill
 `;
@@ -48,7 +48,7 @@ function parse(argv) {
     else if (arg === '--global' || arg === '-g') options.project = false;
     else {
       const tool = TOOLS.find((t) => arg === `--${t.flag}`);
-      if (!tool) throw new Error(`Unknown option "${arg}". Run npx struq@latest --help.`);
+      if (!tool) throw new Error(`Unknown option "${arg}". Run npx @struq/skill@latest --help.`);
       options.only.push(tool);
     }
   }

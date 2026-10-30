@@ -7,7 +7,7 @@ Struq is a design skill for Claude Code, Codex, Cursor and OpenCode. Give it a b
 The icon set the skill uses by default, Struq Icons, is browsable at [struq.nl/iconen](https://struq.nl/iconen).
 
 ```bash
-npx struq@latest
+npx @struq/skill@latest
 ```
 
 It finds the AI tools on your machine and installs the skill into each of them. Then, in your agent:
@@ -18,7 +18,7 @@ It finds the AI tools on your machine and installs the skill into each of them. 
 
 | Agent | How to invoke |
 |---|---|
-| Claude Code (installed with `npx struq` or `npx skills`) | `/struq <brief>` |
+| Claude Code (installed with `npx @struq/skill` or `npx skills`) | `/struq <brief>` |
 | Claude Code (installed as a plugin) | `/struq:struq <brief>` |
 | Codex | `$struq <brief>` |
 | Cursor | invoke the struq skill by name: "use the struq skill to build ..." |
@@ -97,14 +97,14 @@ In Codex, use `$struq` instead of `/struq`; as a Claude Code plugin the command 
 
 ```bash
 # every AI tool on this machine: Claude Code, Cursor, Codex, OpenCode, Gemini CLI, Copilot, Windsurf
-npx struq@latest
+npx @struq/skill@latest
 
 # one tool only, or into the current project instead of your home folder
-npx struq@latest --claude
-npx struq@latest --project
+npx @struq/skill@latest --claude
+npx @struq/skill@latest --project
 ```
 
-Run it again to update, and `npx struq@latest remove` to take it out.
+Run it again to update, and `npx @struq/skill@latest remove` to take it out.
 
 With the open skills CLI, which knows 70+ agents:
 
