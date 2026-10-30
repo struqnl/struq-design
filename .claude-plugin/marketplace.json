@@ -4,6 +4,7 @@
     "name": "Struq",
     "url": "https://struq.nl"
   },
+  "description": "Struq: award-tier web design for coding agents.",
   "plugins": [
     {
       "name": "struq",
