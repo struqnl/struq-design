@@ -1,7 +1,7 @@
 {
   "name": "struq",
   "owner": {
-    "name": "Roy Heilbron",
+    "name": "Struq",
     "url": "https://struq.nl"
   },
   "plugins": [
@@ -9,7 +9,7 @@
       "name": "struq",
       "source": "./",
       "description": "Award-tier web design for coding agents.",
-      "repository": "https://github.com/Deckdot/struq-design"
+      "repository": "https://github.com/struqnl/struq-design"
     }
   ]
 }

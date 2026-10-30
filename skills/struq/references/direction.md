@@ -150,7 +150,7 @@ Hero entrance: <the preset's named entrance, or a declared different one>
 Palette: <light | dark> · --surface-0 #... --surface-1 #... --surface-2 #... --surface-3 #...
   --ink #... --ink-muted #... --ink-faint #... (non-text only) --accent #... --line <...>
 Radius: <n>px
-Icons: <family, package, stroke> (default: Struq Icons, @deckdot/struq-icons, strokeWidth 1.5, accent = --color-accent)
+Icons: <family, package, stroke> (default: Struq Icons, @struq/icons, strokeWidth 1.5, accent = --color-accent)
 Imagery: <grade>, ratios <2 to 3>, grain <opacity | none>
 Scroll: Lenis lerp <the preset's stated value | native, because ...> on gsap.ticker
 Motion: baseline | deviations: <each one, with its reason>

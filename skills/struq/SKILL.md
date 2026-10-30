@@ -40,7 +40,7 @@ This is the stack and the layer each tool owns. It is fixed on purpose: the "wei
 | Text motion | SplitText | Masked line rise, char stagger, scroll color fill | [typography.md](references/typography.md) |
 | SVG motion | DrawSVG, MorphSVG, MotionPath | Draw-on-scroll paths, logo morphs, signature marks | [svg-motion.md](references/svg-motion.md) |
 | Showpieces | Pinned scrub, horizontal galleries, sticky stacks | One or two per site, placed at act breaks | [showcase.md](references/showcase.md), [pinning-scrub.md](references/pinning-scrub.md) |
-| Icons | Struq Icons (`@deckdot/struq-icons`) by default, after the brand's own set; else Phosphor (light), else Iconoir or Tabler | One icon family per site, never mixed, never Lucide by reflex | [iconography.md](references/iconography.md) |
+| Icons | Struq Icons (`@struq/icons`) by default, after the brand's own set; else Phosphor (light), else Iconoir or Tabler | One icon family per site, never mixed, never Lucide by reflex | [iconography.md](references/iconography.md) |
 | Hover and pointer | GSAP `quickTo` (magnetic, cursor), CSS + GSAP hover scenes | Garnish, applied last | [micro-interactions.md](references/micro-interactions.md) |
 | React lifecycle | Motion (`motion/react`) | Mount/unmount, `layoutId`, gesture state | GSAP vs Motion below |
 | Overlays | Radix primitives (Dialog for menus and modals) | Focus trap, Escape, scroll lock paired with `lenis.stop()` | [nav-header.md](references/nav-header.md) |

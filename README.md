@@ -7,10 +7,10 @@ Struq is a design skill for Claude Code, Codex, Cursor and OpenCode. Give it a b
 The icon set the skill uses by default, Struq Icons, is browsable at [struq.nl/iconen](https://struq.nl/iconen).
 
 ```bash
-npx skills add deckdot/struq-design -g
+npx struq@latest
 ```
 
-Then, in your agent:
+It finds the AI tools on your machine and installs the skill into each of them. Then, in your agent:
 
 ```text
 /struq a portfolio for an architecture studio in Rotterdam, dark, calm, lots of photography
@@ -18,7 +18,7 @@ Then, in your agent:
 
 | Agent | How to invoke |
 |---|---|
-| Claude Code (installed with `npx skills`) | `/struq <brief>` |
+| Claude Code (installed with `npx struq` or `npx skills`) | `/struq <brief>` |
 | Claude Code (installed as a plugin) | `/struq:struq <brief>` |
 | Codex | `$struq <brief>` |
 | Cursor | invoke the struq skill by name: "use the struq skill to build ..." |
@@ -73,7 +73,7 @@ Where Struq lost points: craft. The plain builds are less ambitious and break le
 | 3D | Three.js, React Three Fiber, Drei and postprocessing as lazy islands with poster fallbacks |
 | Direction | A directed mode for full WebGL experiences: chapters, camera shots, handoffs, ownership |
 
-Stack: Next.js App Router and Tailwind by default, Vite supported. It reads the versions your project has installed and adapts to them; nothing is pinned. Every GSAP plugin used is free on npm. Icons: [Struq Icons](https://struq.nl/iconen) (`@deckdot/struq-icons`, MIT) by default.
+Stack: Next.js App Router and Tailwind by default, Vite supported. It reads the versions your project has installed and adapts to them; nothing is pinned. Every GSAP plugin used is free on npm. Icons: [Struq Icons](https://struq.nl/iconen) (`@struq/icons`, MIT) by default.
 
 ## Commands
 
@@ -96,17 +96,26 @@ In Codex, use `$struq` instead of `/struq`; as a Claude Code plugin the command 
 ## Install options
 
 ```bash
-# every supported agent on this machine
-npx skills add deckdot/struq-design -g
+# every AI tool on this machine: Claude Code, Cursor, Codex, OpenCode, Gemini CLI, Copilot, Windsurf
+npx struq@latest
 
-# one agent only
-npx skills add deckdot/struq-design -g --agent claude-code
+# one tool only, or into the current project instead of your home folder
+npx struq@latest --claude
+npx struq@latest --project
+```
+
+Run it again to update, and `npx struq@latest remove` to take it out.
+
+With the open skills CLI, which knows 70+ agents:
+
+```bash
+npx skills add struqnl/struq-design -g
 ```
 
 As a Claude Code plugin (the command is then `/struq:struq`):
 
 ```text
-/plugin marketplace add deckdot/struq-design
+/plugin marketplace add struqnl/struq-design
 /plugin install struq@struq
 ```
 
@@ -117,7 +126,7 @@ Node 18+ is required. The screenshot step uses whatever browser tool your agent 
 Struq builds use [Struq Icons](https://struq.nl/iconen) by default: 182 two-tone icons, most with their own hover motion, MIT.
 
 ```bash
-npm install @deckdot/struq-icons
+npm install @struq/icons
 ```
 
 ## License

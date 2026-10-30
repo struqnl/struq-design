@@ -4,13 +4,13 @@
 
 Planning reads only this section ([direction.md](direction.md) §4); the rest is for the build.
 
-- **Family, in this order, stop at the first that fits:** (1) the brand's own drawn set; (2) **Struq Icons**, the default (`npm i @deckdot/struq-icons`, MIT, 182 icons: 118 two-tone with a hover motion, 14 status, 50 glyphs; browse at [struq.nl/iconen](https://struq.nl/iconen)); (3) **Phosphor, weight `light`** (`@phosphor-icons/react`, `thin` for luxury) when the set lacks what the site needs and drawing it is not worth it, or the concept wants a softer, rounder line; (4) **Iconoir or Tabler** at stroke 1.25 when the concept wants a sharper, technical line.
+- **Family, in this order, stop at the first that fits:** (1) the brand's own drawn set; (2) **Struq Icons**, the default (`npm i @struq/icons`, MIT, 182 icons: 118 two-tone with a hover motion, 14 status, 50 glyphs; browse at [struq.nl/iconen](https://struq.nl/iconen)); (3) **Phosphor, weight `light`** (`@phosphor-icons/react`, `thin` for luxury) when the set lacks what the site needs and drawing it is not worth it, or the concept wants a softer, rounder line; (4) **Iconoir or Tabler** at stroke 1.25 when the concept wants a sharper, technical line.
 - **One icon family per site, never mixed.** Never two, never Lucide by reflex. If the chosen family lacks an icon, draw it to that family's rules or move the whole site down the list (§2).
 - **Struq Icons on a Struq site:** `strokeWidth={1.5}` next to light display type (`1.25` for luxury); the accent mapped to the site's own `--color-accent` (§2), not the set's default flame; `states.css` on, so icons rest in one tone and the accent shows where you act.
 - **Size and color:** one size per context (`size={20}` inline, `size={24}` nav, or a `size-5` / `size-6` class so the icon rides the root-rem knob), ink-colored; color only for state and semantics.
 - **Budget:** functional icons only (nav, close, chevrons, form states, CTA anchors). No 3-up feature-card icons, no Sparkles, Rocket or Zap, no emoji, no colored chips.
 - **Motion:** the set's own hover motion (200ms, hover and focus only, never on load, never looping, off under reduced motion) is inside the budget. Other animated icons under 500ms on click, never looping in standard UI, static under reduced motion.
-- **Record in STRUQ.md SYSTEM:** `Icons: Struq Icons, @deckdot/struq-icons, strokeWidth 1.5, accent = --color-accent, states.css on`.
+- **Record in STRUQ.md SYSTEM:** `Icons: Struq Icons, @struq/icons, strokeWidth 1.5, accent = --color-accent, states.css on`.
 
 ---
 
@@ -60,7 +60,7 @@ something picked per component. Resolve it top to bottom and stop at the first t
 | # | Family | When | Install | Weight to match light display type |
 |---|---|---|---|---|
 | 1 | **The brand's own icons** | The client already has a drawn set | their files, inlined as components | as drawn |
-| 2 | **Struq Icons** | The default for every Struq build: a two-tone set on one 24 grid (a base tone for the shape, an accent on the part that carries the meaning), each icon with its own hover motion and a draw-in variant | `npm i @deckdot/struq-icons`; sprite, plain SVG and Iconify JSON (prefix `struq`) for non-React stacks | `strokeWidth={1.5}` (the set's default 2 is Lucide weight; `1.25` for luxury) |
+| 2 | **Struq Icons** | The default for every Struq build: a two-tone set on one 24 grid (a base tone for the shape, an accent on the part that carries the meaning), each icon with its own hover motion and a draw-in variant | `npm i @struq/icons`; sprite, plain SVG and Iconify JSON (prefix `struq`) for non-React stacks | `strokeWidth={1.5}` (the set's default 2 is Lucide weight; `1.25` for luxury) |
 | 3 | **Phosphor** | A softer, rounder line, or a site that needs icons the Struq set does not have | `npm i @phosphor-icons/react`, or Iconify `ph:` | `weight="light"` (or `"thin"` for luxury) |
 | 4 | **Iconoir** or **Tabler** | A sharper, more technical or architectural line | `npm i iconoir-react` / `@tabler/icons-react`, or Iconify `iconoir:` / `tabler:` | Tabler `stroke={1.25}`; Iconoir `strokeWidth={1.25}` |
 
@@ -70,9 +70,9 @@ Import the stylesheets once, at the root, before the site's own stylesheet; then
 
 ```tsx
 // app/layout.tsx (Next) or src/main.tsx (Vite): once, before globals.css
-import "@deckdot/struq-icons/tokens.css";
-import "@deckdot/struq-icons/icons.css";
-import "@deckdot/struq-icons/states.css"; // optional: one tone at rest, the accent on hover, focus and current
+import "@struq/icons/tokens.css";
+import "@struq/icons/icons.css";
+import "@struq/icons/states.css"; // optional: one tone at rest, the accent on hover, focus and current
 ```
 
 ```css
@@ -86,7 +86,7 @@ body {
 ```
 
 ```tsx
-import { ArrowRight, Search } from "@deckdot/struq-icons";
+import { ArrowRight, Search } from "@struq/icons";
 
 <a href="/work" className="font-ui text-ui inline-flex items-center gap-2">
   Selected work <ArrowRight size={20} strokeWidth={1.5} />
@@ -99,7 +99,7 @@ import { ArrowRight, Search } from "@deckdot/struq-icons";
 
 - **Props:** `size` (16, 20, 24, 32 or 48 px; a `size-5` class overrides it in rem), `strokeWidth`, `label` (names it for screen readers; without one it is `aria-hidden` decoration), `animate` (`"hover"` default, `"draw"`, `"none"`), `color` and `accentColor` (any CSS colour, set per icon; they beat the variables). Other SVG props pass through.
 - **Server components.** The icons use no hooks, so they render in server components. Only the draw-in entry is a client component.
-- **Draw-in** for one empty state, first run or hero moment, never a list: `import { StruqIconDraw } from "@deckdot/struq-icons/draw"`, `<StruqIconDraw icon={Inbox} size={48} delay={0.2} />`. It needs `motion` (already in the stack), draws once, never loops, and shows the finished icon on the server, without JS and under reduced motion.
+- **Draw-in** for one empty state, first run or hero moment, never a list: `import { StruqIconDraw } from "@struq/icons/draw"`, `<StruqIconDraw icon={Inbox} size={48} delay={0.2} />`. It needs `motion` (already in the stack), draws once, never loops, and shows the finished icon on the server, without JS and under reduced motion.
 - **Name clashes.** `Link`, `Image`, `File` and `Text` collide with `next/link`, `next/image` and DOM globals; import the `LinkIcon`, `ImageIcon`, `FileIcon` and `TextIcon` aliases instead.
 - **Accent off in one area:** `data-icon-accent="off"` on a parent paints the accent in the base colour (needs `icons.css`). `data-icons="live"` keeps the accent on at rest in an area when `states.css` is loaded.
 - **Status icons** (one tone) take their colour from the place they sit in: they follow `currentColor`, or a token through `color="var(--color-...)"`, never a hex.

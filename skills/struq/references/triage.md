@@ -48,7 +48,7 @@ change its dress.
 - **Scaling**: convert px-everything + per-breakpoint size ladders to the fluid root-rem
   system ([scaling.md](scaling.md)).
 - **Icon misuse**: remove Sparkles/Rocket/Zap/emoji, colored chips, decorative filler;
-  consolidate to one icon family ([iconography.md](iconography.md)): the brand's own set if it has one, else Struq Icons (`@deckdot/struq-icons`). A redesign that already uses one coherent non-Lucide family keeps it (preserve by default); one family per site, never mixed.
+  consolidate to one icon family ([iconography.md](iconography.md)): the brand's own set if it has one, else Struq Icons (`@struq/icons`). A redesign that already uses one coherent non-Lucide family keeps it (preserve by default); one family per site, never mixed.
 - **Everything in [anti-patterns.md](anti-patterns.md)**: that gallery is the fix list.
 
 ---
