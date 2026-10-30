@@ -129,6 +129,14 @@ Struq builds use [Struq Icons](https://struq.nl/iconen) by default: 182 two-tone
 npm install @struq/icons
 ```
 
+## What it fetches and sends
+
+Struq is instructions and reference files. It runs no code of its own and collects or sends nothing about you or your project.
+
+- **Photos, only when your brief has none.** The skill has your agent read the public pack list at `https://struq.nl/api/media/packs` and download the chosen images from `https://struq.nl/media/packs/` into your project. These are plain public requests: no account, no key, and nothing from your project goes with them. The images are CC0.
+- **Checks.** The screenshot and performance checks run against your own local dev server, with your agent's own browser tool.
+- **The installer.** `npx @struq/skill@latest` downloads the package from npm, looks for the AI tools' folders in your home folder and copies the skill into them. It sends nothing.
+
 ## License
 
 MIT
