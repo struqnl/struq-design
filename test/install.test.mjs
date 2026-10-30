@@ -8,7 +8,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const CLI = fileURLToPath(new URL('../bin/struq.mjs', import.meta.url));
+const CLI = fileURLToPath(new URL('../cli/struq.mjs', import.meta.url));
 
 function home(...tools) {
   const dir = mkdtempSync(join(tmpdir(), 'struq-home-'));

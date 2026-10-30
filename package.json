@@ -23,10 +23,10 @@
   ],
   "type": "module",
   "bin": {
-    "struq": "bin/struq.mjs"
+    "struq": "cli/struq.mjs"
   },
   "files": [
-    "bin",
+    "cli",
     "skills",
     "README.md",
     "LICENSE"
