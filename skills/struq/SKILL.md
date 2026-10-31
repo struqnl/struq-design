@@ -1,237 +1,233 @@
 ---
 name: struq
-description: "Award-tier web design for coding agents. Builds cinematic, agency-grade marketing sites, landing pages and portfolios at FWA / Awwwards level: two-face typography with light display weights, curated palettes, Lenis smooth scroll on one GSAP clock, SplitText, DrawSVG and MorphSVG, masked reveals, pinned and horizontal showpieces, hover choreography, full-screen route transitions, Radix overlays, and Three.js / R3F / Drei / postprocessing moments. Use when designing, building, redesigning, animating or auditing a marketing or narrative site, or when a page must feel premium, custom, cinematic or award-winning instead of templated. Stack: Next.js App Router + Tailwind v4 or later (Vite supported), versions detected from the project."
+description: "Award-tier web design for coding agents. Builds cinematic, agency-grade marketing sites, landing pages and portfolios: two-face typography with light display weights, curated palettes, art-directed CC0 photography from the Struq beeldbank, Lenis smooth scroll on one GSAP clock, SplitText headlines, masked reveals, a pinned or horizontal showpiece, a WebGL hero layer with a poster fallback, and a magnetic CTA. Ships tested copy-in components and a self-check script. Use when designing, building, redesigning, animating or auditing a marketing or narrative site, or when a page must feel premium, custom, cinematic or award-winning instead of templated. Stack: Next.js App Router + Tailwind v4 (Vite supported)."
 argument-hint: "[brief] | redesign <path> | audit <path-or-url> | direct <brief>"
 ---
 
 # Struq
 
-The gap between "looks like a template" and "looks like an award-winning agency build" is not talent. It is a finite set of decisions, made in the right order, executed on the right stack. Struq is those decisions. Apply the baseline to **every** build and load reference files only for the techniques the page actually uses.
+A site looks like a template because every choice in it is the likeliest one. Struq replaces those choices with the ones an award-winning studio makes, and ships them as **tested components and two scripts**, so the build spends its effort on the page, not on plumbing. Follow the Build checklist below in order. The references are depth for when a step needs it; you do not need to read them to finish a good build.
 
-**Register check.** Struq is for marketing, landing, portfolio and narrative sites: the cinematic, scroll-driven, agency register. For dashboards and product UI, keep the type and surface rules from the baseline, drop Lenis, cinematic durations and showpieces. Density and native scroll win there.
+`<skill-dir>` below is the folder this SKILL.md is in (Claude Code prints it as "Base directory for this skill"). Typical paths: `.claude/skills/struq`, `~/.claude/skills/struq`, `.agents/skills/struq`.
 
 ## Modes
 
-Read the argument and pick one. State the mode in one line, then work.
-
-| Invocation | Mode | What happens |
-|---|---|---|
-| `/struq <brief>` (or no argument) | **Build** | Run the Direction phases into `STRUQ.md`, stop once for a veto, build, verify. |
-| `/struq redesign <path>` | **Redesign** | Audit assets and performance, triage the current site ([references/triage.md](references/triage.md)), then Direction with the brand kept, then build. |
-| `/struq audit <path-or-url>` | **Audit** | No code changes. Screenshot, run the tell scan and feel audit, return a scored report (see Audit below). |
-| `/struq direct <brief>` | **Directed** | One continuous WebGL experience across chapters (persistent stage, camera shots, handoffs). Run Direction phases 0 to 3 into `STRUQ.md`, then enter [cinematic/README.md](cinematic/README.md), which appends its direction to the same file. Use only when the brief is genuinely an "experience", not a site with a 3D hero. |
-
-**Plan everything before the first component.** Build and Redesign always start with [references/direction.md](references/direction.md): intake, brand (name, SVG logo and mark, when there is none), concept (the one idea and its motif), system (two typefaces, palette, icon family, imagery, motion), and the site plan (pages, arc, showpieces, transitions, SEO). It all goes into one file, `STRUQ.md` in the project root, which is the only plan artifact and the contract for the rest of the build. Stop once, at the gate, then build.
-
-**Ask for materials, never invent them.** Use the logo, copy, photos and numbers that exist. With a usable brief, do not stop to ask first: plan with what is there, and put the materials request inside the one gate message ("Veto anything? If you have a logo, photos or real numbers, send them now."). Where something is still missing, write real, specific running copy for the brief and plan imagery from one Struq beeldbank pack ([references/struq-imagery.md](references/struq-imagery.md)) or as graded placeholders ([references/imagery.md](references/imagery.md) §4b). Never lorem, never "Acme", never invented testimonials, logos or stats. Never write in a real person's or brand's voice: no invented bio, process claims, quotes or catalogue facts; anything the layout needs before the real copy arrives is a labelled draft listed under ASSUMPTIONS ([references/direction.md](references/direction.md) §1).
-
-## The recipe
-
-This is the stack and the layer each tool owns. It is fixed on purpose: the "weighted, expensive" feel comes from these pieces sharing one clock, not from any single effect.
-
-| Layer | Tool | Rule of thumb | Reference |
-|---|---|---|---|
-| Brand | Name, SVG wordmark and mark, favicon set | Positioning before name; the wordmark is drawn from the display face | [brand.md](references/brand.md) |
-| Typography | Signature first: one pairing id (S1 to S7), one display face and one text face, set through role tokens | Display runs **large and light (300 to 400)**. Hierarchy from scale contrast, not weight. One signature move per site. | [typography.md](references/typography.md) |
-| Palette | Tokens on `:root` via Tailwind `@theme` (v4 or later) | Temperature-shifted neutrals do 95% of the work, one accent | [vibe-presets.md](references/vibe-presets.md) |
-| Scale | One fluid root-rem knob | Everything in rem; breakpoints change layout, never size | [scaling.md](references/scaling.md) |
-| Smooth scroll | Lenis, driven by `gsap.ticker` | One requestAnimationFrame for the whole page | [setup.md](references/setup.md), [feel-layer.md](references/feel-layer.md) |
-| Scroll motion | GSAP + ScrollTrigger | Scrub for scroll-tied values; masked reveals over fades | [scroll-reveals.md](references/scroll-reveals.md) |
-| Text motion | SplitText | Masked line rise, char stagger, scroll color fill | [typography.md](references/typography.md) |
-| SVG motion | DrawSVG, MorphSVG, MotionPath | Draw-on-scroll paths, logo morphs, signature marks | [svg-motion.md](references/svg-motion.md) |
-| Showpieces | Pinned scrub, horizontal galleries, sticky stacks | One or two per site, placed at act breaks | [showcase.md](references/showcase.md), [pinning-scrub.md](references/pinning-scrub.md) |
-| Icons | Struq Icons (`@struq/icons`) by default, after the brand's own set; else Phosphor (light), else Iconoir or Tabler | One icon family per site, never mixed, never Lucide by reflex | [iconography.md](references/iconography.md) |
-| Hover and pointer | GSAP `quickTo` (magnetic, cursor), CSS + GSAP hover scenes | Garnish, applied last | [micro-interactions.md](references/micro-interactions.md) |
-| React lifecycle | Motion (`motion/react`) | Mount/unmount, `layoutId`, gesture state | GSAP vs Motion below |
-| Overlays | Radix primitives (Dialog for menus and modals) | Focus trap, Escape, scroll lock paired with `lenis.stop()` | [nav-header.md](references/nav-header.md) |
-| Page flow | Full-screen cover, swap, reveal transitions; session-gated loader | Every route change is a designed moment | [route-transitions.md](references/route-transitions.md), [loaders.md](references/loaders.md) |
-| 3D moments | Three.js, R3F, Drei, postprocessing | Lazy island, poster fallback, driven from the same ticker | [webgl-r3f.md](references/webgl-r3f.md), [webgl-scenes.md](references/webgl-scenes.md) |
-| Findability | Metadata API, an OG image per route, sitemap, robots, JSON-LD | One h1 per page; loaders and reveals never hide content from the HTML | [seo.md](references/seo.md) |
-| Performance | ffmpeg, next/image, gltf-transform, next/font | Assets first: budgets per role, posters always, WebGL never in the first-load bundle | [performance.md](references/performance.md) |
-
-Install line and provider wiring: [references/setup.md](references/setup.md). All GSAP plugins are free on npm from GSAP 3.13 on (the minimum version); no token, no club. No other version is assumed: the installed project decides ([references/setup.md](references/setup.md) §0).
-
-## The baseline (applies to everything)
-
-<!-- CANONICAL: this is the single source of the baseline block. references/baseline-prompt.md carries a standalone copy for pasting into other agents; after editing here, re-copy the block there. -->
-
-```
-STRUQ BASELINE: NON-NEGOTIABLES
-
-TYPE: Signature first: one pairing id from typography.md §3.1 (S1 to S7;
-Extended E1 to E6 only when no Signature temperament fits), two faces max.
-Never Inter, Roboto, Open Sans, Poppins, Montserrat or Lato; never Space
-Grotesk or Geist as a reflex. Scale 1.333 with skipped steps (body 1, lead
-1.25, h3 1.78, h2 3.16, display 7 to 8). Hero h1 = text-display,
-clamp(2.875rem, 1.2rem + 6.86vw, 8rem), leading 0.92 to 1.0; S4 and S5 set
-larger, S7 smaller (typography.md §3.1). Display runs LIGHT (300 to 400);
-heavy display only as a declared genre (the Brutalist appendix), never a
-reflex. Tracking per face, never one tracking-tight on every size: sans
-display about -0.025 to -0.03em, serif display about -0.01 to -0.025em, h2
-about half that. Body 1rem to 1.0625rem at 400, leading 1.6+, 55 to 75ch;
-emphasis 500, never 700. Hierarchy from scale contrast, not medium sizes.
-ROLES: every string takes a role token, never text-xs, text-lg or text-5xl:
-font-display text-display, font-display text-h2, type-h3 text-h3,
-text-lead, text-body, text-small, eyebrow text-eyebrow, font-ui text-ui,
-stat text-stat, and font-display text-statement for the one Orient line
-or manifesto. Eyebrows: uppercase 0.75rem (the 12px floor), tracked 0.12
-to 0.18em per face, ink-muted, one per section, never ink-faint.
-FLOOR: body at least 1rem, muted at least 0.875rem, nothing under 12px.
-CONTRAST: body at least 4.5:1, large text at least 3:1. ink-faint is never
-text: hairlines and disabled states only.
-SIGNATURE: every STRUQ.md declares one typographic signature move
-(typography.md §5: weight-in, soft-scrub, type-mask-media,
-fit-width-wordmark, a cropped display). The masked line rise is a
-technique, not the default hero. Mono only for literal code. Headings get
-text-wrap: balance; body gets text-wrap: pretty.
-
-SPACING: Base-8 rhythm with deliberate asymmetry. Section padding varies by
-role: hero 12 to 20rem, dense content 6 to 8rem, breathers 16 to 24rem. NEVER
-uniform py-16 on every section. Whitespace is a material: at least one section
-should feel "too empty" by SaaS standards.
-
-SCALING: One fluid root-rem knob, not per-breakpoint size ladders:
-html { font-size: clamp(1rem, 0.92rem + 0.2vw, 1.125rem); }
-16px at 390, about 17.6px at 1440, frozen at 18px from about 1640. Every
-clamp() keeps a rem term in its middle so zoom works; a vw-only middle is a
-bug. Author everything in rem; px only for 1px hairlines. Breakpoints change
-LAYOUT (columns, stack or row), never size. Display roles carry their own
-clamp() on top.
-
-SURFACE: Elevation is a tonal step, not a drop shadow. Dark mode: each layer
-steps LIGHTER (#0A0A0B, #111113, #19191C, #232328). Light mode: pick one
-direction and keep it (panels a shade deeper than a toned page, or white lifted
-off a toned page). Hairline borders about 8 to 12% off the surface; in light
-mode a border is the ink at low alpha (rgb(<ink> / 0.08 to 0.14)), never a
-flat gray hex. Shadows only for true floating elements, then large, soft and faint
-(0 24px 80px -12px rgb(0 0 0 / 0.4)). Never shadow-md or shadow-lg.
-
-COLOR: One accent, used sparingly (links, the key CTA, one highlight per
-viewport). Neutrals are temperature-shifted (warm cream and off-black, or cool
-charcoal), never pure #FFF and #000 with gray-500 text. A second accent is a
-declared genre choice with its own token and the same budget. No blue to
-purple gradients, no gradient text, no glassmorphism cards.
-
-MOTION: Lenis smooth scroll (lerp 0.09 to 0.11) on one gsap.ticker clock,
-unless the genre calls for native scroll. Every entrance animates opacity AND
-transform (y 24 to 80px, or a clip or overflow mask). Opacity-only fades are
-forbidden. Stagger siblings 0.06 to 0.1s. Durations: micro 0.2 to 0.3s,
-standard UI 0.3 to 0.6s, reveals 0.6 to 1.0s, hero and cinematic 1.0 to 1.6s;
-exits run about 60% of their entrance. Eases: entrances expo-out
-cubic-bezier(0.16, 1, 0.3, 1) (expo.out); exits power2.in; position swaps
-quart-in-out cubic-bezier(0.76, 0, 0.24, 1) (power3.inOut); curtains and
-panels quint-in-out cubic-bezier(0.83, 0, 0.17, 1) (power4.inOut). Never
-default ease-in-out everywhere.
-Scroll-tied effects scrub; they do not fire time-based tweens at a threshold.
-prefers-reduced-motion: gate transforms, keep opacity.
-
-COMPOSITION: Break the grid at least twice per page: an image bleeding off
-the viewport, an element overlapping two sections, oversized type running off
-canvas, a sticky element. No three identical icon cards in a row. Vary section
-layout: after a 50/50 split comes full-bleed or an asymmetric 1/3 and 2/3.
-Icons: ONE coherent family chosen for the brand, one stroke and size,
-ink-colored. Never emoji, never the AI-cliche icons (Sparkles, Rocket, Zap),
-never icons in colored chips. Animated icons run under 500ms on click and
-never loop in standard UI.
-
-DETAILS THAT SELL IT: Real running copy. Tracked uppercase eyebrows as
-wayfinding, not 01/02/03 stamped on every section (one deliberate oversized
-numeral is fine). The footer is designed as hard as the hero. Custom
-::selection color. Visible, designed focus-visible states. Every route change
-is a designed transition, not a hard cut.
-```
-
-Why each rule earns its place: [references/baseline-prompt.md](references/baseline-prompt.md).
-
-## Leverage ranking: spend effort in this order
-
-Ordered by visual payoff divided by implementation cost. Do 1 to 7 on every build; 8 to 13 when the page calls for them.
-
-1. **Page architecture.** Which sections exist, in what order, and where the showpiece sits. Free, and it decides everything downstream. A perfect section inside a template arc still reads as a template. [references/page-architecture.md](references/page-architecture.md)
-2. **Typography.** The Signature pairing, the light display weight, the role tokens, the eyebrow system, the one signature move. This is 70% of "looks designed". Set the root-rem knob ([references/scaling.md](references/scaling.md)) first, then the type system ([references/typography.md](references/typography.md)).
-3. **Palette and surfaces.** Kills the "Tailwind default" look instantly. [references/vibe-presets.md](references/vibe-presets.md)
-4. **Masked, staggered scroll reveals.** The single highest-payoff motion technique, including the curtain section reveal. [references/scroll-reveals.md](references/scroll-reveals.md)
-5. **The feel layer.** Lenis lerp, scrub smoothing, ease selection. Wrong values make good techniques feel cheap. [references/feel-layer.md](references/feel-layer.md)
-6. **Nav and header.** On screen for the whole session; the fullscreen menu is often the most art-directed moment on the site. [references/nav-header.md](references/nav-header.md)
-7. **Imagery and art direction.** One grade, declared ratios, treated assets. Ungraded mixed stock undoes everything above it. [references/imagery.md](references/imagery.md). No photos of their own? Struq's beeldbank comes before stock: [references/struq-imagery.md](references/struq-imagery.md)
-8. **Composition: overlap, bleed, z-choreography.** [references/composition.md](references/composition.md), and how each technique translates at 360 to 430px: [references/mobile-composition.md](references/mobile-composition.md)
-9. **Showpieces.** Pinned scrub timelines, horizontal galleries, sticky stacks, path journeys. High cost; one or two per site at act breaks. Pick by id from [references/showcase.md](references/showcase.md).
-10. **Page flow.** Full-screen route transitions ([references/route-transitions.md](references/route-transitions.md)), a session-gated first-load loader ([references/loaders.md](references/loaders.md)), per-zone entrances ([references/page-entrances.md](references/page-entrances.md)), section curtains and match cuts ([references/transitions.md](references/transitions.md)). Loader invariant: the pre-paint revisit gate and the live animation phase are separate state machines. A persistent `seen` flag must never hide a curtain that is still playing.
-11. **Text and SVG choreography.** SplitText beyond the line reveal, DrawSVG, MorphSVG. [references/typography.md](references/typography.md), [references/svg-motion.md](references/svg-motion.md)
-12. **Hover and pointer.** Magnetic buttons, cursor followers, hover scenes. Garnish, not the meal. [references/micro-interactions.md](references/micro-interactions.md)
-13. **WebGL moments.** Highest cost of all; only when a section genuinely calls for it. Integration first ([references/webgl-r3f.md](references/webgl-r3f.md)), then Drei, postprocessing and interaction ([references/webgl-scenes.md](references/webgl-scenes.md)). If the whole page is one 3D experience, switch to Directed mode.
-
-Before and after pairs for every category, the cheap reflex against the agency version: [references/anti-patterns.md](references/anti-patterns.md). **If output drifts generic, read that file first.**
-
-**Something looks wrong in motion?** Read [references/pitfalls.md](references/pitfalls.md) first, before changing any code: the symptom-first bug clinic for the bugs that recur on every GSAP build: clipped descenders, jarring or jumping pins, content stuck invisible after a reveal, utilities that vanish on animated elements, entrances that fire before the image paints. Each entry gives the cause, the fix and the check.
-
-**The page will not scroll at all?** It is one of exactly two bugs. Either nothing drives `lenis.raf()` because the ticker wiring lost a race with the `<ReactLenis>` ref, or an overlay left an unbalanced `lenis.stop()`. Check the `<html>` class list for `lenis-stopped` first; that one glance tells you which. Both fixes are in [references/setup.md](references/setup.md) §2 and §2b. Do not start "fixing" CSS overflow. A pinned section that jerks on engage is almost always `anticipatePin` with smooth scroll: [references/pinning-scrub.md](references/pinning-scrub.md) §2.
-
-## AI-default blocklist
-
-These scream "generated". Never ship them:
-
-- A three-column grid of identical `rounded-xl border shadow-sm` cards with a centered icon, an h3 and two lines of gray text
-- Blue to purple (or teal to violet) gradients on backgrounds, buttons or `bg-clip-text` headlines
-- Uniform `py-16` or `py-24` on every section, where every section is a centered h2, a subhead and a grid
-- Off-list faces: Inter, Roboto, Open Sans, Poppins or Montserrat (or Lato, or the system stack) for everything, or Space Grotesk or Geist as the reflex "technical" face, instead of a Signature pairing
-- Bold 700 display headlines, five medium heading sizes, one `tracking-tight` on every size, ad-hoc `text-xs uppercase tracking-[...]` eyebrows instead of the role tokens
-- `text-ink-faint` on any text
-- `shadow-md` or `shadow-lg` as the elevation system on gray-50 cards
-- Opacity-only fade-ins, all fired at once, with default `ease-in-out` and `duration-300`
-- `bg-white` page, `text-gray-500` body, `border-gray-200` everywhere
-- Emoji as icons, the cliche trio (Sparkles, Rocket, Zap) as decoration, icons in colored circles
-- Monospace as decoration on eyebrows, labels, stats or badges
-- `01 / 02 / 03` stamped on every section or row
-- Hero = centered h1, subhead, two buttons and a dashboard screenshot in browser chrome
-- Untreated mixed-grade stock at random ratios, glossy AI-render blobs, floating purple spheres
-- `backdrop-blur` glass cards on a mesh-gradient background
-- Hard cuts between routes on a multi-page site
-- Lorem ipsum, "John Doe", "Acme Inc.", "Your journey starts here"
-
-## GSAP vs Motion: the decision rule
-
-Both are installed. Never animate the same property on the same element with both, and never with GSAP and a CSS `transition` either: one owner per property per element ([references/pitfalls.md](references/pitfalls.md) §3). **GSAP owns everything that runs every frame or is tied to scroll; Motion owns React lifecycle, layout and gesture state.** The reason is the single clock: the whole build runs on one requestAnimationFrame (Lenis driven by `gsap.ticker`, [references/setup.md](references/setup.md) §2). High-frequency pointer work belongs on that same ticker via `quickTo`. Pushing it onto a competing spring loop is exactly what makes good motion feel subtly off.
-
-| GSAP + ScrollTrigger | Motion |
+| Invocation | Mode |
 |---|---|
-| Anything scroll-tied: scrub, pins, parallax, reveals | Mount and unmount (`AnimatePresence`) |
-| Multi-step timelines and orchestration | Layout and shared-element swaps from React state (`layout`, `layoutId`) |
-| SplitText, DrawSVG, MorphSVG, MotionPath | `whileHover`, `whileTap`, one-off `whileInView` |
-| Flip morphs that coordinate with scroll or a timeline | Press and toggle micro-feedback |
-| Magnetic buttons, custom cursor (`quickTo`) | Local stateful overlays that are not part of a timeline |
-| Horizontal scroll, sticky stacks, R3F uniforms from scroll | |
+| `/struq <brief>` | **Build**: the Build checklist below, start to finish. |
+| `/struq redesign <path>` | **Redesign**: keep the brand, copy and components; read [references/triage.md](references/triage.md), then run the checklist from step 3 on the existing project. |
+| `/struq audit <path-or-url>` | **Audit**: change nothing. Run `node <skill-dir>/scripts/check.mjs` on the project and report its FAIL and WARN lines, a score (100, minus 5 per FAIL, minus 2 per WARN) and the three fixes with the most visual payoff. |
+| `/struq direct <brief>` | **Directed**: one continuous WebGL experience across chapters. Run the checklist through step 5, then [cinematic/README.md](cinematic/README.md). |
 
-**Before writing any Flip,** read [references/gsap-api.md](references/gsap-api.md) §7.1 to 7.4. Flip has four failure modes that compound and that no typecheck catches. Flip is verified by watching it, never by a green build.
+Register: this is for marketing, landing, portfolio and narrative sites. For dashboards and product UI keep the type, palette and surface rules and drop Lenis, showpieces and the hero canvas.
 
-## Workflow (Build and Redesign)
+## Three rules that never bend
 
-These step names are the one numbering scheme; [references/brief-router.md](references/brief-router.md) §4 keys its load manifest to them.
+1. **Never an empty frame.** Every image slot holds a real image. Without photos from the user, the Struq beeldbank pack is used automatically: it is free, CC0, made for this, and needs no permission. If struq.nl is unreachable, the script writes graded fallback plates in the site palette. A grey box, a "photo to come" caption or a placeholder component never ships.
+2. **Never invent facts.** No testimonials, client logos, stats, awards, prices, addresses, opening hours, bios or quotes the brief did not give. Write real, specific running copy from what the brief says; anything the layout needs that is not known (an address, hours) is left out or written as a plain invitation ("Bel of mail voor een tafel"), and listed under Assumptions in STRUQ.md. A beeldbank photo shows the world around the client, never their own room, team or product: never caption it as theirs.
+3. **Never the AI tells.** No eyebrows (small uppercase tracked labels above headings), no gradients, no tinted translucent fills or glass, no pills (above all a pill with a dot), no monospace as decoration, no Inter, Roboto, Arial or Geist, no blue or purple unless the brand is that colour, no drop-shadow cards, no three identical icon cards, no emoji, no em or en dashes in copy. `check.mjs` finds them all.
 
-0. **Detect versions.** Scaffold with `@latest` if the folder is empty, then read the installed `package.json` and record the majors on the `Stack:` line. When unsure of an API, check the installed package's types, `npm view <pkg> version` and the official docs for that major. **When the skill's code disagrees with the installed version's types or docs, the installed version wins:** adapt the code and log the adaptation under LOG in STRUQ.md. Strip the scaffold's starter fonts, page and CSS. The known shifts and how to tell which side a project is on: [references/setup.md](references/setup.md) §0.
-1. **Direction.** Run [references/direction.md](references/direction.md) phases 0 to 4: intake (the brief extracted silently, stack detected and recorded as `Stack:`), brand ([references/brand.md](references/brand.md) when there is none), concept, system, and the site plan via [references/brief-router.md](references/brief-router.md) §2. No usable brief? The router's wizard asks at most three plain-language rounds; that is the only early stop. Write `STRUQ.md`, then send the one gate message: summary, materials request, "Veto anything?" Vite? Every later step translates through [references/stack-targets.md](references/stack-targets.md). Redesigning? First run the asset audit in [references/performance.md](references/performance.md) §2 and read [references/triage.md](references/triage.md).
-2. **Brand files and tokens.** Write the logo, mark and favicon set ([references/brand.md](references/brand.md) §5). Set the root-rem knob, the type system ([references/typography.md](references/typography.md)) and the palette tokens exactly as STRUQ.md records them.
-3. **Structure and SEO.** Routes, metadata, sitemap, robots and JSON-LD from the PLAN's page list ([references/seo.md](references/seo.md)), before any section is styled. Then, with the routes in place, the OG image per shared route ([references/seo.md](references/seo.md) §3).
-4. **Wire providers.** Lenis on the GSAP ticker with the reduced-motion guard ([references/setup.md](references/setup.md)). For multi-page sites, the transition provider ([references/route-transitions.md](references/route-transitions.md)) and optionally a loader ([references/loaders.md](references/loaders.md)).
-5. **Static layout.** Authored in rem, designed at 1440 and 390 at the same time, and checked at 768 wherever a breakpoint changes the column count ([references/mobile-composition.md](references/mobile-composition.md) §4). Type, spacing and surfaces right **before any motion**; motion cannot rescue a flat layout. Nav per [references/nav-header.md](references/nav-header.md), icons per [references/iconography.md](references/iconography.md).
-6. **Motion in layers.** Reveals, then composition, then the one or two showpieces, then text and SVG choreography, then hover and pointer. WebGL last, as a lazy island with a poster. Read [references/pitfalls.md](references/pitfalls.md) before the first tween.
-7. **Optimize and sweep.** Every asset through the budgets in [references/performance.md](references/performance.md); then [references/anti-patterns.md](references/anti-patterns.md) as a checklist and the [references/seo.md](references/seo.md) checklist.
-8. **Verify.** Against a production server only: `next build && next start` (or `vite build && vite preview`), never the dev server, and confirm the port you shoot is owned by that production process (a leftover dev server on the same port answers silently). Then:
-   - **Layout:** screenshot at **390, 768, 1440 and 1920** with whatever browser tool the harness has (Playwright or similar). Full-page shots do not show a fixed footer-reveal (the viewport becomes the document height); verify the close from the scroll pass.
-   - **Scans:** the 30-second tell scan ([references/anti-patterns.md](references/anti-patterns.md)) and the 60-second feel audit ([references/feel-layer.md](references/feel-layer.md) §5) against the screenshots, not the code.
-   - **Motion:** scroll the page end to end with motion on: no dead wheel, no flash on route change, and **every pinned section** engaged and released at a slow and a fast scroll with no jump or snap. Run the descender test ("Gyp, jq." in every masked component at 390 and 1440) and the pin checks in [references/pitfalls.md](references/pitfalls.md) §1 and §2.
-   - **No empty regions:** ambitious motion loses to plain pages when a reveal leaves a region blank. Capture a full page with reduced motion, a full page with JavaScript off, and the scroll sequence after each reveal settles; any blank footer, frame, CTA or row that should hold content fails verify ([references/pitfalls.md](references/pitfalls.md) §3.6, §3.7).
-   - **Timing:** static PNGs cannot show timing bugs. Take a frame trace of the first 3 seconds (a screenshot every 200 to 250ms from navigation) and confirm each entrance does what its recipe says: the hold frame of a match cut is the photo, a split hero is never shown unsplit, nothing stays at opacity 0.
-   - **Vitals:** LCP (with the element it names) and CLS from an in-page `PerformanceObserver` probe under 4x CPU and a throttled network, plus INP from field data or a manual interaction trace, and the first-load JS measured from the served HTML (Turbopack prints no table). Port check, probe, trace and first-load scripts: [references/performance.md](references/performance.md) §8.
-   Fix, re-shoot, and write the score under VERIFY in STRUQ.md.
+## The Build checklist
 
-## Audit
+Copy this block into `STRUQ.md` in the project root (under the short plan, step 2) and tick each line (`- [x]`) as you finish it. `check.mjs` fails while any line is open. Do not report the build as done until every line is ticked and `check.mjs` prints `RESULT: PASS`.
 
-`/struq audit` changes nothing. It returns:
+```
+## Build checklist
+- [ ] 1 Project: Next.js App Router + Tailwind v4 in place (scaffolded if the folder was empty)
+- [ ] 2 Plan: the short plan above is written; the plan message is sent; building on without waiting
+- [ ] 3 Recipes: node <skill-dir>/scripts/recipes.mjs printed "OK recipes ready"
+- [ ] 4 Images: node <skill-dir>/scripts/images.mjs <pack> printed "OK"
+- [ ] 5 System: palette tokens in app/globals.css, two faces in app/fonts.ts, title and lang in app/layout.tsx
+- [ ] 6 Hero: HeroCanvas layer, SplitHeadline h1, one line of lead, MagneticButton CTA, the hero photo
+- [ ] 7 Sections: 5 to 7 sections on the arc, every image in a MediaFrame, text groups in Reveal, two grid breaks
+- [ ] 8 Showpiece: one HorizontalGallery or PinnedZoom at the act break
+- [ ] 9 Footer: designed as hard as the hero, with the image credit
+- [ ] 10 Build: npm run build passes
+- [ ] 11 Look: screenshots at 390 and 1440 and one full scroll, fixes made (or "not seen: no browser" written under Verify)
+- [ ] 12 Check: node <skill-dir>/scripts/check.mjs prints RESULT: PASS
+```
 
-1. **Score out of 100**, starting at 100: minus 5 per blocklist tell found, minus 3 per baseline violation (type, spacing, surface, color, motion, composition), minus 10 if the page fails to scroll smoothly or a pin jerks, minus 10 if there is no designed mobile layout, minus 5 per asset over budget ([references/performance.md](references/performance.md) §1, capped at minus 15), minus 5 if social images, the sitemap or page metadata are missing ([references/seo.md](references/seo.md)).
-2. **The tells**, grouped by category, each with the file and line (or screenshot region) and the one-line fix.
-3. **Feel audit** result from [references/feel-layer.md](references/feel-layer.md) §5.
-4. **The three changes with the most visual payoff**, ordered by the leverage ranking above.
+### Step 1: Project
 
-Keep the score honest. An award-tier page lands at 90+; a typical AI-generated page lands under 50.
+Empty folder: `npx create-next-app@latest . --ts --tailwind --app --eslint --yes`. Existing project: read `package.json`; when the installed version's types disagree with a recipe, the installed version wins (adapt the recipe, keep its intent). Vite: translate each step through [references/stack-targets.md](references/stack-targets.md).
+
+### Step 2: Plan (five minutes, not fifty)
+
+Write this at the top of `STRUQ.md`, then the checklist under it:
+
+```
+# STRUQ.md: <name>
+Brief: <one line: what it is, for whom, where>
+Idea: <the one idea the site is about, and the one visual motif that carries it>
+Palette: <preset from the table, or the brand's own colours>
+Type: <pairing id>: <display face> + <text face>
+Images: pack <slug> (or: the client's photos)
+Hero: <contours | ripple | dots | the MCP background>
+Showpiece: <HorizontalGallery | PinnedZoom>, after section <n>
+Arc: 1 hero, 2 <...>, 3 <...>, 4 showpiece, 5 <...>, 6 invite, footer
+Assumptions: <every drafted line and every fact left out>
+Verify: <filled in at step 11>
+```
+
+Then send **one plan message**: the plan in five lines, and "Building with these choices now. Veto anything, or send a logo, photos or real numbers, and I will swap them in." **Do not wait for an answer**; keep building. Stop to ask first only when the brief does not say what the business is. When the user does answer later, swap what they veto or send.
+
+### Step 3: Recipes
+
+```bash
+node <skill-dir>/scripts/recipes.mjs
+```
+
+Copies the tested components into the project and installs `gsap @gsap/react lenis three @types/three`. On a fresh scaffold it also writes `app/globals.css`, `app/layout.tsx` and `app/fonts.ts`; on your own files it prints what to merge. The components (all in `components/struq/`):
+
+| Component | What it gives the page |
+|---|---|
+| `SmoothScroll` | Lenis on `gsap.ticker`, one clock for the whole page. Already in the layout. `getLenis()?.stop()` / `.start()` for menus. |
+| `SplitHeadline` | SplitText line-mask rise. `as="h1"` for the hero, `on="scroll"` for a statement further down. Plain text children. |
+| `Reveal` | Staggered rise of its direct children on scroll (`on="load"` in the hero). |
+| `MediaFrame` | The only way an image goes on the page: curtain reveal, photo settle, scrubbed parallax. Props `image`, `ratio`, `sizes`, `priority` (the hero image only), `reveal`. |
+| `HeroCanvas` | The WebGL hero layer: `scene="contours"`, `"ripple"` (needs `image`) or `"dots"`. Lazy three.js chunk, poster first, DPR cap, pixel budget, pause offscreen, still frame under reduced motion, colours read from the tokens. |
+| `HorizontalGallery` | Showpiece: pinned section, a track of photos sliding sideways, each photo panning. Native swipe row on phones. |
+| `PinnedZoom` | Showpiece: a small framed photo opens to full bleed while the statement lifts away. |
+| `MagneticButton` | The primary CTA: leans to the pointer, ink fill rises on hover. `variant="line"` for the secondary. |
+| `Cursor` | Dot and trailing ring, inverted against the page. Already in the layout; delete it for a booking tool or a dense shop. |
+
+### Step 4: Images (automatic, every build)
+
+```bash
+node <skill-dir>/scripts/images.mjs <pack-slug>
+```
+
+It downloads the pack's 24 images to `public/images/`, verifies every file is a real image, and writes `lib/struq-images.ts`. It prints every image with what it shows: read those lines and give each slot the photo that fits it. Use them as `images.hero[0]`, `images.card[3]`, and so on; `imageCredit` goes in the footer. With the user's own photos: put them in `public/images/` and use them first; fill the rest from the pack.
+
+Pick the pack by what the business is (the table goes by what the photos show):
+
+| The brief is | Pack | The photos |
+|---|---|---|
+| Restaurant, bistro, bakery, café, wine bar, catering | `proof` | wood-fire kitchen, dining room before service, bread, plates |
+| Shop, ceramics, cosmetics, homeware, product brand | `vitrine` | objects on stone under soft light |
+| Architect, real estate, makelaar, property, interiors studio | `datum` | concrete, glass and timber, corrected verticals, no people |
+| Construction, trades, installation, renovation | `mortar` | scaffold, timber frame, tools, backs and hands |
+| Hotel, holiday home, travel, terrace, pool | `portico` | limewash, shutters, still water, late warm light |
+| Law, accountancy, consultancy, finance, notary | `ledger` | oak desks, closed volumes, brass |
+| Design studio, agency, print, illustration, writer | `quire` | studio desk mid-project, paper, ink, swatches |
+| Software, SaaS, AI, anything with nothing to photograph | `halide` | glass, machined metal and light in darkness |
+| Electronics, hardware, devices, engineering, deep tech | `circuit` | copper, solder and connectors at macro range |
+| Mobility, e-bikes, logistics, transport, delivery | `transit` | depots, wet road, containers under sodium light |
+| Sport, gym, running, coaching for performance | `cadence` | training spaces after dark, chalk and steel |
+| Yoga, physio, spa, wellness, movement | `vessel` | studio floor, still water, linen, sand tones |
+| Care, therapy, coaching, psychology, a small B&B | `linen` | calm rooms, linen, quiet hands |
+| Hair salon, beauty, barber, nails | `sable` | salon light in taupe and brass |
+| Fashion, textile, tailoring, clothing | `bolt` | cloth, rails, folds and seams, no bodies |
+| Farm, growers, farm shop, food provenance | `loam` | soil, crops, greenhouse in low morning light |
+| Nature, outdoor, coast, landscape, sustainability | `brume` | Atlantic coast under overcast, fog, stone |
+| Crafts, metalwork, furniture making, workshop | `forge` | hot steel, worn tools, warm darkness |
+| School, childcare, education | `primer` | empty rooms at child height, birch and felt |
+| Events, venues, theatre, conferences | `assembly` | the room before it fills, chairs and stage light |
+
+Nothing fits closely: take the pack whose light matches the palette (warm and light `linen`, warm and dark `forge`, cool and dark `halide`, cool and light `datum`). Never skip images. `node <skill-dir>/scripts/images.mjs --list` prints every pack. One pack per site. Translate the alts in `lib/struq-images.ts` when the site is not Dutch.
+
+### Step 5: System
+
+**Palette.** Paste one preset into the `STRUQ TOKENS` block of `app/globals.css` (or the brand's own colours in the same names). Neutrals do 95% of the work; the accent appears on the key CTA and at most one highlight per screen.
+
+| Preset | For | surface-0 / 1 / 2 / 3 | ink / ink-muted | accent / accent-ink |
+|---|---|---|---|---|
+| Paper | food, craft, editorial | #F5EFE6 #EDE4D6 #E1D4BF #CDBB9F | #1E1A15 #5D5446 | #8A3B22 #FBF6EE |
+| Limestone | architecture, law, studios | #F1F0EC #E7E5DF #D9D6CE #C2BEB3 | #181816 #56544E | #9C4A2B #F7F5F1 |
+| Clay | hospitality, wellness, ceramics | #EFE6DA #E6D9C8 #D8C4AC #C3A784 | #2A1F17 #66574A | #A9482A #FBF4EC |
+| Ink | dark cinematic: architecture, night hospitality, film | #0E0D0C #161513 #1F1D1A #2A2723 | #EDE7DC #A39B8E | #C8A46A #14110D |
+| Forest | nature, outdoor, calm wellness | #0F1411 #151C18 #1D2620 #27322B | #E8E6DC #A2A898 | #C97B4A #0F1411 |
+| Sodium | mobility, logistics, tech, sport | #111213 #18191B #212225 #2C2E31 | #ECEAE5 #9FA0A0 | #FF6A1A #111213 |
+
+A blue or purple brand: write `Cool hue: declared because <the brand colour>` in STRUQ.md, or the check fails.
+
+**Type.** Two faces, swapped into `app/fonts.ts` (keep the variable names `--face-display` and `--face-body`). Set `--display-weight` in globals.css to the weight given here.
+
+| Id | Display + text | Temperament, for | fonts.ts | Weight |
+|---|---|---|---|---|
+| S2 | Fraunces + Urbanist | warm, literate: food, craft, books | `Fraunces({ subsets: ["latin"], axes: ["SOFT", "opsz"], variable: "--face-display", display: "swap" })`, `Urbanist({ subsets: ["latin"], variable: "--face-body", display: "swap" })` | 300 |
+| S3 | Fraunces + Outfit | soft, friendly: wellness, care, kids | as S2 with `Outfit` for the body | 300 |
+| S4 | Cormorant Garamond + Jost | quiet luxury: hotel, fashion, salon | `Cormorant_Garamond({ subsets: ["latin"], weight: ["300", "400"], style: ["normal", "italic"], variable: "--face-display", display: "swap" })`, `Jost({ ... "--face-body" })` | 300 |
+| S5 | Newsreader + Manrope | cinematic, dark, literate: architecture, law, film | `Newsreader({ subsets: ["latin"], axes: ["opsz"], style: ["normal", "italic"], variable: "--face-display", display: "swap" })`, `Manrope({ ... })` | 300 |
+| S6 | Urbanist + Lora | essay-led: consultancy, research, studios | `Urbanist` as display, `Lora` as body | 300 |
+| S7 | Sora + Instrument Sans | product, precise: tech, mobility, logistics | `Sora({ ... "--face-display" })`, `Instrument_Sans({ ... "--face-body" })` | 300 |
+| E5 | Bodoni Moda + Albert Sans | fashion house | `Bodoni_Moda({ subsets: ["latin"], axes: ["opsz"], ... })`, `Albert_Sans({ ... })` | 400 |
+| E6 | Instrument Serif + Outfit | poster, film title: events, venues, culture | `Instrument_Serif({ subsets: ["latin"], weight: "400", style: ["normal", "italic"], ... })`, `Outfit({ ... })` | 400 |
+
+Every string takes a role: `font-display text-display` (the h1), `font-display text-h2`, `font-display text-h3`, `text-lead`, `text-body`, `text-small`. Never `text-xl` or `text-5xl`, never `font-bold` on a heading: hierarchy comes from scale. The accent move is one word in the display italic, or the accent colour on one word. Depth: [references/typography.md](references/typography.md).
+
+### Step 6: The hero
+
+```tsx
+<section className="relative flex min-h-svh flex-col justify-end overflow-hidden px-6 pb-16 pt-40 md:px-[8vw]">
+  <HeroCanvas scene="ripple" image={images.hero[0]} scrim={0.35} priority />
+  <div className="relative z-10 grid gap-10 text-on-photo md:grid-cols-12">
+    <SplitHeadline as="h1" className="font-display text-display md:col-span-9">Vis en groente, van het seizoen.</SplitHeadline>
+    <Reveal on="load" delay={0.5} className="flex flex-col gap-8 md:col-span-4 md:col-start-9">
+      <p className="text-lead">Veertig plekken in Amsterdam-Noord. Reserveren kost een minuut.</p>
+      <div><MagneticButton href="#reserveren">Reserveer een tafel</MagneticButton></div>
+    </Reveal>
+  </div>
+</section>
+```
+
+- **Pick the scene:** `ripple` when one strong photo carries the brand (food, hospitality, hotels, fashion, wellness); `contours` for calm and precise (architecture, studios, consultancy, nature, research), with the hero photo in a `MediaFrame` beside or below the headline; `dots` for movement and scale (mobility, logistics, tech, sport, energy), with the photo in the next section.
+- Type over a photo (`ripple`, `PinnedZoom`, a full-bleed band) is `text-on-photo` with `scrim={0.3}` to `0.45`; type over `contours` or `dots` is the normal `text-ink`. The headline must read at 4.5:1.
+- The h1 is the site's promise in 8 words or fewer, set large and light. No label above it.
+
+### Step 7: Sections on the arc
+
+Five to seven sections after the hero, in this order of beats: **orient** (what it is, one statement beside a big image), **prove** (the real specifics: the menu, the services, the projects, typeset), the **showpiece**, **deepen** (detail photos and short text), **invite** (the one CTA again). Then the footer. Patterns with code: [references/sections.md](references/sections.md).
+
+- Every image in a `MediaFrame` from `lib/struq-images.ts`, declared ratios only (16/9, 3/2, 4/5, 1/1, 21/9), never the same photo twice.
+- Text groups in `<Reveal>`: a heading and its paragraph rise together.
+- Break the grid at least twice: an image bleeding off the viewport edge, an image overlapping the next section (`-mb-[12vh] relative z-10`), oversized type running off the canvas.
+- Vary the layouts: after a 5/7 split comes a full-bleed band or hairline rows, never three equal cards.
+- Section padding varies by role: dense 6 to 8rem, breathers 12 to 20rem. One section should feel too empty by SaaS standards.
+- Wayfinding without eyebrows: the heading itself, a hairline rule (`border-t border-line`), a change of surface step, a jump in scale.
+
+### Step 8: The showpiece
+
+One per site, at the act break (after the proof, before the invitation). `HorizontalGallery` when there is a set of things (dishes, projects, rooms, products); `PinnedZoom` when there is one moment (the room, the place, the material). Never two pins back to back. The Struq MCP or a brief may budget more; never fewer than one.
+
+### Step 9: The footer
+
+Designed as hard as the hero: the name set huge in the display face (it may crop at the edge), the one CTA, the contact facts the brief gave (and only those), a hairline, the image credit as one quiet `text-small` link: `<a href={imageCredit.href}>{imageCredit.label}</a>`.
+
+### Steps 10 to 12: Build, look, check
+
+- `npm run build` must pass. Fix type errors in your own code; never delete a recipe to get green.
+- **Look**, when you have a browser tool: serve the production build (`npx next start -p 4321`), screenshot 390 and 1440, scroll the page once top to bottom. Check: the headline reads, no frame is blank after its reveal, the showpiece engages and releases without a jump, nothing overflows sideways at 390. No browser tool: write `Verify: not seen, no browser` in STRUQ.md. Never claim you saw what you did not.
+- **Check**: `node <skill-dir>/scripts/check.mjs`. Fix every FAIL at its file and line, run it again, and repeat until `RESULT: PASS`. Then tick line 12 and report.
+
+## With the Struq MCP (Pro)
+
+When the `struq_*` tools are connected, their plan wins for palette, type, arc, copy budget and motion values: write what they return into the short plan and build it with these recipes. The floor in this file still holds on top of it: images from the beeldbank pack the plan names (the plan's pack, or the table above), one showpiece at least, the hero canvas, every check passing.
+
+**When `struq_achtergrond` returns a background, build that one.** It is the hero layer. Write it as `components/struq/scenes/<name>.ts` with the same `createScene` contract as the three shipped scenes ([references/hero-scenes.md](references/hero-scenes.md)), take its colours from the palette passed in (so it is recoloured to the site's tokens), add it to the `SCENES` map in `HeroCanvas.tsx`, and use `<HeroCanvas scene="<name>" />`. Never skip it because it is hard to check without a browser: HeroCanvas keeps the poster when the scene fails, so building it can never leave the hero empty.
+
+## The taste baseline
+
+What the recipes and the check enforce, and what you keep when you write your own code:
+
+- **Type:** two faces; display large and light (300 to 400), leading 0.92 to 1.0, tracking tighter at size; body 1 to 1.0625rem at 1.6+; nothing under 12px; body at 4.5:1. Headings `text-wrap: balance`, body `pretty`. Mono only for literal code.
+- **Scale:** one fluid root-rem knob (in globals.css). Author in rem; breakpoints change layout, never size.
+- **Surface:** elevation is a tonal step plus a hairline (`border-line`), never a drop shadow. Radius 0 to 4px.
+- **Colour:** temperature-shifted neutrals, one accent, flat fills. No gradient anywhere, no gradient text, no glass.
+- **Motion:** every entrance moves and fades (never opacity alone), expo.out, stagger 0.06 to 0.1s, reveals 0.6 to 1.0s, hero 1.0 to 1.6s; scroll-tied effects scrub; one clock; reduced motion keeps opacity and drops transforms.
+- **Composition:** break the grid twice, vary section layouts, one too-empty section, the footer designed as hard as the hero.
+- **Details:** real running copy, custom `::selection`, designed `:focus-visible`, one icon family if any icons at all ([references/iconography.md](references/iconography.md)), never Sparkles, Rocket or Zap.
+
+Before and after pairs for every tell: [references/anti-patterns.md](references/anti-patterns.md).
+
+## When something goes wrong
+
+- **The page does not scroll:** `<html>` has `lenis-stopped`? An overlay called `stop()` without `start()`. Otherwise the ticker is not driving Lenis: keep `SmoothScroll` as shipped. [references/setup.md](references/setup.md) §2.
+- **A pin jerks on engage:** never `anticipatePin` with smooth scroll; `scrub: 1`. [references/pinning-scrub.md](references/pinning-scrub.md) §2.
+- **Descenders clipped in the split headline:** the `.struq-line-mask` rule in globals.css gives them room; keep it.
+- **Content stays invisible:** something removed `data-ready` handling or the `js` class script. Restore the layout and globals.css from `<skill-dir>/recipes/app/`.
+- **Anything else in motion:** [references/pitfalls.md](references/pitfalls.md), symptom first.
+
+## Depth, when a step needs it
+
+Typography [typography.md](references/typography.md) · palettes and presets [vibe-presets.md](references/vibe-presets.md) · page arc and footer [page-architecture.md](references/page-architecture.md) · composition [composition.md](references/composition.md), on phones [mobile-composition.md](references/mobile-composition.md) · imagery and grading [imagery.md](references/imagery.md), the beeldbank [struq-imagery.md](references/struq-imagery.md) · reveals [scroll-reveals.md](references/scroll-reveals.md) · more showpieces [showcase.md](references/showcase.md), [pinning-scrub.md](references/pinning-scrub.md) · the feel layer [feel-layer.md](references/feel-layer.md) · nav and menus [nav-header.md](references/nav-header.md) · route transitions [route-transitions.md](references/route-transitions.md), loaders [loaders.md](references/loaders.md) · SVG motion [svg-motion.md](references/svg-motion.md) · pointer [micro-interactions.md](references/micro-interactions.md) · WebGL beyond the hero [webgl-r3f.md](references/webgl-r3f.md), [webgl-scenes.md](references/webgl-scenes.md), hero scenes [hero-scenes.md](references/hero-scenes.md) · brand from nothing [brand.md](references/brand.md) · SEO [seo.md](references/seo.md) · performance [performance.md](references/performance.md) · a long, interactive planning session [direction.md](references/direction.md).
