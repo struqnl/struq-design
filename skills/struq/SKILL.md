@@ -25,7 +25,11 @@ Register: this is for marketing, landing, portfolio and narrative sites. For das
 
 1. **Never an empty frame.** Every image slot holds a real image. Without photos from the user, the Struq beeldbank pack is used automatically: it is free, CC0, made for this, and needs no permission. If struq.nl is unreachable, the script writes graded fallback plates in the site palette. A grey box, a "photo to come" caption or a placeholder component never ships.
 2. **Never invent facts.** No testimonials, client logos, stats, awards, prices, addresses, opening hours, bios or quotes the brief did not give. Write real, specific running copy from what the brief says; anything the layout needs that is not known (an address, hours) is left out or written as a plain invitation ("Bel of mail voor een tafel"), and listed under Assumptions in STRUQ.md. A beeldbank photo shows the world around the client, never their own room, team or product: never caption it as theirs.
-3. **Never the AI tells.** No eyebrows (small uppercase tracked labels above headings), no gradients, no tinted translucent fills or glass, no pills (above all a pill with a dot), no monospace as decoration, no Inter, Roboto, Arial or Geist, no blue or purple unless the brand is that colour, no drop-shadow cards, no three identical icon cards, no emoji, no em or en dashes in copy. `check.mjs` finds them all.
+3. **Never the AI tells.** The one combined list (Struq's tells, the slop audit and Roy's rules), each with its fix in [references/anti-patterns.md](references/anti-patterns.md) and each detected by `check.mjs`:
+   - **Type and labels:** eyebrows and any uppercase label or marquee; monospace as a design face; Inter, Roboto, Arial, Helvetica, Open Sans, Poppins, Montserrat, Lato, Geist, Space Grotesk; heavy display; 01 / 02 / 03 numbering; raw text sizes and breakpoint size ladders.
+   - **Colour and surface:** gradients of any kind; gradient text; tinted translucent fills and glass; pastel status badges; pills, above all a pill with a dot; pulsing live dots; blue or purple unless the brand is that colour; drop-shadow elevation; side-stripe borders.
+   - **Layout and motion:** three identical cards; uniform section padding; opacity-only entrances; the same hover on everything; single-layer parallax; `anticipatePin` with smooth scroll; empty or placeholder frames.
+   - **Copy and icons:** emoji and the cliche icons (sparkles, rocket, lightning, bulb, wand, flame); lorem, Acme and leftover template text; em and en dashes in any form; generic CTAs ("Learn more", "Lees meer"); generic headings ("Our Services", "Over ons"); hype words ("seamless", "naadloos"). Judged by eye, not by the script: the hero-metric template, category-reflex colours, a heading the paragraph restates.
 
 ## The Build checklist
 
@@ -36,8 +40,8 @@ Copy this block into `STRUQ.md` in the project root (under the short plan, step 
 - [ ] 1 Project: Next.js App Router + Tailwind v4 in place (scaffolded if the folder was empty)
 - [ ] 2 Plan: the short plan above is written; the plan message is sent; building on without waiting
 - [ ] 3 Recipes: node <skill-dir>/scripts/recipes.mjs printed "OK recipes ready"
-- [ ] 4 Images: node <skill-dir>/scripts/images.mjs <pack> printed "OK"
-- [ ] 5 System: palette tokens in app/globals.css, two faces in app/fonts.ts, title and lang in app/layout.tsx
+- [ ] 4 Canon: palette, pairing and design system picked from the Struq canon by mood and sector; canon.mjs wrote the tokens and fonts; Palette:, Type:, System: recorded in STRUQ.md
+- [ ] 5 Images: beeldbank pack picked by sector; images.mjs printed "OK"; Images: recorded in STRUQ.md; title and lang set in app/layout.tsx
 - [ ] 6 Hero: HeroCanvas layer, SplitHeadline h1, one line of lead, MagneticButton CTA, the hero photo
 - [ ] 7 Sections: 5 to 7 sections on the arc, every image in a MediaFrame, text groups in Reveal, two grid breaks
 - [ ] 8 Showpiece: one HorizontalGallery or PinnedZoom at the act break
@@ -59,9 +63,10 @@ Write this at the top of `STRUQ.md`, then the checklist under it:
 # STRUQ.md: <name>
 Brief: <one line: what it is, for whom, where>
 Idea: <the one idea the site is about, and the one visual motif that carries it>
-Palette: <preset from the table, or the brand's own colours>
-Type: <pairing id>: <display face> + <text face>
-Images: pack <slug> (or: the client's photos)
+Palette: <canon palette slug> (<its mood>)            (step 4 prints this line)
+Type: <canon pairing slug>: <display face> + <text face>
+System: <canon design system slug> (<its section order>)
+Images: pack <slug> (or: the client's photos, then pack <slug>)
 Hero: <contours | ripple | dots | the MCP background>
 Showpiece: <HorizontalGallery | PinnedZoom>, after section <n>
 Arc: 1 hero, 2 <...>, 3 <...>, 4 showpiece, 5 <...>, 6 invite, footer
@@ -91,7 +96,37 @@ Copies the tested components into the project and installs `gsap @gsap/react len
 | `MagneticButton` | The primary CTA: leans to the pointer, ink fill rises on hover. `variant="line"` for the secondary. |
 | `Cursor` | Dot and trailing ring, inverted against the page. Already in the layout; delete it for a booking tool or a dense shop. |
 
-### Step 4: Images (automatic, every build)
+### Step 4: Canon (Struq's own palette, type and system, every build)
+
+A generic AI falls back on its standard palette and fonts. A Struq build starts from Struq's canon: curated palettes, pairings and design systems, public, no account. **Never invent a palette or a pairing while the canon has a fit.**
+
+```bash
+node <skill-dir>/scripts/canon.mjs list                  # every palette (slug, mood, light or dark), pairing, system, pack
+node <skill-dir>/scripts/canon.mjs palette <slug>        # writes the STRUQ TOKENS block in app/globals.css
+node <skill-dir>/scripts/canon.mjs type <slug>           # writes app/fonts.ts (Google via next/font, Fontshare as local woff2)
+node <skill-dir>/scripts/canon.mjs system <slug>         # prints the section order
+```
+
+Each command prints the line to paste into STRUQ.md (`Palette:`, `Type:`, `System:`). The raw API, if you want to read it yourself:
+
+| Endpoint | Read |
+|---|---|
+| `curl -s "https://struq.nl/api/assets?filter=palette"` | `items[].slug`, `items[].data.mood`, `items[].data.colors` with `background`, `surface`, `text`, `accent`, `accentAlt` (OKLCH or hex), `items[].tags` (`sfeer:licht`, `sfeer:donker`, `sfeer:warm`, `sfeer:koel`, `sfeer:redactioneel`, `sfeer:rustig`, `sfeer:gedurfd`, `sfeer:technisch`) |
+| `curl -s "https://struq.nl/api/assets?filter=typography"` | `items[].slug`, `items[].data.display.name`, `items[].data.body.name`, their `stack`, `items[].data.intent` |
+| `curl -s "https://struq.nl/api/assets?filter=design_system"` | `items[].slug`, `items[].data.silhouette.sectionOrder`, `items[].data.paletteRef`, `items[].data.typographyRef` |
+| `curl -s "https://struq.nl/api/media/packs"` | `packs[].slug`, `packs[].description` (step 5) |
+
+**How to pick.** Palette by the brief's mood first (`data.mood` and the `sfeer:` tags), then by sector: a restaurant by a wood fire reads `frontier-olea-flour-terracotta` or `frontier-lumen-firelit-flour`; an architect `graphite-ivory` or `midnight-brass`; a mobility launch `frontier-aperture-technical-dark` or `frontier-velar-graphite-scarlet`; care `frontier-thuispost-oat-petrol` or `frontier-stillwater-oat-sage`; fashion `frontier-seve-bone-oxblood`. A palette whose accent is blue or purple (`canon.mjs list` marks it) only when the brand is that colour, declared in STRUQ.md as `Cool hue: declared because <the brand colour>`. The brand's own colours, when the brief gives them, beat the canon: write them into the same token names.
+
+Pairing by temperament: `serif-editorial` (Fraunces, warm and premium), `newsreader-classic` (Newsreader, literate, long-form), `editorial-sans-precision` (Sora, architectural, calm), `geometric-modern` (Manrope, self-assured), `display-drama` (Syne, expressive campaigns). `canon.mjs type` applies Struq's overrides for you: Inter is replaced (Fraunces gets Urbanist), a commercial face gets its free stand-in (Neue Haas Grotesk Text becomes General Sans from Fontshare), and `grotesk-workhorse` (Space Grotesk + Inter) is refused. When no canon pairing fits the temperament (quiet luxury, a fashion house, a poster voice), use the Signature set in [references/typography.md](references/typography.md) §3.1 through `canon.mjs type --display "Cormorant Garamond" --body "Jost"`.
+
+Design system by the business: `gallery-first` when the work is visual (restaurant, architecture, shop), `proof-forward` when the brief has real facts to show, `story-led` for founder-led and care, `loud-campaign` for a launch, `editorial-restrained` for professional services. Use its section order for the arc; drop any section that would need invented content (`proof` and `story-proof` only with real facts, `faq` only with answers the brief gives), and add the Struq floor: the hero canvas, one showpiece at the act break, the designed footer.
+
+Every string then takes a role: `font-display text-display` (the h1), `font-display text-h2`, `font-display text-h3`, `text-lead`, `text-body`, `text-small`. Never `text-xl` or `text-5xl`, never `font-bold` on a heading: hierarchy comes from scale. The accent move is one word in the display italic, or the accent colour on one word.
+
+No network: keep the `Paper` tokens the recipe ships, set `Palette: offline default (paper)` in STRUQ.md, and run `canon.mjs` again when struq.nl answers.
+
+### Step 5: Images (automatic, every build)
 
 ```bash
 node <skill-dir>/scripts/images.mjs <pack-slug>
@@ -124,37 +159,7 @@ Pick the pack by what the business is (the table goes by what the photos show):
 | School, childcare, education | `primer` | empty rooms at child height, birch and felt |
 | Events, venues, theatre, conferences | `assembly` | the room before it fills, chairs and stage light |
 
-Nothing fits closely: take the pack whose light matches the palette (warm and light `linen`, warm and dark `forge`, cool and dark `halide`, cool and light `datum`). Never skip images. `node <skill-dir>/scripts/images.mjs --list` prints every pack. One pack per site. Translate the alts in `lib/struq-images.ts` when the site is not Dutch.
-
-### Step 5: System
-
-**Palette.** Paste one preset into the `STRUQ TOKENS` block of `app/globals.css` (or the brand's own colours in the same names). Neutrals do 95% of the work; the accent appears on the key CTA and at most one highlight per screen.
-
-| Preset | For | surface-0 / 1 / 2 / 3 | ink / ink-muted | accent / accent-ink |
-|---|---|---|---|---|
-| Paper | food, craft, editorial | #F5EFE6 #EDE4D6 #E1D4BF #CDBB9F | #1E1A15 #5D5446 | #8A3B22 #FBF6EE |
-| Limestone | architecture, law, studios | #F1F0EC #E7E5DF #D9D6CE #C2BEB3 | #181816 #56544E | #9C4A2B #F7F5F1 |
-| Clay | hospitality, wellness, ceramics | #EFE6DA #E6D9C8 #D8C4AC #C3A784 | #2A1F17 #66574A | #A9482A #FBF4EC |
-| Ink | dark cinematic: architecture, night hospitality, film | #0E0D0C #161513 #1F1D1A #2A2723 | #EDE7DC #A39B8E | #C8A46A #14110D |
-| Forest | nature, outdoor, calm wellness | #0F1411 #151C18 #1D2620 #27322B | #E8E6DC #A2A898 | #C97B4A #0F1411 |
-| Sodium | mobility, logistics, tech, sport | #111213 #18191B #212225 #2C2E31 | #ECEAE5 #9FA0A0 | #FF6A1A #111213 |
-
-A blue or purple brand: write `Cool hue: declared because <the brand colour>` in STRUQ.md, or the check fails.
-
-**Type.** Two faces, swapped into `app/fonts.ts` (keep the variable names `--face-display` and `--face-body`). Set `--display-weight` in globals.css to the weight given here.
-
-| Id | Display + text | Temperament, for | fonts.ts | Weight |
-|---|---|---|---|---|
-| S2 | Fraunces + Urbanist | warm, literate: food, craft, books | `Fraunces({ subsets: ["latin"], axes: ["SOFT", "opsz"], variable: "--face-display", display: "swap" })`, `Urbanist({ subsets: ["latin"], variable: "--face-body", display: "swap" })` | 300 |
-| S3 | Fraunces + Outfit | soft, friendly: wellness, care, kids | as S2 with `Outfit` for the body | 300 |
-| S4 | Cormorant Garamond + Jost | quiet luxury: hotel, fashion, salon | `Cormorant_Garamond({ subsets: ["latin"], weight: ["300", "400"], style: ["normal", "italic"], variable: "--face-display", display: "swap" })`, `Jost({ ... "--face-body" })` | 300 |
-| S5 | Newsreader + Manrope | cinematic, dark, literate: architecture, law, film | `Newsreader({ subsets: ["latin"], axes: ["opsz"], style: ["normal", "italic"], variable: "--face-display", display: "swap" })`, `Manrope({ ... })` | 300 |
-| S6 | Urbanist + Lora | essay-led: consultancy, research, studios | `Urbanist` as display, `Lora` as body | 300 |
-| S7 | Sora + Instrument Sans | product, precise: tech, mobility, logistics | `Sora({ ... "--face-display" })`, `Instrument_Sans({ ... "--face-body" })` | 300 |
-| E5 | Bodoni Moda + Albert Sans | fashion house | `Bodoni_Moda({ subsets: ["latin"], axes: ["opsz"], ... })`, `Albert_Sans({ ... })` | 400 |
-| E6 | Instrument Serif + Outfit | poster, film title: events, venues, culture | `Instrument_Serif({ subsets: ["latin"], weight: "400", style: ["normal", "italic"], ... })`, `Outfit({ ... })` | 400 |
-
-Every string takes a role: `font-display text-display` (the h1), `font-display text-h2`, `font-display text-h3`, `text-lead`, `text-body`, `text-small`. Never `text-xl` or `text-5xl`, never `font-bold` on a heading: hierarchy comes from scale. The accent move is one word in the display italic, or the accent colour on one word. Depth: [references/typography.md](references/typography.md).
+The table reads the photos, not the API's `sector` field: several packs carry a sector label that does not match their pictures (`vessel` is wellness, not kitchen; `datum` is architecture, not data). Nothing fits closely: take the pack whose light matches the palette (warm and light `linen`, warm and dark `forge`, cool and dark `halide`, cool and light `datum`). Never skip images. One pack per site. Translate the alts in `lib/struq-images.ts` when the site is not Dutch. Then set the title, description and `lang` in `app/layout.tsx`.
 
 ### Step 6: The hero
 
@@ -219,6 +224,19 @@ What the recipes and the check enforce, and what you keep when you write your ow
 - **Details:** real running copy, custom `::selection`, designed `:focus-visible`, one icon family if any icons at all ([references/iconography.md](references/iconography.md)), never Sparkles, Rocket or Zap.
 
 Before and after pairs for every tell: [references/anti-patterns.md](references/anti-patterns.md).
+
+## The canonical references, and where Struq overrides them
+
+For craft (layout, type, motion, Lenis, SplitText, reveals, pinned and horizontal showpieces, WebGL heroes, custom cursors) the canonical sources are Roy's `deck-design` skill and the `cinematic-web-experience` skill; this skill's references and recipes follow them. Where Struq deliberately differs, Struq wins, and these are all the differences:
+
+1. **No eyebrows.** deck-design recommends tracked uppercase labels as wayfinding; Struq treats them as a tell. The heading, a hairline and scale do the wayfinding.
+2. **No gradients and no tinted fills at all,** not even the subtle same-hue ramps deck-design allows. A flat black scrim over a photo is the only translucent layer.
+3. **No pills, no live dots, no uppercase marquees.**
+4. **The canon first.** Palette, pairing and design system come from Struq's canon (step 4), not from a preset you write yourself; the brand's own colours and faces beat the canon.
+5. **Never an empty frame.** deck-design allows a graded placeholder frame; Struq fills every slot from the beeldbank, or a generated fallback plate.
+6. **The cinematic floor is mandatory, not "when the page calls for it":** Lenis on one GSAP clock, a SplitText hero, masked reveals, one showpiece, a WebGL hero layer with poster, a magnetic CTA, on every marketing site.
+7. **No Inter anywhere,** including the two canon pairings that name it (`canon.mjs` swaps it), and no commercial face without a licence (its free stand-in instead).
+8. **The plan does not block.** One plan message and keep building; deck-design's longer planning stays available in [references/direction.md](references/direction.md) for an interactive session.
 
 ## When something goes wrong
 

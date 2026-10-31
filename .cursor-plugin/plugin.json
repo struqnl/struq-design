@@ -1,7 +1,7 @@
 {
   "name": "struq",
   "description": "Award-tier web design for coding agents: two-face light typography, curated palettes, Lenis on one GSAP clock, SplitText, DrawSVG, MorphSVG, pinned showpieces, full-screen transitions and R3F moments.",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "author": {
     "name": "Struq"
   },

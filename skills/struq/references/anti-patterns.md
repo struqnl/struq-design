@@ -292,6 +292,25 @@ Lines rising from individual overflow masks. ([scroll-reveals.md](scroll-reveals
 
 ---
 
+## 23. The smaller tells
+
+Each is cheap on its own; three of them together read as generated.
+
+| Tell | Reflex | Instead |
+|---|---|---|
+| Side-stripe borders | `border-l-4 border-accent` down a card or a quote | a hairline, or nothing |
+| Status badges | `bg-green-100 text-green-700` "Available" chips | the fact in the lead line |
+| Live dots | an `animate-ping` dot beside "Now open" | the words alone |
+| Uppercase marquees | a scrolling band of tracked capitals | a large display line in sentence case, if any marquee at all |
+| Generic CTAs | "Learn more", "Get started", "Lees meer" | a verb and the thing: "Reserveer een tafel", "Bekijk de projecten" |
+| Generic headings | "Our Services", "Why Choose Us", "Over ons" | a heading only this business could write |
+| Hype copy | "seamless", "elevate", "next-level", "naadloos", "revolutionair" | the plain, specific claim from the brief |
+| Hero-metric template | a hero followed by a strip of four big numbers | numbers only when the brief gives them, set inside the copy |
+| Category-reflex colours | green for every eco brand, blue for every bank, purple for every AI | the canon palette that fits the mood; the reflex hue only when it is the brand's own |
+| Restated headings | a paragraph that repeats the heading in more words | the paragraph adds the next fact |
+
+---
+
 ## The 30-second tell scan
 
 The script does this scan for you: `node <skill-dir>/scripts/check.mjs` prints every hit with its file and line. By hand:

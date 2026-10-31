@@ -79,7 +79,7 @@ Stack: Next.js App Router and Tailwind by default, Vite supported. It reads the 
 
 | Command | What it does |
 |---|---|
-| `/struq <brief>` | Plans the site into one `STRUQ.md`, stops once for your veto, builds it, then screenshots it at 390, 768, 1440 and 1920 and fixes what it sees |
+| `/struq <brief>` | Writes a short plan into `STRUQ.md`, tells you the choices and builds straight on (veto any time), then runs its own check and, with a browser tool, screenshots it and fixes what it sees |
 | `/struq redesign <path>` | Keeps your brand, copy and components; rebuilds the execution |
 | `/struq audit <path-or-url>` | Changes nothing. Returns a score out of 100, every tell with its fix, and the three highest-payoff changes |
 | `/struq direct <brief>` | Directed mode for one continuous 3D experience across chapters |
@@ -88,10 +88,10 @@ In Codex, use `$struq` instead of `/struq`; as a Claude Code plugin the command 
 
 ## How a build runs
 
-1. **Plan.** It reads your brief and writes one `STRUQ.md`: brand, concept, the two typefaces, palette tokens, icon family, page arc, which showcase recipes go where, the transition system, and whether 3D is warranted. It never invents testimonials or stats.
-2. **One stop.** It shows the summary and asks once: veto anything, and send a logo, photos or real numbers if you have them. Only an empty or vague brief gets a short wizard first.
-3. **Build.** Static layout to the baseline first, at desktop and mobile at once. Motion goes on in layers: reveals, composition, showpieces, text and SVG, pointer, then 3D.
-4. **Look.** Screenshots at four widths, a tell scan, a feel audit and one full scroll. Then it fixes and re-shoots.
+1. **Plan.** A short plan in `STRUQ.md` with a Build checklist the agent ticks as it goes. It never invents testimonials or stats.
+2. **Canon.** Palette, type pairing and section order come from Struq's own canon (`struq.nl/api/assets`), not from the defaults every AI falls back on. The photos come from the matching Struq beeldbank pack, so no frame is ever empty.
+3. **Build.** Tested components do the cinematic floor on every site: Lenis smooth scroll on one GSAP clock, a SplitText hero, masked reveals, one pinned or horizontal showpiece, a WebGL hero layer with a poster fallback, a magnetic CTA.
+4. **Check.** `check.mjs` scans the project for empty frames, the AI tells (eyebrows, gradients, pills, mono, Inter, purple), the motion floor and the typography, and the build is only done when it passes. With a browser tool it also screenshots and fixes what it sees.
 
 ## Install options
 
@@ -131,9 +131,10 @@ npm install @struq/icons
 
 ## What it fetches and sends
 
-Struq is instructions and reference files. It runs no code of its own and collects or sends nothing about you or your project.
+Struq is instructions, reference files, copy-in components and four small Node scripts (`recipes.mjs`, `canon.mjs`, `images.mjs`, `check.mjs`) that your agent runs in your project. They read and write files in your project and make the public requests below; they collect or send nothing about you or your project.
 
-- **Photos, only when your brief has none.** The skill has your agent read the public pack list at `https://struq.nl/api/media/packs` and download the chosen images from `https://struq.nl/media/packs/` into your project. These are plain public requests: no account, no key, and nothing from your project goes with them. The images are CC0.
+- **Canon.** `canon.mjs` reads the public palettes, pairings and design systems at `https://struq.nl/api/assets`, and downloads a Fontshare face from `api.fontshare.com` when a pairing needs one. No account, no key.
+- **Photos, for every slot your own photos do not fill.** The skill has your agent read the public pack list at `https://struq.nl/api/media/packs` and download the chosen images from `https://struq.nl/media/packs/` into your project. These are plain public requests: no account, no key, and nothing from your project goes with them. The images are CC0.
 - **Checks.** The screenshot and performance checks run against your own local dev server, with your agent's own browser tool.
 - **The installer.** `npx @struq/skill@latest` downloads the package from npm, looks for the AI tools' folders in your home folder and copies the skill into them. It sends nothing.
 
