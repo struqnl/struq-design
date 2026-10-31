@@ -83,11 +83,12 @@ function readPalette() {
     const path = join(root, file);
     if (!existsSync(path)) continue;
     const css = readFileSync(path, "utf8");
-    const pick = (name) => css.match(new RegExp(`--${name}\\s*:\\s*(#[0-9a-fA-F]{3,8})`))?.[1];
+    // Literal colours only (hex or oklch); a color-mix() step falls back to its neighbour.
+    const pick = (name) => css.match(new RegExp(`--${name}\\s*:\\s*(#[0-9a-fA-F]{3,8}|oklch\\([^)]*\\))`))?.[1];
     palette.s0 = pick("surface-0") ?? palette.s0;
     palette.s1 = pick("surface-1") ?? palette.s1;
-    palette.s2 = pick("surface-2") ?? palette.s2;
-    palette.s3 = pick("surface-3") ?? palette.s3;
+    palette.s2 = pick("surface-2") ?? (pick("surface-1") ? palette.s1 : palette.s2);
+    palette.s3 = pick("surface-3") ?? (pick("surface-0") ? palette.s0 : palette.s3);
     palette.ink = pick("ink") ?? palette.ink;
     palette.accent = pick("accent") ?? palette.accent;
     break;

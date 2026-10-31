@@ -48,9 +48,27 @@ type Props = {
   priority?: boolean;
 };
 
+/**
+ * A token as an rgb() string three.js can parse, whatever it was written in: hex, oklch() or
+ * color-mix(). The browser resolves the variable on a probe element, a 2D canvas turns the result
+ * into sRGB bytes.
+ */
+function pick(name: string, fallback: string) {
+  const probe = document.createElement("span");
+  probe.style.color = `var(${name}, ${fallback})`;
+  document.body.appendChild(probe);
+  const computed = getComputedStyle(probe).color;
+  probe.remove();
+  const ctx = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
+  if (!ctx) return fallback;
+  ctx.fillStyle = fallback;
+  ctx.fillStyle = computed; // an unparseable value leaves the fallback in place
+  ctx.fillRect(0, 0, 1, 1);
+  const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
 function readPalette(): Palette {
-  const css = getComputedStyle(document.documentElement);
-  const pick = (name: string, fallback: string) => css.getPropertyValue(name).trim() || fallback;
   return {
     surface: pick("--surface-0", "#f4efe6"),
     surface2: pick("--surface-2", "#e2d7c4"),
