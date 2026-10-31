@@ -211,7 +211,7 @@ const plan = read("STRUQ.md");
   tell("Filler content", /Lorem ipsum|\bAcme\b|John Doe|Jane Doe|SITE_TITLE|SITE_DESCRIPTION|Your journey starts here/i, "real copy for the brief; replace the layout's SITE_TITLE and SITE_DESCRIPTION.");
   tell("Dashes", /[\u2012\u2013\u2014\u2015\u2E3A\u2E3B]|&(mdash|ndash|horbar);|&#(821[0-3]);|&#x201[2-5];/i,
     "em and en dashes read as machine-written copy. Restructure the sentence: a comma, a colon, a full stop, or \"to\" for a range.");
-  tell("Generic CTAs", />\s*(Learn more|Get started|Read more|Click here|Discover more|Find out more|Join now|Lees meer|Meer weten|Klik hier|Ontdek meer)\s*</i, "a verb and the thing: \"Reserveer een tafel\", \"Bekijk de projecten\".", { ...ownOnly, warn: true, quietPass: true });
+  tell("Generic CTAs", />\s*(Learn more|Get started|Read more|Click here|Submit|Sign up|Contact us|Get in touch|Discover more|Find out more|Join now|Lees meer|Meer informatie|Meer weten|Klik hier|Neem contact op|Aan de slag|Ontdek meer)\s*</i, "name the action and its result, verb first: \"Reserveer een tafel voor vanavond\", \"Bekijk de projecten\", \"Plan een kennismaking\" (Struq tells 1.2.0, generic-ctas).", ownOnly);
   tell("Generic section headings", />\s*(Features|About Us|Our Services|Why Choose Us|What We Do|Our Story|Capabilities|Onze diensten|Over ons|Waarom kiezen voor ons)\s*</i, "a heading that says something only this business could say.", { ...ownOnly, warn: true, quietPass: true });
   tell("Hype copy", /\b(Unleash|Supercharge|Next-?gen|Seamless|Elevate your|Revolutioni[sz]e|Game-?changer|Cutting-?edge|State-of-the-art|Unparalleled|Next-level|Turbocharge|naadloos|ontgrendel|revolutionair|toekomstbestendig)\b/i, "plain, specific claims from the brief.", { ...ownOnly, warn: true, quietPass: true });
 
@@ -352,6 +352,32 @@ const plan = read("STRUQ.md");
   }
 }
 
+/* -------------------------------------------------------------------- HERO */
+{
+  const G = "HERO";
+  const heroFiles = own.filter((f) => /<HeroCanvas\b/.test(f.text));
+  // The hero is the section around HeroCanvas: from the section that opens before it to the first
+  // </section> after it. Photos further down the page do not count for the hero.
+  const heroSlice = (text) => {
+    const at = text.indexOf("<HeroCanvas");
+    const open = text.lastIndexOf("<section", at);
+    const close = text.indexOf("</section>", at);
+    return text.slice(open >= 0 ? open : at, close >= 0 ? close : text.length);
+  };
+  const bare = heroFiles.filter((f) => !/images\.hero\b|<MediaFrame\b|\bimage=\{/.test(heroSlice(f.text)));
+  if (bare.length) add(G, "FAIL", "Hero without a photo: every pack has hero images, so the hero shows one (HeroCanvas scene=\"ripple\" image={images.hero[0]}, or a MediaFrame beside the copy). The WebGL field is an atmosphere layer, not the picture.", bare.map((f) => f.rel));
+  else if (heroFiles.length) add(G, "PASS", "The hero carries a photo");
+  const quietless = heroFiles.filter((f) => !/data-quiet|<SplitHeadline\b/.test(f.text));
+  if (quietless.length) add(G, "FAIL", "The hero copy is not marked: put data-quiet on the headline and the lead (SplitHeadline marks the h1 itself), so the field hushes behind them.", quietless.map((f) => f.rel));
+  if (own.some((f) => /data-wordmark/.test(f.text))) add(G, "PASS", "A header wordmark (data-wordmark)");
+  else add(G, "FAIL", "No header wordmark: every page has a header with the name as wordmark, marked data-wordmark (references/sections.md, Header).");
+  // Custom hero scenes live beside the shipped ones; only the shipped files are trusted.
+  const customScenes = files.filter((f) => f.rel.includes("components/struq/scenes/") && !/[/](contours|ripple|dots|types)[.]ts$/.test(f.rel));
+  const geometry = hits(/new\s+THREE\.(Box|Cylinder|Torus|Sphere|Capsule|Cone|Tube|Lathe|Extrude|Tetrahedron|Octahedron|Icosahedron)Geometry\b|<(box|cylinder|torus|sphere|capsule|cone|tube|lathe|extrude)Geometry\b/, { scope: [...own, ...customScenes] });
+  if (geometry.length) add(G, "FAIL", "Hand-built product geometry: never model the client's product from primitives. Use a shared hero scene with the product photography (pack vitrine for a launch).", geometry);
+  else add(G, "PASS", "No product modelled from primitives");
+}
+
 /* --------------------------------------------------------------------- LOG */
 // Every site keeps STRUQ-LOG.md: an entry for each completed checklist step. Step 12 (this check)
 // writes its own entry when this run ends, so it is not required beforehand.
@@ -363,13 +389,17 @@ const plan = read("STRUQ.md");
     const ticked = (plan.match(/^\s*[-*]\s*\[[xX]\]\s*(\d+)/gm) ?? []).map((l) => Number(l.match(/(\d+)\s*$/)[1])).filter((n) => n !== 12);
     const missing = ticked.filter((n) => !new RegExp(`^## Step ${n}\\b`, "m").test(log));
     const entries = (log.match(/^## /gm) ?? []).length;
+    const approval = log.match(/^## Step 2 Approval[^\n]*\n([\s\S]*?)(?=^## |(?![\s\S]))/m);
+    if (!approval || !/^Reply:\s*["\u201C\u2018'].+["\u201D\u2019']\s*$/m.test(approval[1])) {
+      add(G, "FAIL", 'No Step 2 Approval entry with the user\'s own reply. The build request is not the approval: stop once, ask "Akkoord? Heb je een logo, foto\'s of echte cijfers, stuur ze nu.", then log the answer word for word: node <skill-dir>/scripts/log.mjs "Step 2 Approval" "Asked: Akkoord? ..." "Reply: \"<their words>\"".');
+    } else add(G, "PASS", "The approval stop is logged with the user's reply");
     if (missing.length) add(G, "FAIL", `STRUQ-LOG.md has no entry for ticked step(s) ${missing.join(", ")}. Add one per step with log.mjs: what was done and why.`);
     else add(G, "PASS", `STRUQ-LOG.md has ${entries} entries, one or more for every ticked step`);
   }
 }
 
 /* ------------------------------------------------------------------ REPORT */
-const order = ["IMAGES", "TELLS", "MOTION", "TYPE", "PLAN", "LOG"];
+const order = ["IMAGES", "TELLS", "MOTION", "HERO", "TYPE", "PLAN", "LOG"];
 console.log(`Struq check: ${root}\n`);
 for (const g of order) {
   const rows = results.filter((r) => r.group === g);

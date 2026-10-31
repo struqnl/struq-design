@@ -35,7 +35,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "test": "node --test test/install.test.mjs"
+    "test": "node --test test/install.test.mjs test/check.test.mjs test/packs.test.mjs"
   },
   "publishConfig": {
     "access": "public"

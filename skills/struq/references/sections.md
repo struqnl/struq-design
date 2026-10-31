@@ -16,11 +16,13 @@ import { imageCredit, images } from "@/lib/struq-images";
 
 ## Header
 
-Sits over the hero, not a bar. The name in the display face, two or three links, the CTA. No pill, no blur.
+Every page has one. It sits over the hero, not a bar: the name in the display face as the wordmark (marked `data-wordmark`, which `check.mjs` looks for), two or three links, the CTA. No pill, no blur. Internal links use `next/link` (the lint rule fails a plain `<a>` to a page).
 
 ```tsx
+import Link from "next/link";
+
 <header className="absolute inset-x-0 top-0 z-20 flex items-center justify-between px-6 py-6 md:px-[8vw]">
-  <a href="/" className="font-display text-h3">Zout</a>
+  <Link href="/" data-wordmark="" className="font-display text-h3">Zout</Link>
   <nav className="flex items-center gap-8 text-small">
     <a href="#kaart" className="hidden md:inline">Kaart</a>
     <a href="#zaal" className="hidden md:inline">De zaal</a>

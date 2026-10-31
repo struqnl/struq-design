@@ -42,12 +42,12 @@ export const createScene: CreateScene = async ({ THREE, renderer, palette, dark 
       ${NOISE_GLSL}
       void main() {
         vec2 uv = gl_FragCoord.xy / uFieldRes;
-        float t = uTime * 0.035;
+        float t = uTime * 0.022; // the ambient clock: a slow drift, Vapor pace
         // Perspective: the horizon sits just above the top edge, the vanishing point on the right third.
         float below = 1.18 - uv.y;
         float Z = 0.8 / below;
         float X = (uv.x - 0.66) * uAspect * Z;
-        vec2 p = vec2(X, Z - t * 2.2 + uScroll * 1.2) * 0.62;
+        vec2 p = vec2(X, Z - t * 1.1 + uScroll * 1.2) * 0.62;
         vec2 warp = vec2(fbm(p + vec2(0.0, t)), fbm(p + vec2(4.1, -t)));
         float h = fbm(p * 0.9 + 1.25 * warp);
         // The pointer: a soft rise where it rests, eased by presence. A modulation, never a spotlight.

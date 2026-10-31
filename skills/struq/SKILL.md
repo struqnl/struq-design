@@ -44,8 +44,8 @@ Rule: keep STRUQ-LOG.md at every step: node <skill-dir>/scripts/log.mjs "Step N 
 - [ ] 2 Plan and approval: palette, pairing, design system and pack picked from the canon (canon.mjs list); STRUQ.md written; the one stop for approval sent and answered
 - [ ] 3 Recipes: node <skill-dir>/scripts/recipes.mjs printed "OK recipes ready"
 - [ ] 4 Canon: canon.mjs palette and canon.mjs type wrote the tokens and the fonts of the approved picks
-- [ ] 5 Images: images.mjs printed "OK" for the approved pack; title and lang set in app/layout.tsx
-- [ ] 6 Hero: HeroCanvas layer, SplitHeadline h1, one line of lead, MagneticButton CTA, the hero photo
+- [ ] 5 Images: images.mjs --brief printed "OK"; only photos whose alt fits the client are used, captions written from the alts; title and lang set in app/layout.tsx
+- [ ] 6 Hero: a header with the wordmark (data-wordmark), a pack hero photo, the HeroCanvas field beside or behind the copy and held by the quiet zone, SplitHeadline h1, one line of lead, MagneticButton CTA
 - [ ] 7 Sections: 5 to 7 sections on the arc, every image in a MediaFrame, text groups in Reveal, two grid breaks
 - [ ] 8 Showpiece: one HorizontalGallery or PinnedZoom at the act break
 - [ ] 9 Footer: designed as hard as the hero, with the image credit
@@ -82,6 +82,8 @@ Then **stop, once**: send the plan in five lines (idea, palette, type, pack, arc
 > Akkoord? Heb je een logo, foto's of echte cijfers, stuur ze nu.
 
 (English: "Approve? If you have a logo, photos or real numbers, send them now.") Wait for the answer. Any yes, or "bouw maar" with nothing attached, builds with the canon picks as planned; what the user sends replaces the matching pick or pack images; a veto changes only what it names. **This is the only stop: never ask a second time**, not for permission to download the images (they are free and CC0) and not to confirm a build step. Only a brief that does not say what the business is gets one question before the plan, instead of this stop.
+
+**The build request is not the approval.** "Build me a site for ..." is the brief; the approval is the user's answer to this stop, and nothing else counts as one. Log it word for word, then go on: `node <skill-dir>/scripts/log.mjs "Step 2 Approval" "Asked: Akkoord? Heb je een logo, foto's of echte cijfers, stuur ze nu." "Reply: \"<the user's own words>\""`. `check.mjs` fails without that entry and its Reply line.
 
 ### Step 3: Recipes
 
@@ -138,12 +140,13 @@ No network: keep the `Paper` tokens the recipe ships, set `Palette: offline defa
 ### Step 5: Images (automatic, every build)
 
 ```bash
-node <skill-dir>/scripts/images.mjs <pack-slug>
+node <skill-dir>/scripts/images.mjs --brief "<the brief, in the user's words>"
+node <skill-dir>/scripts/images.mjs <pack-slug> --brief "<the brief>"     # when you picked the pack yourself
 ```
 
-It downloads the pack's 24 images to `public/images/`, verifies every file is a real image, and writes `lib/struq-images.ts`. It prints every image with what it shows: read those lines and give each slot the photo that fits it. Use them as `images.hero[0]`, `images.card[3]`, and so on; `imageCredit` goes in the footer. With the user's own photos: put them in `public/images/` and use them first; fill the rest from the pack.
+Always pass `--brief`. With it the script picks the pack by Struq's rule when you name none, and **leaves out the photos whose alt names a subject this client does not do** (a fish restaurant gets the dining room and the wood fire of `proof`, not its flour and dough); the best fits come first in each slot. It downloads what is left to `public/images/`, verifies every file is a real image, and writes `lib/struq-images.ts` with each photo's alt and description. Read every alt before you place a photo: use only photos whose alt fits what this client actually does, and **write every caption from what the alt says**. Never caption a photo with a subject it does not show (no "Vis van het seizoen" under an apron with flour on it). Use them as `images.hero[0]`, `images.card[3]`, and so on; `imageCredit` goes in the footer. With the user's own photos: put them in `public/images/` and use them first; fill the rest from the pack.
 
-Pick the pack by what the business is (the table goes by what the photos show):
+The pack rule, the same one Struq's MCP uses (`scripts/packs.mjs`): a sector word in the brief picks that sector's pack, matched as whole words; a product launch with no sector word gets `vitrine` (product photography) and the hero scene carries the product; vehicle and mobility words never pull a brief to freight; anything else gets `halide`. The table, by what the photos show:
 
 | The brief is | Pack | The photos |
 |---|---|---|
@@ -156,7 +159,8 @@ Pick the pack by what the business is (the table goes by what the photos show):
 | Design studio, agency, print, illustration, writer | `quire` | studio desk mid-project, paper, ink, swatches |
 | Software, SaaS, AI, anything with nothing to photograph | `halide` | glass, machined metal and light in darkness |
 | Electronics, hardware, devices, engineering, deep tech | `circuit` | copper, solder and connectors at macro range |
-| Mobility, e-bikes, logistics, transport, delivery | `transit` | depots, wet road, containers under sodium light |
+| Logistics, freight, distribution, warehousing (vracht, distributie, magazijn) | `transit` | depots, wet road, containers under sodium light |
+| A product launch with no sector of its own: an e-bike, a cargo bike, a device, a drink | `vitrine` | the product's world on stone under one light; the hero scene carries the product |
 | Sport, gym, running, coaching for performance | `cadence` | training spaces after dark, chalk and steel |
 | Yoga, physio, spa, wellness, movement | `vessel` | studio floor, still water, linen, sand tones |
 | Care, therapy, coaching, psychology, a small B&B | `linen` | calm rooms, linen, quiet hands |
@@ -168,7 +172,7 @@ Pick the pack by what the business is (the table goes by what the photos show):
 | School, childcare, education | `primer` | empty rooms at child height, birch and felt |
 | Events, venues, theatre, conferences | `assembly` | the room before it fills, chairs and stage light |
 
-The table reads the photos, not the API's `sector` field: several packs carry a sector label that does not match their pictures (`vessel` is wellness, not kitchen; `datum` is architecture, not data). Nothing fits closely: take the pack whose light matches the palette (warm and light `linen`, warm and dark `forge`, cool and dark `halide`, cool and light `datum`). Never skip images. One pack per site. Translate the alts in `lib/struq-images.ts` when the site is not Dutch. Then set the title, description and `lang` in `app/layout.tsx`.
+The table reads the photos, never the API's `sector` field: production still carries old labels that do not match the pictures (`vessel` is wellness, not kitchen; `datum` is architecture, not data), so the skill never chooses by that field. Nothing fits closely: take the pack whose light matches the palette (warm and light `linen`, warm and dark `forge`, cool and dark `halide`, cool and light `datum`). Never skip images. One pack per site. Translate the alts in `lib/struq-images.ts` when the site is not Dutch. Then set the title, description and `lang` in `app/layout.tsx`.
 
 ### Step 6: The hero
 
@@ -185,7 +189,10 @@ The table reads the photos, not the API's `sector` field: several packs carry a 
 </section>
 ```
 
-- **Pick the scene:** `ripple` when one strong photo carries the brand (food, hospitality, hotels, fashion, wellness); `contours` for calm and precise (architecture, studios, consultancy, nature, research), with the hero photo in a `MediaFrame` beside or below the headline; `dots` for movement and scale (mobility, logistics, tech, sport, energy), with the photo in the next section.
+- **The hero carries a photo.** Every pack has hero images, so the hero shows one: `ripple` makes the photo itself the field; with `contours` or `dots` the photo sits in a `MediaFrame` beside the copy (the copy on the left, the photo on the right two fifths). `check.mjs` fails a HeroCanvas hero without a photo.
+- **The field is atmosphere, never the picture and never under the headline's box.** It runs behind or beside the copy and the quiet zone holds it down there. Pick the scene: `ripple` when one strong photo carries the brand (food, hospitality, hotels, fashion, wellness); `contours` for calm and precise (architecture, studios, consultancy, nature, research); `dots` for movement and scale (mobility, logistics, tech, sport, energy).
+- **Never model the client's product from primitives** (boxes, cylinders and tori for a bike): use the shared scenes and the product photography. `check.mjs` fails hand-built geometry.
+- **Every page has a header with the wordmark,** the name in the display face marked `data-wordmark` (references/sections.md, Header). For a portfolio brief ("laat ons werk zien"), the work is in the first screen: a project photo in the hero, not text alone.
 - Type over a photo (`ripple`, `PinnedZoom`, a full-bleed band) is `text-on-photo` with `scrim={0.3}` to `0.45`; type over `contours` or `dots` is the normal `text-ink`. The headline must read at 4.5:1.
 - The h1 is the site's promise in 8 words or fewer, set large and light. No label above it.
 - The canvas hushes behind the copy: the `SplitHeadline` h1 marks itself, add `data-quiet` to the lead line (at most four elements). Keep the copy on the left or on a third and let the scene carry the right: every shipped scene is composed that way.
