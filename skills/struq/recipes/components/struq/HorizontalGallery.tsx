@@ -43,7 +43,7 @@ export function HorizontalGallery({ title, intro, items, className = "" }: Props
             start: "top top",
             end: () => `+=${distance()}`,
             pin: true,
-            scrub: 1, // never anticipatePin with smooth scroll: it jerks on engage
+            scrub: 1, // no pin anticipation: with smooth scroll it jerks the pin on engage
             invalidateOnRefresh: true,
           },
         });

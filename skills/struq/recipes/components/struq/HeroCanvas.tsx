@@ -4,9 +4,13 @@
 // - three.js loads in its own chunk after the page paints, never in the first-load bundle;
 // - the poster (the hero photo, or the flat page surface) shows first and stays when WebGL is
 //   missing; the canvas fades in over it only after its first frame;
-// - device pixel ratio capped at 1.75 (1.5 on phones);
+// - device pixel ratio capped at 1.75, plus a pixel budget for large screens;
 // - rendering pauses when the hero leaves the viewport or the tab is hidden;
-// - prefers-reduced-motion renders ONE still frame and never animates;
+// - prefers-reduced-motion and phones render ONE composed still frame (a computed poster) and never
+//   run the loop, so a phone spends no battery on it;
+// - the copy stays readable: mark the headline and lead with data-quiet and the field hushes
+//   behind them (a soft ceiling, not a dark box);
+// - the pointer is a gentle modulation that eases in and out (presence), never a spotlight;
 // - colours come from the site tokens on :root (--surface-0, --surface-2, --ink, --accent), so the
 //   scene is recoloured to the palette automatically;
 // - it runs on gsap.ticker, the same clock as Lenis and ScrollTrigger.
@@ -16,7 +20,7 @@
 //   <HeroCanvas scene="contours" />                      (no photo needed)
 //   <HeroCanvas scene="ripple" image={images.hero[0]} /> (the hero photo, liquid under the pointer)
 //   <HeroCanvas scene="dots" />                          (a field of points, for tech and mobility)
-//   <div className="relative z-10">...headline...</div>
+//   <div className="relative z-10"><h1 data-quiet>...</h1><p data-quiet>...</p></div>
 // </section>
 //
 // A scene from the Struq MCP (struq_achtergrond) or one of your own: write it as
@@ -68,6 +72,12 @@ function pick(name: string, fallback: string) {
   return `rgb(${r}, ${g}, ${b})`;
 }
 
+/** Relative luminance of an rgb() string, 0 to 1. */
+function luminance(rgb: string) {
+  const [r, g, b] = (rgb.match(/[0-9]+/g) ?? ["255", "255", "255"]).slice(0, 3).map((n) => Number(n) / 255);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
 function readPalette(): Palette {
   return {
     surface: pick("--surface-0", "#f4efe6"),
@@ -102,19 +112,22 @@ export function HeroCanvas({ scene, image, grade = 0.25, scrim = 0, className = 
       } catch {
         return; // no WebGL: the poster stays, which is the designed fallback
       }
-      const phone = window.matchMedia("(max-width: 767px)").matches;
+      const phone = window.matchMedia("(max-width: 767px), (pointer: coarse)").matches;
+      const still = reduce || phone;
       const dprCap = Math.min(window.devicePixelRatio || 1, phone ? 1.5 : 1.75);
       const canvas = renderer.domElement;
       canvas.style.cssText = "position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0";
       canvas.setAttribute("aria-hidden", "true");
       slot.appendChild(canvas);
 
+      const palette = readPalette();
       let hero: Awaited<ReturnType<CreateScene>>;
       try {
         hero = await createScene({
           THREE,
           renderer,
-          palette: readPalette(),
+          palette,
+          dark: luminance(palette.surface) < 0.4,
           image: image ? { src: image.src, width: image.width, height: image.height } : undefined,
           grade,
         });
@@ -131,7 +144,34 @@ export function HeroCanvas({ scene, image, grade = 0.25, scrim = 0, className = 
         return;
       }
 
-      const state = { time: 0, pointer: { x: 0, y: 0 }, target: { x: 0, y: 0 }, scroll: 0, velocity: 0 };
+      const state = {
+        time: 0,
+        pointer: { x: 0.3, y: 0 },
+        target: { x: 0.3, y: 0 },
+        presence: 0,
+        wanted: 0,
+        scroll: 0,
+        velocity: 0,
+        quiet: new Float32Array(16),
+        feather: 48,
+      };
+      // The copy the field hushes behind: up to four [data-quiet] elements in the hero section.
+      const measureQuiet = () => {
+        const pr = renderer.getPixelRatio();
+        const box = el.getBoundingClientRect();
+        const section = el.parentElement ?? el;
+        state.quiet.fill(0);
+        Array.from(section.querySelectorAll<HTMLElement>("[data-quiet]"))
+          .slice(0, 4)
+          .forEach((node, i) => {
+            const r = node.getBoundingClientRect();
+            state.quiet[i * 4] = (r.left - box.left) * pr;
+            state.quiet[i * 4 + 1] = (box.bottom - r.bottom) * pr;
+            state.quiet[i * 4 + 2] = (r.right - box.left) * pr;
+            state.quiet[i * 4 + 3] = (box.bottom - r.top) * pr;
+          });
+        state.feather = 64 * pr;
+      };
       const size = () => {
         const w = el.clientWidth || window.innerWidth;
         const h = el.clientHeight || window.innerHeight;
@@ -140,12 +180,16 @@ export function HeroCanvas({ scene, image, grade = 0.25, scrim = 0, className = 
         renderer.setPixelRatio(Math.min(dprCap, Math.sqrt(2_400_000 / Math.max(1, w * h))));
         renderer.setSize(w, h, false);
         hero.resize(w, h);
+        measureQuiet();
       };
       size();
+      // Webfonts and the headline's split change the copy's box once after mount.
+      const remeasure = window.setTimeout(measureQuiet, 900);
 
       const draw = () => {
         hero.update(state);
-        renderer.render(hero.scene, hero.camera);
+        if (hero.render) hero.render(renderer);
+        else renderer.render(hero.scene, hero.camera);
       };
 
       let visible = true;
@@ -159,13 +203,16 @@ export function HeroCanvas({ scene, image, grade = 0.25, scrim = 0, className = 
         state.velocity = Math.min(1, state.velocity + Math.hypot(x - state.target.x, y - state.target.y) * 2);
         state.target.x = x;
         state.target.y = y;
+        state.wanted = Math.abs(x) <= 1 && Math.abs(y) <= 1 ? 1 : 0;
       };
+      const onLeave = () => (state.wanted = 0);
 
       const tick = (time: number) => {
         if (!visible || document.hidden) return;
         state.time = time;
-        state.pointer.x += (state.target.x - state.pointer.x) * 0.06;
-        state.pointer.y += (state.target.y - state.pointer.y) * 0.06;
+        state.pointer.x += (state.target.x - state.pointer.x) * 0.05;
+        state.pointer.y += (state.target.y - state.pointer.y) * 0.05;
+        state.presence += (state.wanted - state.presence) * (state.wanted ? 0.04 : 0.015);
         state.velocity *= 0.95;
         state.scroll = Math.min(1, Math.max(0, window.scrollY / Math.max(1, el.clientHeight)));
         draw();
@@ -173,15 +220,16 @@ export function HeroCanvas({ scene, image, grade = 0.25, scrim = 0, className = 
 
       const ro = new ResizeObserver(() => {
         size();
-        if (reduce) draw();
+        if (still) draw();
       });
       ro.observe(el);
 
-      if (reduce) {
-        state.time = 12; // one composed still frame
+      if (still) {
+        state.time = 40; // one composed still frame: the computed poster
         draw();
       } else {
         window.addEventListener("pointermove", onPointer, { passive: true });
+        document.documentElement.addEventListener("pointerleave", onLeave);
         gsap.ticker.add(tick);
         draw();
       }
@@ -189,7 +237,9 @@ export function HeroCanvas({ scene, image, grade = 0.25, scrim = 0, className = 
 
       cleanup = () => {
         gsap.ticker.remove(tick);
+        window.clearTimeout(remeasure);
         window.removeEventListener("pointermove", onPointer);
+        document.documentElement.removeEventListener("pointerleave", onLeave);
         io.disconnect();
         ro.disconnect();
         hero.dispose();

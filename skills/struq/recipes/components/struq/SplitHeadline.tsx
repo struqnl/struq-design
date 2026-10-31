@@ -18,9 +18,11 @@ type Props = {
   /** "load" for the hero, "scroll" for a statement further down. */
   on?: "load" | "scroll";
   delay?: number;
+  /** Mark it as copy the hero canvas hushes behind. On by default for the h1. */
+  quiet?: boolean;
 };
 
-export function SplitHeadline({ children, as = "h1", className = "", on = "load", delay = 0.15 }: Props) {
+export function SplitHeadline({ children, as = "h1", className = "", on = "load", delay = 0.15, quiet = as === "h1" }: Props) {
   const ref = useRef<HTMLHeadingElement>(null);
 
   useGSAP(
@@ -59,7 +61,7 @@ export function SplitHeadline({ children, as = "h1", className = "", on = "load"
 
   const Tag = as as "h1";
   return (
-    <Tag ref={ref} data-split="" className={className}>
+    <Tag ref={ref} data-split="" data-quiet={quiet ? "" : undefined} className={className}>
       {children}
     </Tag>
   );

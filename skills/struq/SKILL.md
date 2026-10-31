@@ -185,6 +185,8 @@ The table reads the photos, not the API's `sector` field: several packs carry a 
 - **Pick the scene:** `ripple` when one strong photo carries the brand (food, hospitality, hotels, fashion, wellness); `contours` for calm and precise (architecture, studios, consultancy, nature, research), with the hero photo in a `MediaFrame` beside or below the headline; `dots` for movement and scale (mobility, logistics, tech, sport, energy), with the photo in the next section.
 - Type over a photo (`ripple`, `PinnedZoom`, a full-bleed band) is `text-on-photo` with `scrim={0.3}` to `0.45`; type over `contours` or `dots` is the normal `text-ink`. The headline must read at 4.5:1.
 - The h1 is the site's promise in 8 words or fewer, set large and light. No label above it.
+- The canvas hushes behind the copy: the `SplitHeadline` h1 marks itself, add `data-quiet` to the lead line (at most four elements). Keep the copy on the left or on a third and let the scene carry the right: every shipped scene is composed that way.
+- Phones and reduced motion get one composed still frame of the scene, never the loop.
 
 ### Step 7: Sections on the arc
 
