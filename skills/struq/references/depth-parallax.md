@@ -168,7 +168,7 @@ export function StackingCards({ items }: { items: { kicker: string; title: strin
         <section key={item.title} data-card
                  className={`sticky top-0 flex flex-col justify-between gap-16 overflow-hidden
                              px-8 py-12 md:min-h-[100svh] ${SURFACES[i % SURFACES.length]}`}>
-          <span className="eyebrow text-eyebrow text-ink-muted">{item.kicker}</span>
+          <span className="text-small text-ink-muted">{item.kicker}</span>
           <div className="max-w-3xl">
             <h3 className="font-display text-h2">{item.title}</h3>
             <p className="text-lead mt-6 max-w-[48ch] text-ink-muted">{item.body}</p>

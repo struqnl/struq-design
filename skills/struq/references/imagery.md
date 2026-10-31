@@ -23,6 +23,7 @@ Pick one:
 Apply the grade in one reusable layer, not per-image in an editor:
 
 ```tsx
+// The grade as a component. On a Struq build MediaFrame is this layer: add the filter to its <Image> className.
 // components/ui/GradedImage.tsx: every content image renders through this
 export function GradedImage({ src, alt, ratio = "4/3", className = "" }: {
   src: string; alt: string; ratio?: string; className?: string;
@@ -31,15 +32,13 @@ export function GradedImage({ src, alt, ratio = "4/3", className = "" }: {
     <div className={`relative overflow-hidden ${className}`} style={{ aspectRatio: ratio }}>
       <img src={src} alt={alt} className="h-full w-full scale-[1.18] object-cover
                                           [filter:saturate(0.82)_contrast(1.05)]" />
-      {/* the tint: surface temperature washed over every image */}
-      <div aria-hidden className="absolute inset-0 bg-surface-0/15 mix-blend-color" />
     </div>
   );
 }
 ```
 
-- The `filter` + tint values are **per-project constants**: tune once against the preset, then never per-image. (Static CSS filters are fine; it's *scrubbed* filters that cost, see [setup.md](setup.md) §5.)
-- Duotone variant: `[filter:grayscale(1)]` on the img + an accent-colored overlay with `mix-blend-screen` (dark pages) or `mix-blend-multiply` (light pages).
+- The `filter` values are **per-project constants**: tune once against the preset, then never per-image. (Static CSS filters are fine; it's *scrubbed* filters that cost, see [setup.md](setup.md) §5.)
+- Duotone variant: `[filter:grayscale(1)_sepia(0.2)]` on the img. Never a tinted translucent layer over the photo: that is a tell of its own ([anti-patterns.md](anti-patterns.md) §20).
 - `scale-[1.18]` is the parallax headroom from [depth-parallax.md](depth-parallax.md) §2, so grading and panning share the same frame component.
 
 **Cheap tell:** every image at its source colors, six looks on one page. **Instead:** One `GradedImage` component; swap the page's grade by editing one filter line.
@@ -97,38 +96,20 @@ In order of preference:
    - Avoid the AI-render look: no glossy 3D blobs, no purple-glow gradients, no hyperdetailed-everything. The §1 grade pass over generated output hides most remaining tells.
 4. **Treated stock**: last resort, and only *through* the grade layer. Untreated stock (beaming laptop people, handshake photos) is below the floor.
 
-**Beeldbank, stock and generated images show context, never the client's product.** The city, the canal, a rider, a room, a material: yes. A stranger's e-bike, a generated bottle or a stock ceramic presented as the product: never, because the visitor reads it as the thing they would buy. Until the real product is shot, it is a placeholder frame (§4b), a declared 3D stand-in ([webgl-scenes.md](webgl-scenes.md) §4, "No model file yet"), or type.
+**Beeldbank, stock and generated images show context, never the client's product.** The city, the canal, a rider, a room, a material: yes. A stranger's e-bike, a generated bottle or a stock ceramic presented as the product: never, because the visitor reads it as the thing they would buy. Until the real product is shot, it is type, a context image of the client's world, a declared 3D stand-in ([webgl-scenes.md](webgl-scenes.md) §4, "No model file yet"), or type.
 
 **Never:** browser-chrome screenshot mockups tilted in perspective, generic "dashboard glow" renders, or watermark-adjacent placeholder imagery. If a section has no honest image, the strongest move is **no image**: type, space, and surface carry it (same logic as the no-icon rule, [iconography.md](iconography.md) §1).
 
 ---
 
-## 4b. Placeholders: when the real image is not here yet
+## 4b. Never an empty frame
 
-A slot that will hold a real image (planned in the shot list, not yet shot or generated) ships as a **graded tonal frame**, never a grey box and never random stock dropped in to fill it. It must look like part of the page's system, so the layout can be judged honestly before the photography exists.
+A slot that will one day hold the client's own photo holds a beeldbank image today. There is no placeholder state on a Struq site: no grey box, no tonal frame with a "photo to come" caption, no placeholder component.
 
-- **Frame:** the declared ratio for that role (`--ratio-standard`, `--ratio-wide`, `--ratio-portrait`, §2), with the same radius and mask as the real `GradedImage` frame.
-- **Tone:** a vertical gradient between two adjacent surface steps of the palette (for example `surface-2` to `surface-3`), with the page's grain on top. No icon, no "image" glyph, no diagonal cross.
-- **Caption:** the shot-list line (subject and ratio) set in the eyebrow style, bottom left inside the frame's padding, in `ink-muted`. Example: `ROASTER MACHINE, 4/5`.
-- **Markup:** `role="img"` with an `aria-label` that names the planned subject, so the placeholder is honest to screen readers too.
-- **Never inside a showpiece.** A media-led showpiece is not staged on placeholders; it waits for the real assets ([showcase.md](showcase.md) Choosing).
-
-```tsx
-// components/ui/ImagePlaceholder.tsx: the stand-in for one shot-list line
-export function ImagePlaceholder({ caption, ratio = "4/3", className = "" }: {
-  caption: string; ratio?: string; className?: string;
-}) {
-  return (
-    <div role="img" aria-label={`Planned image: ${caption}`}
-         className={`relative overflow-hidden bg-linear-to-b from-surface-2 to-surface-3 ${className}`}
-         style={{ aspectRatio: ratio }}>
-      <span className="eyebrow text-eyebrow absolute bottom-4 left-4 text-ink-muted">
-        {caption}
-      </span>
-    </div>
-  );
-}
-```
+- **Default:** `node <skill-dir>/scripts/images.mjs <pack>` fills every slot from the pack that matches the brief ([struq-imagery.md](struq-imagery.md)). It runs on every build, without asking: the images are free and CC0.
+- **struq.nl unreachable:** the same script writes graded fallback plates in the site palette (two planes of light, a horizon hairline, grain) at each slot's ratio, and `lib/struq-images.ts` points at them. They are abstract images, not boxes. Run the script again when the network is back and the photos replace them in place.
+- **The client's product, team or projects:** a beeldbank photo never stands in for those. Those sections use type, the WebGL layer or a context image of the client's world (the material, the place), and the gap is listed under Assumptions.
+- **Markup:** every image goes through `MediaFrame`, which requires an `image`, so an empty frame cannot be written by accident. `check.mjs` fails on placeholder components, "photo to come" captions and empty `aspect-` boxes.
 
 ---
 

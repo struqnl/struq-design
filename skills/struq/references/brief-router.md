@@ -82,8 +82,8 @@ Steps marked **SYSTEM** are decided in [direction.md](direction.md) §4; they ar
 7. **Route transitions.** Multi-page: plan a full-screen transition and its variant ([route-transitions.md](route-transitions.md), with [page-entrances.md](page-entrances.md) for what happens after the curtain). One-pager: none, but reserve the hook if routes are coming. Loader yes or no from the genre's register (loaders suit narrative, portfolio and launch only, see [loaders.md](loaders.md)).
 8. **WebGL gate.** Only if a section genuinely calls for it AND the deadline allows. If yes, plan the poster first and name the moment (what the user sees, where in the arc, the fallback, one gate for canvas and pin) per [webgl-r3f.md](webgl-r3f.md) §1 and [webgl-scenes.md](webgl-scenes.md) §5. **No model file?** Walk the ladder in [webgl-scenes.md](webgl-scenes.md) §4 ("No model file yet"): ask for the GLB in the gate, a declared primitive stand-in built to be replaced, or a downgrade to photography or a type-led showpiece; label the rung under ASSUMPTIONS. A whole page as one directed scene is [../cinematic/README.md](../cinematic/README.md) instead.
 9. **Motion, icons, imagery grade.** SYSTEM. Motion is the [SKILL.md](../SKILL.md) baseline unless a deviation is recorded with its reason.
-10. **Copy budget.** Per section, from [page-architecture.md](page-architecture.md) §5: hero h1 at most 8 words, eyebrows 1 to 3 words, section headlines at most 10, body 2 to 4 sentences at 44 to 52ch, CTAs 2 to 4 verb-first words, exactly one manifesto line on the whole page.
-11. **Shot list.** Per section: subject, grade, ratio and source (real, generate, treated stock), mapped onto the arc. The grade and ratio set come from SYSTEM; missing imagery is planned as placeholders per [imagery.md](imagery.md) §4b.
+10. **Copy budget.** Per section, from [page-architecture.md](page-architecture.md) §5: hero h1 at most 8 words, no eyebrows, section headlines at most 10, body 2 to 4 sentences at 44 to 52ch, CTAs 2 to 4 verb-first words, exactly one manifesto line on the whole page.
+11. **Shot list.** Per section: subject, grade, ratio and source (real, generate, treated stock), mapped onto the arc. The grade and ratio set come from SYSTEM; missing imagery is filled from the Struq beeldbank pack (struq-imagery.md) per [imagery.md](imagery.md) §4b.
 
 ---
 
@@ -147,7 +147,7 @@ Stack: Next.js App Router · React · Tailwind · GSAP · Lenis, each with the i
 ## MATERIALS
 Have: black wordmark (SVG requested), roastery photo set (bar room, hands and pour, roaster machine)
 Missing: all copy (written from the first draft, no lorem); roast bag and bean shots
-  (planned as graded placeholders, imagery.md §4b); no numbers or quotes (no proof faked)
+  (filled from the beeldbank pack proof, struq-imagery.md); no numbers or quotes (no proof faked)
 
 ## CONCEPT
 Idea: the site reads like a roast log: one week, one batch, written down by people who taste everything
@@ -160,8 +160,8 @@ Niche: food and drink product brand, buyer = the person buying beans · genre Pr
   · preset Warm Editorial · borrowed: none (the tasting bar is a room, but imagery is not a
   borrowable field; Warm Editorial already carries the warmth)
 Display: Fraunces 300, SOFT 50 (Google Fonts, OFL) · pairing S2
-Text: Urbanist 400 body, 500 eyebrow and UI (Google Fonts, OFL)
-  · roles per typography.md §3.1 S2: display 300, h2 300, h3 400, eyebrow 500, body 400
+Text: Urbanist 400 body, 500 UI (Google Fonts, OFL)
+  · roles per typography.md §3.1 S2: display 300, h2 300, h3 400, body 400
 Signature move: soft-scrub (the roast date headline softens as the reader leaves the hero)
 Hero entrance: Warm Editorial's soft-scrub plus line rise
 Palette: light · --surface-0 #FAF6F0 --surface-1 #F3EDE2 --surface-2 #EAE1D2 --surface-3 #DFD3BF
@@ -198,7 +198,7 @@ Copy budget: h1 at most 8 words ("Roasted Tuesday. Gone by Friday."), manifesto 
   line only, roast frames = name + 2 tasting words + origin, CTAs "Visit the bar", "Get the beans"
 Assets to produce (8 images):
   1 hero bean macro, 21/9, generate on-brief
-  4 roast bags, 1/1, shoot (placeholders until then)
+  4 roast bags, 1/1, shoot (beeldbank pack images until then)
   1 bar room, 21/9, existing set, regraded
   1 hands and pour, 4/5, existing set, regraded
   1 roaster machine, 4/5, existing set, regraded
@@ -208,8 +208,7 @@ Assets to produce (8 images):
 - "best roaster in the city" read as craft-serious: one accent (the preset's oxblood, not the
   cream-plus-terracotta reflex), no second accent
 - wordmark stays black on cream (ink #1E1A16)
-- the gallery is never staged on placeholders: until the 4 roast shots exist, row 3 is a
-  static 2 by 2 grid of placeholder frames (no pin), and the pin switches on when they land
+- the gallery runs on beeldbank pack images until the 4 roast shots exist, then swaps them in
 - shop deferred: row 6 collects newsletter sign-ups instead of a cart
 - one-pager now, /shop reserved in the nav
 ```

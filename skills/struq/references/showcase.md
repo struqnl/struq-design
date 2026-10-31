@@ -12,7 +12,7 @@ Every id carries a **kind**:
 1. **Budget:** one `showpiece` for a landing page, two for a long narrative or portfolio site. A third reads as a demo reel, not a site. `system` ids are free of the budget but still obey the motion baseline.
 2. **Placement:** at act breaks ([page-architecture.md](page-architecture.md) §3), with a breather before and after. A showpiece is its own density class, so "breather, showpiece, breather" is the pattern, even when the showpiece itself is airy (`manifesto-fill`). Never as the first thing under the hero and never two in a row; a quiet section between them is what makes each one land.
 3. **Content first:** a showpiece needs material worth staging. A horizontal gallery with four weak images is worse than a static grid.
-4. **No real imagery yet?** Prefer type-led showpieces (`manifesto-fill`) over media-led ones. Where an image slot must exist before the shoot, it renders as a graded tonal frame at the declared ratio with the shot-list caption set in the eyebrow style ([imagery.md](imagery.md) §4b). Never grey boxes, never random stock to fill the frame.
+4. **No real imagery yet?** The Struq beeldbank pack fills every media slot, so a media-led showpiece has real photos from the first build ([struq-imagery.md](struq-imagery.md)). Never grey boxes, never placeholder frames.
 5. **Mobile is authored, not shrunk:** every recipe below names its touch behavior. Build it at the same time as the desktop version.
 6. **Cost** is implementation and debugging time: **S** is under an hour, **M** is a few hours, **L** is a day or more.
 
@@ -84,4 +84,4 @@ At most two showpieces each; the system ids around them set the rhythm and do no
 - A showpiece in the first 100vh under the hero, unless it **is** the hero
 - A showpiece without a reduced-motion version (the content must still read as a static layout, and the server markup is that layout: nothing hidden by inline styles, [pitfalls.md](pitfalls.md) §2)
 - A recipe chosen because it is impressive rather than because the content earns it
-- A media-led showpiece staged on placeholders (a 3D product built from primitives counts, unless it is a declared stand-in per [webgl-scenes.md](webgl-scenes.md) §4, "No model file yet")
+- A media-led showpiece staged on empty frames (a 3D product built from primitives counts, unless it is a declared stand-in per [webgl-scenes.md](webgl-scenes.md) §4, "No model file yet")

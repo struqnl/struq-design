@@ -65,7 +65,6 @@ The arithmetic: trespasser gets `-mb-32` + `relative z-10`; receiver gets `pt-56
 
 ```tsx
 <section className="content-grid gap-y-10 py-32">
-  <p className="eyebrow text-eyebrow text-ink-muted">Selected Work</p>
   <h2 className="font-display text-h2">Selected projects</h2>
   <p className="text-body max-w-[52ch] text-ink-muted">…</p>
   <img className="bleed-full aspect-[21/9] w-full object-cover" src="/wide.jpg" alt="" />

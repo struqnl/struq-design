@@ -44,7 +44,7 @@ Surface ladder steps (`surface-0 → 1 → 2`) signal depth tonally. Real shadow
 **Agency:** kill the cards; let type and rhythm carry it:
 ```tsx
 <section className="content-grid py-40 gap-y-0">
-  <p className="eyebrow text-eyebrow text-ink-muted">Capabilities</p>
+  <h2 className="font-display text-h2 max-w-[18ch]">What we take on, start to finish</h2>
   <div className="mt-16 divide-y divide-line">
     {features.map((f) => (
       <div key={f.title} className="group grid grid-cols-12 items-baseline gap-4 py-10">
@@ -55,7 +55,7 @@ Surface ladder steps (`surface-0 → 1 → 2`) signal depth tonally. Real shadow
   </div>
 </section>
 ```
-Editorial rows, left-aligned, divided by hairlines, asymmetric columns. Hierarchy comes from type scale and the eyebrow, not from a number on every row (see §16). ([composition.md](composition.md))
+Editorial rows, left-aligned, divided by hairlines, asymmetric columns. Hierarchy comes from type scale and the hairlines, not from a label or a number on every row (see §16). ([composition.md](composition.md))
 
 ---
 
@@ -180,7 +180,7 @@ Lines rising from individual overflow masks. ([scroll-reveals.md](scroll-reveals
 **Reflex:** h1 `text-4xl`, h2 `text-3xl`, h3 `text-2xl`, h4 `text-xl`: five steps between 20 and 36px, all `font-bold`, default tracking.
 **The tell:** compressed mid-range hierarchy. Nothing leads, everything is "kind of big."
 
-**Agency:** two extremes, set through the role tokens so nothing is improvised: `font-display text-display` for the hero (the token carries the pairing's clamp, tracking and leading), `font-display text-h2` per section, `type-h3 text-h3` for items, `text-body` at 1 to 1.0625rem, and `eyebrow text-eyebrow text-ink-muted` (uppercase 0.75rem, tracked 0.12 to 0.18em per face) as wayfinding between. No `tracking-tight`: tracking belongs to the face and the role ([typography.md](typography.md) §3.1). **Hero/display runs light (300 to 400)**. Large + light is the agency signal; heavy display (600+) is a deliberate genre choice only, never the reflex. **Floor:** body ≥1rem, muted ≥0.875rem, nothing below 12px. **Contrast:** body ≥4.5:1 (WCAG AA), large/≥24px ≥3:1; `ink-faint` is never text. ([baseline-prompt.md](baseline-prompt.md); the Signature pairings, roles and fluid scale are in [typography.md](typography.md))
+**Agency:** two extremes, set through the role tokens so nothing is improvised: `font-display text-display` for the hero (the token carries the pairing's clamp, tracking and leading), `font-display text-h2` per section, `type-h3 text-h3` for items, `text-body` at 1 to 1.0625rem, and quiet `text-small text-ink-muted` meta lines (sentence case) for captions and dates. No label above a heading (§19). No `tracking-tight`: tracking belongs to the face and the role ([typography.md](typography.md) §3.1). **Hero/display runs light (300 to 400)**. Large + light is the agency signal; heavy display (600+) is a deliberate genre choice only, never the reflex. **Floor:** body ≥1rem, muted ≥0.875rem, nothing below 12px. **Contrast:** body ≥4.5:1 (WCAG AA), large/≥24px ≥3:1; `ink-faint` is never text. ([baseline-prompt.md](baseline-prompt.md); the Signature pairings, roles and fluid scale are in [typography.md](typography.md))
 
 ---
 
@@ -216,7 +216,7 @@ Lines rising from individual overflow masks. ([scroll-reveals.md](scroll-reveals
 **Reflex:** `01 / 02 / 03 / 04` stamped on every section header, every feature, every list row (often oversized in a corner) as the page's wayfinding system.
 **The tell:** uniform sequencing is reflexive, not editorial. No art director numbers *everything*; it is the same impulse as `py-16` on every section, applied to labels. It signals "I needed a decoration and reached for the nearest one."
 
-**Agency:** wayfinding through variety: tracked uppercase eyebrows, hairline rules, scale jumps, surface changes. A numeral earns its place only as a **single deliberate accent** (one oversized `03` against a manifesto line), never as a per-row counter. If you can delete the numbers and lose no meaning, they were filler.
+**Agency:** wayfinding through variety: hairline rules, scale jumps, surface changes, the headings themselves. Never tracked uppercase eyebrows: they are a tell of their own (§19). A numeral earns its place only as a **single deliberate accent** (one oversized `03` against a manifesto line), never as a per-row counter. If you can delete the numbers and lose no meaning, they were filler.
 
 **The boundary:** ordinal numbering *inside one genuinely stepped component* (the phase kickers of a pinned sequence, see [pinning-scrub.md](pinning-scrub.md) §1, or a numbered process that really is ordered) is legitimate content, not this tell. The tell is *page-wide* stamping: numerals as the default decoration on every section, feature, and row.
 
@@ -229,7 +229,7 @@ Lines rising from individual overflow masks. ([scroll-reveals.md](scroll-reveals
 <p className="font-mono text-xs uppercase tracking-widest">// System online</p>
 <span className="font-mono text-sm">[ 2024 ]</span>
 ```
-**The tell:** monospace on eyebrows, labels, stats, badges, timestamps, or body to look "technical / engineered / terminal." It is the aesthetic of a code editor, not a designed page, and it has become a default reach for "techy," which makes it read as generated.
+**The tell:** monospace on labels, stats, badges, timestamps, or body to look "technical / engineered / terminal." It is the aesthetic of a code editor, not a designed page, and it has become a default reach for "techy," which makes it read as generated.
 
 **Agency:** a real text face carries all UI and copy; "precision" comes from tracking, `tabular-nums` on figures, and tight type, not from a typewriter font. **Mono is reserved for literal code** (snippets, inline `code`, terminal output on a dev-tool site where it is genuinely the subject). Anywhere else, it is a tell. The same logic kills the scramble/decode "terminal" loader ([loaders.md](loaders.md)).
 
@@ -249,7 +249,52 @@ Lines rising from individual overflow masks. ([scroll-reveals.md](scroll-reveals
 
 ---
 
+## 19. Eyebrows
+
+**Reflex:**
+```tsx
+<p className="text-xs font-medium uppercase tracking-[0.18em] text-ink-muted">Restaurant in Amsterdam-Noord</p>
+<h1 className="font-display text-display">Vis en groente, van het seizoen.</h1>
+```
+**The tell:** a small uppercase tracked label above every heading. Generated pages put one on every section because it looks "designed" at no cost; the result is the most recognisable AI marketing page there is, and it competes with the heading it sits on.
+
+**Agency:** the heading carries the section alone. Wayfinding comes from a hairline rule (`border-t border-line`), a change of surface step, a jump in scale, an image. A place or a date the reader needs goes in the lead line under the heading, in sentence case. `check.mjs` fails on `uppercase` with `tracking-`.
+
+---
+
+## 20. Gradients, tinted fills and glass
+
+**Reflex:** `bg-linear-to-b from-surface-0 to-surface-2` on a section, `bg-accent/10` behind a label, `bg-white/5 backdrop-blur` on a card, a radial glow behind the hero.
+
+**The tell:** colour that is neither a surface nor the accent. Translucent tints and gradients are the generator's way to make a flat page "rich"; they muddy the palette and read as a template on sight.
+
+**Agency:** flat, opaque surface steps (`bg-surface-1`, `bg-surface-2`) and hairlines. The only translucent fill is a flat black scrim over a photo so type in `text-on-photo` reads. Depth comes from the WebGL hero, the photography and the overlap of sections, not from washes.
+
+---
+
+## 21. Pills
+
+**Reflex:** `rounded-full px-4 py-1.5 bg-accent/10 text-accent` badges, a "New" pill with a pulsing dot, pill-shaped buttons.
+
+**The tell:** the pill with a dot is the badge of every generated launch page. Pills everywhere also break the site's radius system.
+
+**Agency:** the site radius (0 to 4px) on every button and frame; status as words in the lead line; no badges. The primary CTA is a `MagneticButton`, square-cornered, its fill rising on hover.
+
+---
+
+## 22. Empty frames
+
+**Reflex:** an `aspect-[16/9] bg-surface-2` box with "Foto volgt" in it, or a placeholder component standing in for a photo that never came.
+
+**The tell:** the reader sees the site was not finished, and a plain page with no images at all beats it.
+
+**Agency:** every frame holds a real image: the client's photo, or the Struq beeldbank pack (`scripts/images.mjs`, automatic, CC0), or, when struq.nl is unreachable, the graded fallback plate the script writes. Never ship an empty frame ([struq-imagery.md](struq-imagery.md)).
+
+---
+
 ## The 30-second tell scan
+
+The script does this scan for you: `node <skill-dir>/scripts/check.mjs` prints every hit with its file and line. By hand:
 
 Before shipping, run these grep-level checks:
 - `shadow-md|shadow-lg` on cards → §1 · `from-blue|to-purple|bg-clip-text` → §11
@@ -262,4 +307,5 @@ Before shipping, run these grep-level checks:
 - `font-bold` on the hero/`h1` / largest size = `text-4xl` → §12 · faint text on body copy / contrast below AA → §12
 - size ladders like `text-2xl md:text-4xl lg:text-6xl`, `px-`/`py-` tuned per breakpoint, fixed-`px` layout widths, or no fluid root font-size → §18
 - `text-4xl` as the largest size on the page → §12 · "Lorem|Acme|John Doe" → §15
-- `tracking-tight`, `text-ink-faint`, or `text-xs uppercase tracking-[` on headings and eyebrows (role tokens bypassed) → §12 · `Inter|Roboto|Open_Sans|Poppins|Montserrat|Lato|Space_Grotesk|Geist` in `next/font` imports → [typography.md](typography.md) §3.4
+- `uppercase` with `tracking-`, or an `eyebrow`/`kicker` class → §19 · `gradient|bg-linear-|backdrop-blur|bg-accent/` → §20 · `rounded-full` with `px-` → §21 · `Placeholder`, an empty `aspect-` div → §22
+- `tracking-tight`, `text-ink-faint`, or `uppercase` with `tracking-` anywhere (the eyebrow tell, §19), or `text-xs` on headings (role tokens bypassed) → §12 · `Inter|Roboto|Open_Sans|Poppins|Montserrat|Lato|Space_Grotesk|Geist` in `next/font` imports → [typography.md](typography.md) §3.4

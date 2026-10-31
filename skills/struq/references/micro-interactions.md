@@ -120,7 +120,7 @@ export function Cursor() {
     <div ref={dot} className="pointer-events-none fixed left-0 top-0 z-[100] -translate-x-1/2 -translate-y-1/2">
       <div className={`flex items-center justify-center rounded-full bg-ink text-surface-0
                        transition-all duration-300 ease-out-expo
-                       ${variant === "view" ? "eyebrow text-eyebrow h-20 w-20" : "h-2.5 w-2.5"}`}>
+                       ${variant === "view" ? "text-small h-20 w-20" : "h-2.5 w-2.5"}`}>
         {variant === "view" && "View"}
       </div>
     </div>

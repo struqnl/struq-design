@@ -268,8 +268,7 @@ useGSAP(
       defaults: { ease: "expo.out", duration: 1 },
     });
 
-    tl.from("[data-eyebrow]", { y: 24, autoAlpha: 0, duration: 0.6 })
-      .add(splitHeadlineIn(), "-=0.4")                       // overlap, don't queue
+    tl.add(splitHeadlineIn())
       .from("[data-body]", { y: 32, autoAlpha: 0 }, "-=0.6")
       .from("[data-media]", { yPercent: 12, autoAlpha: 0, duration: 1.2 }, "-=0.8");
   },

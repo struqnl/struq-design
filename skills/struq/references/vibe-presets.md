@@ -11,14 +11,14 @@ Every preset defines exactly this surface area. Components may use nothing outsi
 | Token | Role |
 |---|---|
 | `--color-surface-0…3` | the elevation ladder; 0 = page, each step = one layer closer |
-| `--color-ink / -muted` | the two text steps: ink for everything that must be read, muted for eyebrows, meta, captions. No gray-400/500/600 improvisation |
+| `--color-ink / -muted` | the two text steps: ink for everything that must be read, muted for meta and captions. No gray-400/500/600 improvisation |
 | `--color-ink-faint` | **never text.** Hairline emphasis, disabled states, placeholder rules, inactive dots. As text it fails contrast |
-| (inverted surfaces) | On an `ink` panel (the menu, an inverted footer) the ladder flips: `surface-0` is the text, `surface-2` the muted tier (eyebrows, meta), `surface-3` hairlines only. `ink-muted` on `ink` fails contrast. Check surface-2 on ink at 4.5:1 per preset; no new tokens needed |
+| (inverted surfaces) | On an `ink` panel (the menu, an inverted footer) the ladder flips: `surface-0` is the text, `surface-2` the muted tier (meta, captions), `surface-3` hairlines only. `ink-muted` on `ink` fails contrast. Check surface-2 on ink at 4.5:1 per preset; no new tokens needed |
 | `--color-accent` | the one accent |
 | `--color-line` | hairline borders/dividers (a low-alpha ink, not a gray) |
 | `--font-display / --font-body` | the pairing (one display + one text face, max; one family may fill both) |
-| `--font-h3 / --font-eyebrow / --font-ui / --font-stat` | role faces, mapped in `@theme inline` per the pairing's row in [typography.md](typography.md) §3.1 (defaults = S1) |
-| `--font-mono` | **optional, code only**: literal snippets, `code`, terminal output. Not a preset face. Never for eyebrows, labels, stats, or body (that's the terminal-aesthetic tell, see [anti-patterns.md](anti-patterns.md) §17) |
+| `--font-h3 / --font-meta / --font-ui / --font-stat` | role faces, mapped in `@theme inline` per the pairing's row in [typography.md](typography.md) §3.1 (defaults = S1) |
+| `--font-mono` | **optional, code only**: literal snippets, `code`, terminal output. Not a preset face. Never for labels, stats, or body (that's the terminal-aesthetic tell, see [anti-patterns.md](anti-patterns.md) §17) |
 | `--radius-base` | corner philosophy in one number |
 | `--ease-out-expo / --ease-out-quart / --ease-in-out-quint` | the motion vocabulary ([transitions.md](transitions.md)) |
 
@@ -98,7 +98,7 @@ Calm, cool and exact: mineral greys, one family, a deep green accent. For produc
 
 | Axis | Spec |
 |---|---|
-| Fonts | **Urbanist** in both roles, Signature S1: display 300, text 400 at 1.0625rem, eyebrows 500 at 0.12em. Accent word by weight (300 to 500) or the accent colour, never italic. Role values in [typography.md](typography.md) §3.1 |
+| Fonts | **Urbanist** in both roles, Signature S1: display 300, text 400 at 1.0625rem. Accent word by weight (300 to 500) or the accent colour, never italic. Role values in [typography.md](typography.md) §3.1 |
 | Spacing bias | even and generous: sections 8-12rem, lead 44ch, body 62ch, grids with real gutters |
 | Border/shadow | hairlines at 10% ink, 6px radius on media and inputs; no shadows |
 | Motion personality | *soft-precise*: `expo.out` 0.9 to 1.2s entrances, stagger 0.08; Lenis lerp **0.1**; scrub 1 |

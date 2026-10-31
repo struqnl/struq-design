@@ -2,7 +2,7 @@
 
 Everything else in Struq makes a *section* excellent; this file decides **which sections exist and in what order**. It is the layer templates fake with "Hero / Features / Testimonials / Pricing / CTA", which is a stack, not a story. Read this **before** picking a vibe preset: the arc determines what you build; the preset determines how it looks.
 
-This file does not write the words. It only sets the *structural* budgets copy must fit (headline lengths, one manifesto line, eyebrow grammar).
+This file does not write the words. It only sets the *structural* budgets copy must fit (headline lengths, one manifesto line, CTA length).
 
 ---
 
@@ -97,7 +97,7 @@ Copywriting is its own craft; the *architecture* constrains it so display type s
 
 - **Hero h1: ≤ ~8 words**, breaking into 1 to 3 lines of ≤ ~12ch at display size (`max-w-[12ch]` is the layout guard). Longer claims get demoted to the sub-line.
 - **One manifesto line per page**: a single sentence given a whole breather section. More than one and neither is the manifesto.
-- **Eyebrow grammar:** 1 to 3 words, uppercase, tracked. A *category label* ("Capabilities", "Selected work"), never a sentence, never punctuated.
+- **No eyebrows.** No label above a heading: the heading carries the section ([anti-patterns.md](anti-patterns.md) §19).
 - **Section headline: ≤ ~10 words.** Body blocks: `max-w-[44-52ch]`, 2 to 4 sentences per block. Long arguments become editorial rows, not paragraphs.
 - **CTA labels: 2 to 4 words, verb-first** ("Start a project", not "Learn more about our services").
 - Real copy from the first draft: the baseline's no-lorem rule is architectural, because fake copy hides that a section has no actual job.

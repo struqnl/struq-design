@@ -96,8 +96,7 @@ export function ProcessSequence() {
           {PHASES.map((p) => (
             <li key={p.kicker} data-phase
                 className="flex flex-col justify-center group-data-[mode=rig]/seq:absolute group-data-[mode=rig]/seq:inset-0">
-              <span className="eyebrow text-eyebrow text-ink-muted">{p.kicker}</span>
-              <h3 className="font-display text-h2 mt-4">{p.title}</h3>
+              <h3 className="font-display text-h2">{p.title}</h3>
               <p className="text-body mt-6 max-w-[36ch] text-ink-muted">{p.body}</p>
             </li>
           ))}
@@ -192,7 +191,7 @@ export function WorkGallery({ projects }: { projects: { title: string; meta: str
                    className="aspect-[4/3] w-full scale-110 object-cover" />
             </div>
             <p className="text-small mt-4 flex items-baseline justify-between text-ink-muted">
-              <span>{p.title}</span><span className="eyebrow text-eyebrow">{p.meta}</span>
+              <span>{p.title}</span><span className="tabular-nums">{p.meta}</span>
             </p>
           </article>
         ))}
@@ -216,7 +215,7 @@ Craft notes:
 ## 3. Scrub-tied hero (no pin)
 
 **Term:** Departure scrub.
-**Mechanic:** The hero reacts to the first hundreds of scroll pixels: headline drifts up faster than scroll, media scales and dims, eyebrow fades. No pinning; the page just *leaves* cinematically instead of sliding away as a rigid block.
+**Mechanic:** The hero reacts to the first hundreds of scroll pixels: headline drifts up faster than scroll, media scales and dims, the lead line fades. No pinning; the page just *leaves* cinematically instead of sliding away as a rigid block.
 
 **When:** Every hero. This is the cheapest scrub win on the page. Do it even when you do nothing else from this file.
 **Cost:** Trivial.

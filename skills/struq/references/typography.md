@@ -26,7 +26,7 @@ During planning ([direction.md](direction.md) §4) read only this section; the r
 
    **A brand that owns one face** keeps it in the role the matching S row gives that face, and takes the row's partner for the other role (a brand set in Sora takes S7: Sora display, Instrument Sans text), unless the brand already sets its body copy in its own face too; then it is a declared one-family system. Log the partner under ASSUMPTIONS.
 
-2. **The roles are fixed; the pairing only overrides values.** Every string is one of the roles in §2.1, each with its own token: `font-display text-display` (hero), `font-display text-statement` (the Orient line or manifesto), `font-display text-h2`, `type-h3 text-h3`, `text-lead`, `text-body`, `text-small`, `eyebrow text-eyebrow text-ink-muted`, `font-ui text-ui`, `stat text-stat`. The pairing's row writes its weights, tracking, leading, role faces and display clamp into `@theme`; components never change.
+2. **The roles are fixed; the pairing only overrides values.** Every string is one of the roles in §2.1, each with its own token: `font-display text-display` (hero), `font-display text-statement` (the Orient line or manifesto), `font-display text-h2`, `type-h3 text-h3`, `text-lead`, `text-body`, `text-small`, `meta text-meta text-ink-muted`, `font-ui text-ui`, `stat text-stat`. The pairing's row writes its weights, tracking, leading, role faces and display clamp into `@theme`; components never change.
 
 3. **One signature move** (§5): `weight-in`, `soft-scrub`, `type-mask-media`, `fit-width-wordmark` or a cropped display. Record it next to the pairing id, with the preset's hero entrance ([vibe-presets.md](vibe-presets.md)).
 
@@ -61,7 +61,7 @@ Every piece of text on the page is one of these. If a string fits none, the desi
 | **Lead** | `text-lead` | 20 to 22px | `font-body` | The one paragraph under a hero or h2 | More than one paragraph in a row |
 | **Body** | `text-body` | 16 to 18.7px | `font-body` | Running copy | Below 1rem; wider than 75ch |
 | **Small** | `text-small` | 14 to 15.4px | `font-body` | Captions, meta, footnotes, legal | Body-length copy; below 0.875rem |
-| **Eyebrow** | `text-eyebrow` | 12 to 13.2px | `eyebrow` (`--font-eyebrow`), uppercase | Section wayfinding labels, one per section | Numbered `01 / 02` stamps; mono |
+| **Meta** | `text-meta` | 13 to 14.3px | `meta` (`--font-meta`), sentence case | Captions, dates, credits, the line under a photo | Uppercase tracked labels above headings (the eyebrow tell); mono |
 | **UI** | `text-ui` | 15 to 16.5px | `font-ui` (`--font-ui`) | Buttons, nav links, form labels, tabs | Sentence-length strings |
 | **Numerals** | `text-stat` | 48 to 82px | `stat` (`--font-stat`), `tabular-nums` | Stats, counters, prices | Monospace |
 
@@ -73,7 +73,7 @@ Sizes are read at the knob's two ends: the root is 16px at 390px and about 17.6p
 
 - **Display, h2, h3: 300 to 400.** Lighter on dark grounds (light on dark reads heavier by irradiation; run a variable face 20 to 40 units lighter, for example 340 on light and 310 on dark). Never below 300, never faked with opacity.
 - **Text roles: 400.** Body, lead, small at 400. The text face at 300 is too pale for 4.5:1 on toned surfaces.
-- **Emphasis is 500, not 700.** UI labels, eyebrows, an inline `<strong>`: 500. A 700 inside light typography is a hole in the page.
+- **Emphasis is 500, not 700.** UI labels, an inline `<strong>`: 500. A 700 inside light typography is a hole in the page.
 - **At most three weights per family loaded**, typically 300, 400 and 500. With a variable file it is one request, but the rule still holds for what the CSS uses: a fourth weight is a fourth voice.
 - **`font-synthesis: none` on `body`**, so a single-weight face (Instrument Serif, Archivo Black) is never smeared into a fake bold.
 
@@ -81,18 +81,18 @@ Sizes are read at the knob's two ends: the root is 16px at 390px and about 17.6p
 
 - **Tracking tightens as size grows.** Spacing drawn for 16px reads loose at 115px. Grotesks take about -0.04em at display size, -0.02em at h2, 0 at body. Serifs and wide geometrics carry their own horizontal rhythm and want 40 to 60% less, or letters touch.
 - **Leading tightens as size grows.** The eye reads the white between lines, which scales with size. Body wants 1.6 to 1.7 to track a 62ch line back; a three-line headline at 1.65 falls apart. Below 0.95, descenders hit ascenders.
-- **Uppercase flips both.** Capitals have no descenders, so leading can drop to 0.88, and tracking wants 0 to +0.02em on display and +0.12 to +0.2em at eyebrow size, never a negative value.
-- **Small tiers loosen.** +0.005em on small, +0.01em on UI. Tracked uppercase is how a 12px line earns its place.
+- **Uppercase is not a hierarchy tool.** Capitals have no descenders, so a display line set in caps can drop its leading to 0.88 with tracking 0 to +0.02em. Small tracked capitals as labels above headings are the eyebrow tell: never use them.
+- **Small tiers loosen.** +0.005em on small, +0.01em on meta and UI.
 - **Measure.** Body 55 to 75 characters (`max-w-[62ch]`), lead 40 to 50ch, hero 14 to 18ch, h2 18 to 22ch. Cap widths in `ch`, never in px: `ch` follows the face and the knob.
 
 ### 2.4 The tokens
 
-Tailwind (v4 or later, for `@theme`) lets a `--text-*` token carry its line height, tracking and weight, so `text-h2` applies all four and components never assemble them by hand. Roles that can change face per pairing (h3, eyebrow, UI, numerals) also get a **role font token**, so a pairing swap never touches a component. These defaults equal the S1 row in §3.1 exactly (Urbanist in both roles); every other pairing's row lists the values to override in the preset's `@theme`, including its four role faces.
+Tailwind (v4 or later, for `@theme`) lets a `--text-*` token carry its line height, tracking and weight, so `text-h2` applies all four and components never assemble them by hand. Roles that can change face per pairing (h3, meta, UI, numerals) also get a **role font token**, so a pairing swap never touches a component. These defaults equal the S1 row in §3.1 exactly (Urbanist in both roles); every other pairing's row lists the values to override in the preset's `@theme`, including its four role faces.
 
 ```css
 /* app/theme.css: type layer, next to the preset's colour tokens. Defaults = S1. */
 @theme {
-  --text-eyebrow: 0.75rem;   --text-eyebrow--line-height: 1.2;  --text-eyebrow--letter-spacing: 0.12em;  --text-eyebrow--font-weight: 500;
+  --text-meta: 0.8125rem;   --text-meta--line-height: 1.45; --text-meta--letter-spacing: 0.01em;  --text-meta--font-weight: 400;
   --text-small: 0.875rem;    --text-small--line-height: 1.55;   --text-small--letter-spacing: 0.01em;
   --text-ui: 0.9375rem;      --text-ui--line-height: 1;         --text-ui--letter-spacing: 0.02em;       --text-ui--font-weight: 500;
   --text-body: 1.0625rem;    --text-body--line-height: 1.65;
@@ -111,12 +111,12 @@ Tailwind (v4 or later, for `@theme`) lets a `--text-*` token carry its line heig
 /* Role faces. --font-display and --font-body come from the preset; these default to S1. */
 @theme inline {
   --font-h3: var(--font-display);
-  --font-eyebrow: var(--font-body);
+  --font-meta: var(--font-body);
   --font-ui: var(--font-body);
   --font-stat: var(--font-display);
 }
 
-@utility eyebrow { text-transform: uppercase; font-family: var(--font-eyebrow); font-feature-settings: "case"; }
+@utility meta { font-family: var(--font-meta); font-variant-numeric: tabular-nums; }
 @utility stat { font-family: var(--font-stat); font-variant-numeric: lining-nums tabular-nums; }
 @utility type-h3 { font-family: var(--font-h3); }
 
@@ -127,7 +127,7 @@ p, li, blockquote { text-wrap: pretty; }
 
 `text-statement` takes the pairing's h2 weight and tracking unless its row says otherwise; it is the only role a manifesto paragraph or an Orient sentence ever needs, so neither recipe carries an arbitrary `text-[clamp(...)]`.
 
-Usage: `<h1 class="font-display text-display max-w-[16ch]">`, `<p class="font-display text-statement max-w-[30ch]">`, `<h3 class="type-h3 text-h3">`, `<p class="text-body max-w-[62ch]">`, `<span class="eyebrow text-eyebrow text-ink-muted">`, `<button class="font-ui text-ui">`, `<span class="stat text-stat">`. The scale has no h1 token on purpose: the page's h1 is the display role. `"case"` shifts punctuation and dashes up to cap height, which uppercase eyebrows need. Eyebrows and meta take `text-ink-muted`; `ink-faint` is never text ([vibe-presets.md](vibe-presets.md)).
+Usage: `<h1 class="font-display text-display max-w-[16ch]">`, `<p class="font-display text-statement max-w-[30ch]">`, `<h3 class="type-h3 text-h3">`, `<p class="text-body max-w-[62ch]">`, `<span class="meta text-meta text-ink-muted">`, `<button class="font-ui text-ui">`, `<span class="stat text-stat">`. The scale has no h1 token on purpose: the page's h1 is the display role. Meta lines take `text-ink-muted`; `ink-faint` is never text ([vibe-presets.md](vibe-presets.md)).
 
 **Wrapping.** `balance` evens headline lines so the last is not an orphan; engines cap it at a handful of lines, which suits headings only. `pretty` avoids one-word last lines in paragraphs. Both are progressive enhancement. SplitText measures the balanced layout, so balance and line masks agree.
 
@@ -139,7 +139,7 @@ A short, curated set, not a catalogue. The Struq taste profile: **open, geometri
 
 **How to choose.** Pick by brand temperament: warm and literate, soft and friendly, quiet luxury, cinematic, product and precise. Take the **Signature** pairing that matches. Use **Extended** only when the brief names a temperament Signature does not cover, or when two Struq sites in the same niche would otherwise share a face. **Unsure is not a temperament.** Pick from the brief's temperament word. S1 only when the brief declares a one-family system. Two Struq sites in the same niche never share a display face. **Never fall back to Inter or another default** (§3.4); "unsure" is exactly when a default sneaks in. The presets in [vibe-presets.md](vibe-presets.md) are built from Signature, and the type step of [brief-router.md](brief-router.md) defers to this section: Signature first, always.
 
-**Reading the role rows.** Size tokens are fixed by the system (§2.4): display `text-display`, h2 `text-h2`, h3 `text-h3`, eyebrow `text-eyebrow`, body `text-body`, small `text-small`, UI `text-ui`, numerals `text-stat`. Each row gives `weight / tracking (em) / leading` per role; those are the overrides you write into the preset's `@theme`. Display and h2 use the display face, body and small the text face. h3, eyebrow, UI and numerals take whatever face the pairing's role font tokens name (the third table): write those four `--font-*` values into the preset's `@theme inline`, plus the display clamp and body size where the row differs from the standard. **GF** is Google Fonts (`next/font/google`); **FS** is Fontshare (self-host with `next/font/local`, §4). Every weight listed ships in the family.
+**Reading the role rows.** Size tokens are fixed by the system (§2.4): display `text-display`, h2 `text-h2`, h3 `text-h3`, meta `text-meta`, body `text-body`, small `text-small`, UI `text-ui`, numerals `text-stat`. Each row gives `weight / tracking (em) / leading` per role; those are the overrides you write into the preset's `@theme`. Display and h2 use the display face, body and small the text face. h3, meta, UI and numerals take whatever face the pairing's role font tokens name (the third table): write those four `--font-*` values into the preset's `@theme inline`, plus the display clamp and body size where the row differs from the standard. **GF** is Google Fonts (`next/font/google`); **FS** is Fontshare (self-host with `next/font/local`, §4). Every weight listed ships in the family.
 
 ### 3.1 Struq Signature (the default set)
 
@@ -153,19 +153,19 @@ A short, curated set, not a catalogue. The Struq taste profile: **open, geometri
 | S6 | **Urbanist** + **Lora** | GF | Essay-led editorial sans | The reversed pair: light geometric headlines over a warm book serif for long reading. Editorial without any serif headline | Warm Editorial, Luxury Minimal |
 | S7 | **Sora** + **Instrument Sans** | GF | Product, precise, technical | A wide geometric display over a compact, slightly condensed grotesk: technical by letterform, never by monospace | Dark Cinematic, Soft Modern |
 
-| # | Display | h2 | h3 | Eyebrow | Body | Small | UI | Numerals |
+| # | Display | h2 | h3 | Meta | Body | Small | UI | Numerals |
 |---|---|---|---|---|---|---|---|---|
-| S1 | 300 / -0.03 / 0.98 | 300 / -0.02 / 1.06 | 400 / -0.01 / 1.2 | 500 / 0.12 / 1.2 | 400 / 0 / 1.65 | 400 / 0.01 / 1.55 | 500 / 0.02 / 1 | Urbanist 300, tabular |
-| S2 | 300 / -0.025 / 0.95 | 300 / -0.015 / 1.06 | 400 / -0.005 / 1.2 | 500 / 0.12 / 1.2 | 400 / 0 / 1.65 | 400 / 0.01 / 1.55 | 500 / 0.02 / 1 | Fraunces 300, -0.02 |
-| S3 | 400 / -0.02 / 0.96 | 300 / -0.012 / 1.06 | 400 / -0.005 / 1.2 | 500 / 0.12 / 1.2 | 400 / 0 / 1.65 | 400 / 0.01 / 1.55 | 500 / 0.02 / 1 | Outfit 400, tabular |
-| S4 | 300 / -0.01 / 0.92 | 300 / -0.005 / 1.04 | 400 / 0 / 1.2 | 500 / 0.18 / 1.2 | 400 / 0 / 1.7 | 400 / 0.01 / 1.55 | 500 / 0.06 / 1 | Jost 400, tabular |
-| S5 | 300 / -0.02 / 0.94 | 300 / -0.012 / 1.04 | 400 / -0.005 / 1.15 | 500 / 0.14 / 1.2 | 400 / 0 / 1.6 | 400 / 0.005 / 1.5 | 500 / 0.01 / 1 | Manrope 400, tabular |
-| S6 | 300 / -0.03 / 0.98 | 300 / -0.02 / 1.06 | 400 / -0.01 / 1.2 | 500 / 0.12 / 1.2 | Lora 400 / 0 / 1.7 | Urbanist 400 / 0.01 / 1.5 | 500 / 0.02 / 1 | Urbanist 300, tabular |
-| S7 | 300 / -0.025 / 1.0 | 300 / -0.015 / 1.08 | 400 / -0.01 / 1.2 | 500 / 0.12 / 1.2 | 400 / 0 / 1.6 | 400 / 0.005 / 1.5 | 500 / 0.01 / 1 | Sora 300, tabular |
+| S1 | 300 / -0.03 / 0.98 | 300 / -0.02 / 1.06 | 400 / -0.01 / 1.2 | 400 / 0.01 / 1.45 | 400 / 0 / 1.65 | 400 / 0.01 / 1.55 | 500 / 0.02 / 1 | Urbanist 300, tabular |
+| S2 | 300 / -0.025 / 0.95 | 300 / -0.015 / 1.06 | 400 / -0.005 / 1.2 | 400 / 0.01 / 1.45 | 400 / 0 / 1.65 | 400 / 0.01 / 1.55 | 500 / 0.02 / 1 | Fraunces 300, -0.02 |
+| S3 | 400 / -0.02 / 0.96 | 300 / -0.012 / 1.06 | 400 / -0.005 / 1.2 | 400 / 0.01 / 1.45 | 400 / 0 / 1.65 | 400 / 0.01 / 1.55 | 500 / 0.02 / 1 | Outfit 400, tabular |
+| S4 | 300 / -0.01 / 0.92 | 300 / -0.005 / 1.04 | 400 / 0 / 1.2 | 400 / 0.01 / 1.45 | 400 / 0 / 1.7 | 400 / 0.01 / 1.55 | 500 / 0.06 / 1 | Jost 400, tabular |
+| S5 | 300 / -0.02 / 0.94 | 300 / -0.012 / 1.04 | 400 / -0.005 / 1.15 | 400 / 0.01 / 1.45 | 400 / 0 / 1.6 | 400 / 0.005 / 1.5 | 500 / 0.01 / 1 | Manrope 400, tabular |
+| S6 | 300 / -0.03 / 0.98 | 300 / -0.02 / 1.06 | 400 / -0.01 / 1.2 | 400 / 0.01 / 1.45 | Lora 400 / 0 / 1.7 | Urbanist 400 / 0.01 / 1.5 | 500 / 0.02 / 1 | Urbanist 300, tabular |
+| S7 | 300 / -0.025 / 1.0 | 300 / -0.015 / 1.08 | 400 / -0.01 / 1.2 | 400 / 0.01 / 1.45 | 400 / 0 / 1.6 | 400 / 0.005 / 1.5 | 500 / 0.01 / 1 | Sora 300, tabular |
 
 Per-pairing columns: the role faces (write them into `@theme inline`), the display size, the body size and the accent move. "Standard" display is the §2.4 token. `display` and `body` here mean `var(--font-display)` and `var(--font-body)`.
 
-| # | `--font-h3` | `--font-eyebrow` | `--font-ui` | `--font-stat` | `--text-display` | `--text-body` | Accent move |
+| # | `--font-h3` | `--font-meta` | `--font-ui` | `--font-stat` | `--text-display` | `--text-body` | Accent move |
 |---|---|---|---|---|---|---|---|
 | S1 | display | body | body | display | standard | 1.0625rem | Weight shift 300 to 500 on one word, or the accent colour |
 | S2 | display | body | body | display | standard | 1.0625rem | One word in Fraunces italic |
@@ -179,16 +179,16 @@ The display clamps compensate for x-height and width: Cormorant and Newsreader h
 
 Honest notes, per face:
 
-- **Urbanist** (100 to 900) is geometric and wide-set, so it wants less negative tracking than a neo-grotesk and slightly looser leading; its round `o` and `e` collide first. At 400 it is a genuine text face, set at 1.0625rem because its x-height is modest. Eyebrows at 0.12em.
+- **Urbanist** (100 to 900) is geometric and wide-set, so it wants less negative tracking than a neo-grotesk and slightly looser leading; its round `o` and `e` collide first. At 400 it is a genuine text face, set at 1.0625rem because its x-height is modest.
 - **Fraunces**: use the axes on purpose. `opsz` follows size automatically through `next/font`, so the hero gets the sharp cut and the h3 the sturdier one. `SOFT` (0 to 100) rounds the terminals: around 50 suits warm brands (S2), 100 is the soft and friendly voice of S3, 0 keeps it crisp. Pin it with `font-variation-settings: "SOFT" 50` (or 100) on the display roles only, and load the axis (§4). Write the pin inside `@layer base` (`@layer base { .font-display, .type-h3, .stat { font-variation-settings: "SOFT" 50; } }`): an unlayered rule after `@import "tailwindcss"` beats every utility, including the start value of `soft-scrub`. On a `soft-scrub` site the hero h1 rests at `SOFT 0` (the scrub's start); every other display line pins 50. Leaving `opsz` out of `font-variation-settings` keeps optical sizing automatic.
 - **Cormorant Garamond** needs size. Display and h2 only, at its own larger clamp and leading 0.92; if it ever sets running text (a pull quote, a lead), never below 1.125rem. Hairlines vanish on cheap screens below that. Its h3 can move to Jost 500 in dense lists. Load the italic: it is the accent.
 - **Newsreader** (200 to 800, `opsz` 6 to 72) is S5's display face. Leave `opsz` automatic so the hero gets the fine display cut and h3 the sturdier text cut; run it 300 on dark grounds. Like Cormorant it sets a size larger than a geometric.
 - **Sora** (100 to 800) runs wide. It takes less negative tracking than its weight suggests (-0.025em at display, -0.015em at h2) because tight tracking on a wide face clots the counters; carry the width with a smaller clamp and a hero `max-w-[18ch]`, or headlines break into single words.
-- **Manrope** (200 to 800): 200 is too thin for anything but one giant word. As text at 400 it holds up down to 0.875rem; body at 1rem, eyebrows at 0.14em.
+- **Manrope** (200 to 800): 200 is too thin for anything but one giant word. As text at 400 it holds up down to 0.875rem; body at 1rem.
 - **Lora** (400 to 700) is a text serif: body and lead only, never display. Body 1.0625rem at leading 1.7, because serif text on screen wants more air than sans.
-- **Outfit** (100 to 900) is a clean geometric; body at 1.0625rem, eyebrows at 0.12em. On dark grounds keep body and small at 400, not 300.
-- **Jost** (100 to 900) is a Futura-lineage geometric. Body 1.0625rem at 1.7 under Cormorant; its caps want the widest eyebrow tracking in the set (0.18em) and UI at 0.06em.
-- **Instrument Sans** (400 to 700, `wdth` axis) is compact and even: body 1rem at 1.6, eyebrows at 0.12em. Keep `wdth` at 100; condensing it under a wide Sora display tips the contrast into a mismatch.
+- **Outfit** (100 to 900) is a clean geometric; body at 1.0625rem. On dark grounds keep body and small at 400, not 300.
+- **Jost** (100 to 900) is a Futura-lineage geometric. Body 1.0625rem at 1.7 under Cormorant; UI at 0.06em.
+- **Instrument Sans** (400 to 700, `wdth` axis) is compact and even: body 1rem at 1.6. Keep `wdth` at 100; condensing it under a wide Sora display tips the contrast into a mismatch.
 
 **House pairing: Comfortaa + Urbanist.** This is Struq's own brand pairing, not a default for other brands, and it is not in the Signature set. Comfortaa sets the wordmark and the h1 only; h2 and everything below runs in Urbanist 300 and up. Comfortaa is a rounded display face that charms at 40px and up and tires in a paragraph, so it never sets h3, body, small or UI.
 
@@ -205,20 +205,20 @@ Less-seen faces for when Signature does not fit, or to keep two sites in the sam
 | E5 | **Bodoni Moda** (`opsz`) + **Albert Sans** | GF | Fashion house | A Didone with optical sizing over a quiet grotesk that lets the hairlines carry the voice | Luxury Minimal |
 | E6 | **Instrument Serif** (400 only) + **Outfit** | GF | Film title, poster | A condensed high-contrast serif against a soft geometric: poster gravity without a heavy weight. Never with the italic accent word inside a sans headline (the 2025 to 2026 template tell) | Dark Cinematic |
 
-| # | Display | h2 | h3 | Eyebrow | Body | Small | UI | Numerals |
+| # | Display | h2 | h3 | Meta | Body | Small | UI | Numerals |
 |---|---|---|---|---|---|---|---|---|
-| E1 | 300 / -0.02 / 0.96 | 300 / -0.01 / 1.06 | 400 / 0 / 1.2 | 500 / 0.14 / 1.2 | 400 / 0 / 1.65 | 400 / 0.005 / 1.55 | 500 / 0.01 / 1 | Albert Sans 400, tabular |
-| E2 | 300 / -0.02 / 0.95 | 300 / -0.015 / 1.05 | 400 / -0.005 / 1.2 | 500 / 0.14 / 1.2 | 400 / 0 / 1.65 | 400 / 0.005 / 1.55 | 500 / 0.01 / 1 | General Sans 400, tabular |
-| E3 | 300 / -0.02 / 0.98 | 300 / -0.01 / 1.06 | 400 / 0 / 1.2 | 500 / 0.18 / 1.2 | 400 / 0 / 1.7 | 400 / 0.005 / 1.55 | 500 / 0.02 / 1 | Sentient 300, -0.01 |
-| E4 | 300 / -0.02 / 0.96 | 300 / -0.01 / 1.04 | 400 / 0 / 1.2 | 500 / 0.16 / 1.2 | 400 / 0 / 1.65 | 400 / 0.005 / 1.55 | 500 / 0.02 / 1 | Albert Sans 400, tabular |
-| E5 | 400 / -0.015 / 1.0 | 400 / -0.01 / 1.08 | 400 / 0 / 1.2 | 500 / 0.16 / 1.2 | 400 / 0 / 1.7 | 400 / 0.01 / 1.55 | 500 / 0.04 / 1 | Albert Sans 400, tabular |
-| E6 | 400 / -0.01 / 0.92 | 400 / -0.005 / 1.02 | 400 / 0 / 1.15 | 500 / 0.12 / 1.2 | 400 / 0 / 1.65 | 400 / 0.005 / 1.5 | 500 / 0.01 / 1 | Outfit 400, tabular |
+| E1 | 300 / -0.02 / 0.96 | 300 / -0.01 / 1.06 | 400 / 0 / 1.2 | 400 / 0.01 / 1.45 | 400 / 0 / 1.65 | 400 / 0.005 / 1.55 | 500 / 0.01 / 1 | Albert Sans 400, tabular |
+| E2 | 300 / -0.02 / 0.95 | 300 / -0.015 / 1.05 | 400 / -0.005 / 1.2 | 400 / 0.01 / 1.45 | 400 / 0 / 1.65 | 400 / 0.005 / 1.55 | 500 / 0.01 / 1 | General Sans 400, tabular |
+| E3 | 300 / -0.02 / 0.98 | 300 / -0.01 / 1.06 | 400 / 0 / 1.2 | 400 / 0.01 / 1.45 | 400 / 0 / 1.7 | 400 / 0.005 / 1.55 | 500 / 0.02 / 1 | Sentient 300, -0.01 |
+| E4 | 300 / -0.02 / 0.96 | 300 / -0.01 / 1.04 | 400 / 0 / 1.2 | 400 / 0.01 / 1.45 | 400 / 0 / 1.65 | 400 / 0.005 / 1.55 | 500 / 0.02 / 1 | Albert Sans 400, tabular |
+| E5 | 400 / -0.015 / 1.0 | 400 / -0.01 / 1.08 | 400 / 0 / 1.2 | 400 / 0.01 / 1.45 | 400 / 0 / 1.7 | 400 / 0.01 / 1.55 | 500 / 0.04 / 1 | Albert Sans 400, tabular |
+| E6 | 400 / -0.01 / 0.92 | 400 / -0.005 / 1.02 | 400 / 0 / 1.15 | 400 / 0.01 / 1.45 | 400 / 0 / 1.65 | 400 / 0.005 / 1.5 | 500 / 0.01 / 1 | Outfit 400, tabular |
 
-Role faces for Extended: `--font-h3` is the display face; eyebrow, UI and numerals use the text face, except E3, whose numerals use Sentient. Every Extended row takes the standard display clamp and a 1rem body (1.0625rem for Outfit in E6). Bodoni Moda starts at 400, which reads light because of its hairlines; hairlines vanish under 40px, so h3 can move to Albert Sans 500. **Instrument Serif** has one weight, 400, plus an italic: set every display-role weight to 400, never ask it for 700, and keep its italic inside its own serif headlines.
+Role faces for Extended: `--font-h3` is the display face; meta, UI and numerals use the text face, except E3, whose numerals use Sentient. Every Extended row takes the standard display clamp and a 1rem body (1.0625rem for Outfit in E6). Bodoni Moda starts at 400, which reads light because of its hairlines; hairlines vanish under 40px, so h3 can move to Albert Sans 500. **Instrument Serif** has one weight, 400, plus an italic: set every display-role weight to 400, never ask it for 700, and keep its italic inside its own serif headlines.
 
 ### 3.3 Genre exception: heavy display
 
-Outside the profile on purpose, for the one preset that shouts. **Archivo Black** (400 only, a black weight) + **Archivo** (GF) for Brutalist: display `400 caps / -0.01 / 0.88`, h2 `400 caps / 0 / 0.92`, h3 Archivo `500 / -0.01 / 1.15`, eyebrow `500 / 0.08 / 1.2`, body `400 / 0 / 1.55`, small `400 / 0 / 1.45`, UI `500 caps / 0.04 / 1`, numerals Archivo 500 tabular. Use it only when the brief declares the genre.
+Outside the profile on purpose, for the one preset that shouts. **Archivo Black** (400 only, a black weight) + **Archivo** (GF) for Brutalist: display `400 caps / -0.01 / 0.88`, h2 `400 caps / 0 / 0.92`, h3 Archivo `500 / -0.01 / 1.15`, meta `400 / 0.01 / 1.45`, body `400 / 0 / 1.55`, small `400 / 0 / 1.45`, UI `500 caps / 0.04 / 1`, numerals Archivo 500 tabular. Use it only when the brief declares the genre.
 
 ### 3.4 Off the list, on purpose
 
@@ -238,7 +238,7 @@ Outside the profile on purpose, for the one preset that shouts. **Archivo Black*
 
 1. **Structure contrast.** Serif against geometric, or one family in two roles. Two similar sans faces from different families read as a mistake. (S7 passes because Sora's width against Instrument Sans's compact text is the contrast.)
 2. **96 and 16.** Set the headline at 96px and a paragraph at 16px on the real surface. If the paragraph tires you, the text face is wrong.
-3. **Squint.** Blur your eyes. The headline is the first shape; the eyebrow recedes to texture. If two tiers compete, the gap is too small, not the fonts.
+3. **Squint.** Blur your eyes. The headline is the first shape; the meta line recedes to texture. If two tiers compete, the gap is too small, not the fonts.
 
 ---
 
@@ -674,7 +674,7 @@ In a headline, place one soft hyphen by hand (`Duurzaam&shy;heid`), never inside
 
 **One accent word.** One word of a headline in the display italic is the cheapest high-end move there is, when the display face has a real italic and it is loaded (S2, S3, S4, S5). Wrap it in `<em>`; SplitText keeps nested inline elements. Geometric pairings (S1, S6, S7) shift that one word from 300 to 500 or set it in the accent colour instead. The accent word stays in the headline's own family: a serif italic `<em>` dropped into a sans headline is the template tell of the moment (§7).
 
-**Eyebrows are wayfinding.** Short, tracked, uppercase via CSS (source copy stays sentence case), one per section, never a stamped `01 / 02 / 03` ([anti-patterns.md](anti-patterns.md)).
+**No eyebrows.** A small uppercase tracked label above a heading is the most common AI tell on a marketing page. Wayfinding comes from the heading itself, a hairline rule, a change of surface step and a jump in scale. Never a stamped `01 / 02 / 03` either ([anti-patterns.md](anti-patterns.md)).
 
 ---
 
@@ -686,8 +686,8 @@ Sweep before shipping, alongside [anti-patterns.md](anti-patterns.md).
 |---|---|---|
 | Inter, Roboto, Open Sans, Poppins, Montserrat or Lato anywhere | Starter and UI-kit defaults | A pairing from §3 |
 | Space Grotesk or Geist as the "technical" reflex | The generator's idea of modern | S7 (Sora + Instrument Sans) or S1 (Urbanist) |
-| `tracking-tight`, `text-xs` or `text-3xl` to `text-5xl` on headings or eyebrows | The role tokens were bypassed; the size and optics are improvised | `text-h2`, `text-h3`, `text-eyebrow` and the role faces (§2.4) |
-| `text-ink-faint` on any text | `ink-faint` is for hairlines, disabled states and placeholder rules; as text it fails contrast | `text-ink-muted` for eyebrows and meta |
+| `tracking-tight`, `text-xs` or `text-3xl` to `text-5xl` on headings or labels | The role tokens were bypassed; the size and optics are improvised | `text-h2`, `text-h3`, `text-meta` and the role faces (§2.4) |
+| `text-ink-faint` on any text | `ink-faint` is for hairlines, disabled states and placeholder rules; as text it fails contrast | `text-ink-muted` for meta |
 | An Instrument Serif `<em>` inside a sans headline | The 2025 to 2026 template tell | The pairing's own accent move (§3.1) |
 | Cream surface plus terracotta accent with no brand reason | The default "warm, human" palette of every generator | A palette argued from the brand ([vibe-presets.md](vibe-presets.md)) |
 | The masked line rise as the hero's only gesture (no signature move on it, no preset entrance behind it) | One entrance on every site is a template | The preset's named hero entrance and the site's signature move (§5); the rise may deliver them |
@@ -696,7 +696,7 @@ Sweep before shipping, alongside [anti-patterns.md](anti-patterns.md).
 | 700 for emphasis inside light type | A hole in the page | 500 |
 | Four or more weights of one family | Extra voices, extra bytes | Three at most (300, 400, 500) |
 | Five similar sizes (`text-lg` to `text-4xl`) | Flat page, no focal point | The roles with real gaps (§2) |
-| Mono eyebrows, labels, stats or badges | Dev-tool cosplay | Tracked uppercase text face; `tabular-nums` |
+| Mono labels, stats or badges | Dev-tool cosplay | The text face in sentence case; `tabular-nums` |
 | A rounded or hairline display face used for body | Charming at 60px, tiring at 16px | Display faces stay at display sizes |
 | Everything centred | No axis, no reading edge | Left-aligned on a strong edge; centre only short single lines |
 | Gradient text | The 2021 SaaS tell, and it fails contrast | Solid ink; accent on one word at most |

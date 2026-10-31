@@ -6,7 +6,7 @@ A cinematic site that nobody finds, or that shows a blank grey card when it is s
 
 - **Flat and named.** Every page is at most two levels deep: `/work`, `/work/<slug>`, `/studio`, `/contact`. Slugs are lowercase words in the site's language, never ids.
 - **One page, one job, one h1.** By default the hero display line **is** the h1: write it so it says what the page is about in words someone would search. Only when the display line is deliberately not descriptive (a poetic claim, a single word) does the h1 become a smaller line above it, with the display line as a `p` in display styling.
-- **Headings in order.** h1, then h2 per section, h3 inside. A section eyebrow is a `p`, not a heading. Visual size and heading level are separate decisions.
+- **Headings in order.** h1, then h2 per section, h3 inside. A caption or meta line is a `p`, not a heading. Visual size and heading level are separate decisions.
 - **Every important page linked from the nav or the footer** with a real `<a href>` (the `TransitionLink` from [route-transitions.md](route-transitions.md) renders one). A route reachable only through a JavaScript click handler does not exist to a crawler.
 - **A real 404** (`app/not-found.tsx`) designed as hard as the hero, with a way back.
 
@@ -212,7 +212,7 @@ No metadata API: set title, description, canonical and OG tags per route in the 
 - [ ] `metadataBase`, title template and description in the root layout; a canonical on every page (home included), none in the layout
 - [ ] An `opengraph-image` per shared route, designed from the system, checked at real size
 - [ ] `sitemap.ts` covers every page; `robots.ts` points at it; staging disallows all
-- [ ] One h1 per page (the hero display line, unless it is not descriptive), headings in order, eyebrows are not headings
+- [ ] One h1 per page (the hero display line, unless it is not descriptive), headings in order, captions are not headings
 - [ ] JSON-LD for the page type
 - [ ] Every route reachable by a real link and server-rendered on direct load
 - [ ] Loader and animations never hide content from the server HTML

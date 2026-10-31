@@ -43,13 +43,13 @@ What MATERIALS tracks:
 - No biography, training, process or sourcing stated as fact ("trained as a production thrower", "eats at the restaurant before drawing", "clay dug in Alentejo") unless the brief says it.
 - No catalogue facts: invented works, sizes, glazes, materials, prices, editions, sold-out states, stockists or client names.
 
-When the layout needs that copy to exist, draft it as a labelled placeholder and list every drafted claim under ASSUMPTIONS ("Studio paragraph: drafted, replace with Ana's words"; "Work index: 8 entries drafted as layout copy, no prices, no client names"). A portfolio with no work list gets its entries drafted the same way, titled as layout copy, never as the record. The gate message names the drafts so the client can replace them.
+When the layout needs that copy to exist, draft it as plain layout copy and list every drafted claim under ASSUMPTIONS ("Studio paragraph: drafted, replace with Ana's words"; "Work index: 8 entries drafted as layout copy, no prices, no client names"). A portfolio with no work list gets its entries drafted the same way, titled as layout copy, never as the record. The gate message names the drafts so the client can replace them.
 
 **No real imagery yet.** Plan for it instead of papering over it:
 
-- Prefer type-led showpieces (`manifesto-fill`, `scrub-headline`, `ghost-marquee`) over media-led ones; a horizontal gallery of placeholders is worse than a static grid ([showcase.md](showcase.md) Choosing).
+- Media-led showpieces work from the first build: the beeldbank pack supplies the photos. Never stage one on empty frames.
 - Every missing image becomes a shot-list line (subject, grade, ratio) under PLAN `Assets to produce`, so it can be shot, sourced or generated later ([imagery.md](imagery.md) §4).
-- In the build, a missing image renders as a placeholder frame per [imagery.md](imagery.md) §4b: a graded tonal frame at the declared ratio, with the shot-list caption set in the eyebrow style. Never grey boxes, never random stock.
+- In the build, every image slot is filled from the Struq beeldbank pack ([struq-imagery.md](struq-imagery.md)), automatically and without asking: the images are CC0. A frame is never empty and never a placeholder.
 
 ## 2. Brand
 
