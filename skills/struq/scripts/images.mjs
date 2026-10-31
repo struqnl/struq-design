@@ -4,6 +4,11 @@
 //   node <skill-dir>/scripts/images.mjs <pack-slug>          run from the project root
 //   node <skill-dir>/scripts/images.mjs <pack-slug> --dir ./my-site
 //   node <skill-dir>/scripts/images.mjs --list                every pack, with what it shows
+//   node <skill-dir>/scripts/images.mjs --brief "<the brief>"  picks the pack and the fitting photos
+//   node <skill-dir>/scripts/images.mjs <pack-slug> --brief "<the brief>"
+//
+// With --brief (always pass it): the pack follows Struq's rule (scripts/packs.mjs) when no slug is
+// given, and photos whose alt names a subject the client does not do are left out, best fit first.
 //
 // What it does, in order:
 // 1. Reads the pack from https://struq.nl/api/media/packs/<slug> (public, no key, CC0 images).
@@ -17,6 +22,7 @@
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { appendLog } from "./log.mjs";
+import { fitImages, packForBrief, packReason } from "./packs.mjs";
 
 // STRUQ_API_BASE points a test run at another Struq environment (for example https://staging.struq.nl).
 // Real users never set it: the default is production.
@@ -41,7 +47,9 @@ const flag = (name) => {
   return i >= 0 ? args[i + 1] : undefined;
 };
 const root = resolve(flag("--dir") ?? process.cwd());
-const slug = args.find((a, i) => !a.startsWith("--") && args[i - 1] !== "--dir");
+const brief = flag("--brief");
+const slug = args.find((a, i) => !a.startsWith("--") && args[i - 1] !== "--dir" && args[i - 1] !== "--brief") ?? (brief ? packForBrief(brief) : undefined);
+const why = brief && !args.find((a, i) => !a.startsWith("--") && args[i - 1] !== "--dir" && args[i - 1] !== "--brief") ? packReason(brief) : "named on the command line";
 
 async function getJson(url) {
   const res = await fetch(url, { signal: AbortSignal.timeout(20000), headers: { accept: "application/json" } });
@@ -191,7 +199,7 @@ async function list() {
 async function main() {
   if (args.includes("--list")) return list();
   if (!slug) {
-    console.error("Usage: node images.mjs <pack-slug> [--dir <project>]   (or --list)");
+    console.error('Usage: node images.mjs --brief "<the brief>" | <pack-slug> --brief "<the brief>"   [--dir <project>]   (or --list)');
     process.exit(2);
   }
   if (!existsSync(join(root, "package.json"))) {
@@ -203,6 +211,7 @@ async function main() {
   const palette = readPalette();
 
   let pack = null;
+  let droppedImages = [];
   try {
     pack = await getJson(`${API}/${encodeURIComponent(slug)}`);
     if (!Array.isArray(pack?.images) || pack.images.length === 0) throw new Error("pack has no images");
@@ -228,6 +237,13 @@ async function main() {
 
   if (pack) {
     const counters = Object.fromEntries(SLOTS.map((s) => [s, 0]));
+    if (brief) {
+      const fit = fitImages(slug, brief, pack.images);
+      pack.images = fit.keep;
+      droppedImages = fit.dropped;
+    } else {
+      console.warn('WARN no --brief: every photo of the pack is used. Pass --brief so photos of subjects this client does not do are left out.');
+    }
     const jobs = pack.images
       .filter((img) => SLOTS.includes(img.slot))
       .map((img) => {
@@ -299,7 +315,9 @@ async function main() {
   writeFileSync(join(outDir, "struq-pack.json"), JSON.stringify({ pack: slug, images: manifest }, null, 2) + "\n");
   const module = writeModule(entries, slug, !pack);
 
-  console.log(`\nPack ${slug}: ${real} images downloaded and verified, ${plates} fallback plates.`);
+  console.log(`\nPack ${slug} (${why}): ${real} images downloaded and verified, ${plates} fallback plates.`);
+  if (droppedImages.length) console.log(`Left out ${droppedImages.length} photos that do not fit this client (${[...new Set(droppedImages.map((d) => d.reason))].join("; ")}).`);
+  console.log("Captions: write them from each photo's alt below. Never name a subject the photo does not show.");
   console.log(`Module: ${module.replace(root, ".")}  (import { images, imageCredit } from "@/lib/struq-images")\n`);
   for (const e of entries) {
     console.log(`${`images.${e.slot}[${e.order - 1}]`.padEnd(18)} ${e.ratio.padEnd(5)} ${e.description.slice(0, 110)}`);
@@ -308,7 +326,8 @@ async function main() {
     console.log(`\nWARN ${plates} slot(s) use fallback plates. Run this script again when struq.nl answers.`);
   }
   appendLog(root, "Step 5 Images", [
-    `images.mjs: pack ${slug}, ${real} images downloaded and verified, ${plates} fallback plates.`,
+    `images.mjs: pack ${slug} (${why}), ${real} images downloaded and verified, ${plates} fallback plates.`,
+    ...(droppedImages.length ? [`Left out ${droppedImages.length} photos that do not fit this client: ${[...new Set(droppedImages.map((d) => d.reason))].join("; ")}.`] : []),
     `Files in public/images, list in ${module.replace(root, ".")}${BASE !== "https://struq.nl" ? `, from ${BASE}` : ""}.`,
   ]);
   console.log(real > 0 ? "\nOK images ready" : "\nOK fallback plates ready (no frame is empty)");
