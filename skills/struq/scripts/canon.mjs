@@ -14,6 +14,7 @@
 // project's own next/font data); faces that are not on Google come from Fontshare as local woff2.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
+import { appendLog } from "./log.mjs";
 
 // STRUQ_API_BASE points a test run at another Struq environment (for example https://staging.struq.nl).
 // Real users never set it: the default is production.
@@ -127,6 +128,10 @@ async function palette(slug) {
   console.log(`Wrote palette ${p.slug} to ${cssPath.replace(root, ".")}`);
   if (isCool(c.accent)) console.log('NOTE blue or purple accent: write "Cool hue: declared because <the brand colour>" in STRUQ.md, or pick a warmer palette.');
   console.log(`STRUQ.md line:  Palette: ${p.slug} (${p.data.mood})`);
+  appendLog(root, "Step 4 Canon palette", [
+    `canon.mjs wrote palette ${p.slug} (${p.data.mood}) into the STRUQ TOKENS block.`,
+    `Ground ${dark ? "dark" : "light"}, accent ${c.accent}.${isCool(c.accent) ? " Blue or purple accent: needs a Cool hue declaration." : ""}`,
+  ]);
   console.log("OK palette written");
 }
 
@@ -241,6 +246,10 @@ ${b.code}
   }
   console.log(`Wrote ${file.replace(root, ".")}: ${plan.display} (${d.kind}) + ${plan.body} (${b.kind}), display weight ${d.light}`);
   console.log(`STRUQ.md line:  Type: ${label}: ${plan.display} + ${plan.body}`);
+  appendLog(root, "Step 4 Canon type", [
+    `canon.mjs wrote app/fonts.ts: ${plan.display} (${d.kind}) over ${plan.body} (${b.kind}), pairing ${label}.`,
+    `Display weight ${d.light}.${plan.notes.length ? ` Overrides: ${plan.notes.join("; ")}.` : ""}`,
+  ]);
   console.log("OK type written");
 }
 
@@ -255,6 +264,7 @@ async function system(slug) {
   console.log("Struq adds to every order: the hero canvas in the hero, one showpiece at the act break, the designed footer.");
   console.log("proof and story-proof hold only real facts from the brief; faq only questions the brief answers. Drop a section that would need invented content.");
   console.log(`STRUQ.md line:  System: ${s.slug} (${order.join(" > ")})`);
+  appendLog(root, "Step 2 Canon system", [`canon.mjs read design system ${s.slug}: ${order.join(" > ")}.`]);
   console.log("OK system read");
 }
 

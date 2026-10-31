@@ -16,6 +16,7 @@ import { spawnSync } from "node:child_process";
 import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { appendLog } from "./log.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const RECIPES = join(here, "..", "recipes");
@@ -122,4 +123,8 @@ for (const f of copied) console.log(`  ${f}`);
 if (kept.length) console.log(`Kept ${kept.length} existing file(s) (use --force to replace): ${kept.join(", ")}`);
 for (const n of notes) console.log(`NOTE ${n}`);
 console.log("\nNext: set the palette in globals.css (STRUQ TOKENS), the two faces in app/fonts.ts, the title in app/layout.tsx.");
+appendLog(root, "Step 3 Recipes", [
+  `recipes.mjs copied ${copied.length} file(s), kept ${kept.length}.`,
+  ...(notes.length ? [`Notes: ${notes.join(" ")}`] : []),
+]);
 console.log("OK recipes ready");

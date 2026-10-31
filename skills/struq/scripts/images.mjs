@@ -16,6 +16,7 @@
 // Node 18 or later, no dependencies. Safe to run again: valid files are kept.
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
+import { appendLog } from "./log.mjs";
 
 // STRUQ_API_BASE points a test run at another Struq environment (for example https://staging.struq.nl).
 // Real users never set it: the default is production.
@@ -306,6 +307,10 @@ async function main() {
   if (plates > 0) {
     console.log(`\nWARN ${plates} slot(s) use fallback plates. Run this script again when struq.nl answers.`);
   }
+  appendLog(root, "Step 5 Images", [
+    `images.mjs: pack ${slug}, ${real} images downloaded and verified, ${plates} fallback plates.`,
+    `Files in public/images, list in ${module.replace(root, ".")}${BASE !== "https://struq.nl" ? `, from ${BASE}` : ""}.`,
+  ]);
   console.log(real > 0 ? "\nOK images ready" : "\nOK fallback plates ready (no frame is empty)");
 }
 

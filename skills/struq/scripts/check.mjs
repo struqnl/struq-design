@@ -10,6 +10,7 @@
 // FAIL remains. Fix, run again, and only report done on "RESULT: PASS".
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative, resolve, sep } from "node:path";
+import { appendLog } from "./log.mjs";
 
 const args = process.argv.slice(2);
 const dirFlag = args.indexOf("--dir");
@@ -351,8 +352,24 @@ const plan = read("STRUQ.md");
   }
 }
 
+/* --------------------------------------------------------------------- LOG */
+// Every site keeps STRUQ-LOG.md: an entry for each completed checklist step. Step 12 (this check)
+// writes its own entry when this run ends, so it is not required beforehand.
+{
+  const G = "LOG";
+  const log = read("STRUQ-LOG.md");
+  if (!log) add(G, "FAIL", "No STRUQ-LOG.md. Start it at the first step: node <skill-dir>/scripts/log.mjs \"Step 1 Project\" \"<what>\" \"<why>\".");
+  else {
+    const ticked = (plan.match(/^\s*[-*]\s*\[[xX]\]\s*(\d+)/gm) ?? []).map((l) => Number(l.match(/(\d+)\s*$/)[1])).filter((n) => n !== 12);
+    const missing = ticked.filter((n) => !new RegExp(`^## Step ${n}\\b`, "m").test(log));
+    const entries = (log.match(/^## /gm) ?? []).length;
+    if (missing.length) add(G, "FAIL", `STRUQ-LOG.md has no entry for ticked step(s) ${missing.join(", ")}. Add one per step with log.mjs: what was done and why.`);
+    else add(G, "PASS", `STRUQ-LOG.md has ${entries} entries, one or more for every ticked step`);
+  }
+}
+
 /* ------------------------------------------------------------------ REPORT */
-const order = ["IMAGES", "TELLS", "MOTION", "TYPE", "PLAN"];
+const order = ["IMAGES", "TELLS", "MOTION", "TYPE", "PLAN", "LOG"];
 console.log(`Struq check: ${root}\n`);
 for (const g of order) {
   const rows = results.filter((r) => r.group === g);
@@ -367,6 +384,15 @@ for (const g of order) {
 }
 const fails = results.filter((r) => r.status === "FAIL").length;
 const warns = results.filter((r) => r.status === "WARN").length;
+if (!args.includes("--no-log")) {
+  const names = (status) => results.filter((r) => r.status === status).map((r) => `${r.group} ${r.message.split(":")[0].replace(/[.(].*$/, "").trim()}`);
+  const passed = results.filter((r) => r.status === "PASS").length;
+  appendLog(root, "Step 12 Check", [
+    `check.mjs: RESULT ${fails ? "FAIL" : "PASS"}, ${passed} pass, ${fails} fail, ${warns} warn.`,
+    ...(fails ? [`Fail: ${names("FAIL").join("; ")}.`] : []),
+    ...(warns ? [`Warn: ${names("WARN").join("; ")}.`] : []),
+  ]);
+}
 if (fails) {
   console.log(`RESULT: FAIL (${fails} fail, ${warns} warn). Fix every FAIL, run the check again, and only then report done.`);
   process.exit(1);

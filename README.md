@@ -132,7 +132,7 @@ npm install @struq/icons
 
 ## What it fetches and sends
 
-Struq is instructions, reference files, copy-in components and four small Node scripts (`recipes.mjs`, `canon.mjs`, `images.mjs`, `check.mjs`) that your agent runs in your project. They read and write files in your project and make the public requests below; they collect or send nothing about you or your project.
+Struq is instructions, reference files, copy-in components and five small Node scripts (`recipes.mjs`, `canon.mjs`, `images.mjs`, `check.mjs`, `log.mjs`) that your agent runs in your project. They read and write files in your project, including a build log, `STRUQ-LOG.md`, and make the public requests below; they collect or send nothing about you or your project.
 
 - **Canon.** `canon.mjs` reads the public palettes, pairings and design systems at `https://struq.nl/api/assets`, and downloads a Fontshare face from `api.fontshare.com` when a pairing needs one. No account, no key.
 - **Photos, for every slot your own photos do not fill.** The skill has your agent read the public pack list at `https://struq.nl/api/media/packs` and download the chosen images from `https://struq.nl/media/packs/` into your project. These are plain public requests: no account, no key, and nothing from your project goes with them. The images are CC0.

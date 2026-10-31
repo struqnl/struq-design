@@ -15,9 +15,9 @@ A site looks like a template because every choice in it is the likeliest one. St
 | Invocation | Mode |
 |---|---|
 | `/struq <brief>` | **Build**: the Build checklist below, start to finish. |
-| `/struq redesign <path>` | **Redesign**: keep the brand, copy and components; read [references/triage.md](references/triage.md), then run the checklist from step 3 on the existing project. |
-| `/struq audit <path-or-url>` | **Audit**: change nothing. Run `node <skill-dir>/scripts/check.mjs` on the project and report its FAIL and WARN lines, a score (100, minus 5 per FAIL, minus 2 per WARN) and the three fixes with the most visual payoff. |
-| `/struq direct <brief>` | **Directed**: one continuous WebGL experience across chapters. Run the checklist through step 5, then [cinematic/README.md](cinematic/README.md). |
+| `/struq redesign <path>` | **Redesign**: keep the brand, copy and components; read [references/triage.md](references/triage.md), then run the checklist from step 3 on the existing project. The log starts with what you found. |
+| `/struq audit <path-or-url>` | **Audit**: change nothing. Run `node <skill-dir>/scripts/check.mjs` on the project and report its FAIL and WARN lines, a score (100, minus 5 per FAIL, minus 2 per WARN) and the three fixes with the most visual payoff. The check appends its result to the project's STRUQ-LOG.md; log the audit itself there too. |
+| `/struq direct <brief>` | **Directed**: one continuous WebGL experience across chapters. Run the checklist through step 5, then [cinematic/README.md](cinematic/README.md), logging every chapter to the same STRUQ-LOG.md. |
 
 Register: this is for marketing, landing, portfolio and narrative sites. For dashboards and product UI keep the type, palette and surface rules and drop Lenis, showpieces and the hero canvas.
 
@@ -33,10 +33,13 @@ Register: this is for marketing, landing, portfolio and narrative sites. For das
 
 ## The Build checklist
 
-Copy this block into `STRUQ.md` in the project root (under the short plan, step 2) and tick each line (`- [x]`) as you finish it. `check.mjs` fails while any line is open. Do not report the build as done until every line is ticked and `check.mjs` prints `RESULT: PASS`.
+Copy this block into `STRUQ.md` in the project root (under the short plan, step 2) and tick each line (`- [x]`) as you finish it. `check.mjs` fails while any line is open.
+
+**The site log.** Every site also keeps `STRUQ-LOG.md` in the project root, from the first step on: append only, one entry per step, a heading with the step name and the local time, then two to five short lines of what and why. Log the brief received, the canon picks and why, the approval asked and the answer, each section built (files, recipe), every check run, every fix after a failure, every deviation and assumption, and the final state. `canon.mjs`, `images.mjs`, `recipes.mjs` and `check.mjs` append their own entries; you add the rest with `log.mjs`. `check.mjs` fails when the log is missing or a ticked step has no entry. STRUQ.md stays the plan; the log is what happened. Do not report the build as done until every line is ticked and `check.mjs` prints `RESULT: PASS`.
 
 ```
 ## Build checklist
+Rule: keep STRUQ-LOG.md at every step: node <skill-dir>/scripts/log.mjs "Step N Name" "what" "why" (canon, images, recipes and check log themselves)
 - [ ] 1 Project: Next.js App Router + Tailwind v4 in place (scaffolded if the folder was empty)
 - [ ] 2 Plan and approval: palette, pairing, design system and pack picked from the canon (canon.mjs list); STRUQ.md written; the one stop for approval sent and answered
 - [ ] 3 Recipes: node <skill-dir>/scripts/recipes.mjs printed "OK recipes ready"
