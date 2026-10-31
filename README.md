@@ -79,7 +79,7 @@ Stack: Next.js App Router and Tailwind by default, Vite supported. It reads the 
 
 | Command | What it does |
 |---|---|
-| `/struq <brief>` | Writes a short plan into `STRUQ.md`, tells you the choices and builds straight on (veto any time), then runs its own check and, with a browser tool, screenshots it and fixes what it sees |
+| `/struq <brief>` | Plans the site into one `STRUQ.md`, stops once for your approval, builds it, then runs its own check and, with a browser tool, screenshots it and fixes what it sees |
 | `/struq redesign <path>` | Keeps your brand, copy and components; rebuilds the execution |
 | `/struq audit <path-or-url>` | Changes nothing. Returns a score out of 100, every tell with its fix, and the three highest-payoff changes |
 | `/struq direct <brief>` | Directed mode for one continuous 3D experience across chapters |
@@ -89,9 +89,10 @@ In Codex, use `$struq` instead of `/struq`; as a Claude Code plugin the command 
 ## How a build runs
 
 1. **Plan.** A short plan in `STRUQ.md` with a Build checklist the agent ticks as it goes. It never invents testimonials or stats.
-2. **Canon.** Palette, type pairing and section order come from Struq's own canon (`struq.nl/api/assets`), not from the defaults every AI falls back on. The photos come from the matching Struq beeldbank pack, so no frame is ever empty.
-3. **Build.** Tested components do the cinematic floor on every site: Lenis smooth scroll on one GSAP clock, a SplitText hero, masked reveals, one pinned or horizontal showpiece, a WebGL hero layer with a poster fallback, a magnetic CTA.
-4. **Check.** `check.mjs` scans the project for empty frames, the AI tells (eyebrows, gradients, pills, mono, Inter, purple), the motion floor and the typography, and the build is only done when it passes. With a browser tool it also screenshots and fixes what it sees.
+2. **One stop.** It shows the plan and asks once: approve, and send a logo, photos or real numbers if you have them. A plain yes builds with the canon picks.
+3. **Canon.** Palette, type pairing and section order come from Struq's own canon (`struq.nl/api/assets`), not from the defaults every AI falls back on. The photos come from the matching Struq beeldbank pack, so no frame is ever empty.
+4. **Build.** Tested components do the cinematic floor on every site: Lenis smooth scroll on one GSAP clock, a SplitText hero, masked reveals, one pinned or horizontal showpiece, a WebGL hero layer with a poster fallback, a magnetic CTA.
+5. **Check.** `check.mjs` scans the project for empty frames, the AI tells (eyebrows, gradients, pills, mono, Inter, purple), the motion floor and the typography, and the build is only done when it passes. With a browser tool it also screenshots and fixes what it sees.
 
 ## Install options
 

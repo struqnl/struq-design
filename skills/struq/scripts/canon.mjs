@@ -15,7 +15,9 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 
-const API = "https://struq.nl/api";
+// STRUQ_API_BASE points a test run at another Struq environment (for example https://staging.struq.nl).
+// Real users never set it: the default is production.
+const API = `${(process.env.STRUQ_API_BASE || "https://struq.nl").replace(/\/+$/, "")}/api`;
 const args = process.argv.slice(2);
 const opt = (name) => {
   const i = args.indexOf(name);

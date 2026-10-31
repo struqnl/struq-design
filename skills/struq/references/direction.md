@@ -13,7 +13,7 @@ This file is the orchestrator for **Build**, **Redesign** and the planning half 
 | 2 | **Concept** | CONCEPT | this file §3; the tension from [brief-router.md](brief-router.md) §1 | never |
 | 3 | **System** | SYSTEM | this file §4 (sole owner of type, palette, icons, imagery, motion) | never |
 | 4 | **Site plan** | PLAN | [brief-router.md](brief-router.md) §2 | never |
-| Gate | **Veto** | one message: summary, materials request, "Veto anything?" | this file §5 | the user said "just build it", or the run is non-interactive |
+| Gate | **Approval** | one message: summary, materials request, "Akkoord?" | this file §5 | never: it is the one stop, and there is no second |
 | 5 | **Build** | the site | [../SKILL.md](../SKILL.md) workflow steps 2 to 7 | |
 | 6 | **Verify** | VERIFY | [../SKILL.md](../SKILL.md) workflow step 8 | never |
 
@@ -103,7 +103,7 @@ Decide in this order:
 
 Write `STRUQ.md` (template below), then send one message with: the name, the idea line, the two typefaces and pairing id, the signature move and hero entrance, the palette as hex, the icon family, the arc as one line, the showpiece ids, the open assumptions, and the materials request. End it with exactly this:
 
-> **Veto anything? If you have a logo, photos or real numbers, send them now.**
+> **Akkoord? Heb je een logo, foto's of echte cijfers, stuur ze nu.**
 
 Apply edits and new materials to the file; do not re-interview. This is the only stop between the brief and the build (the wizard in [brief-router.md](brief-router.md) §1b is the one exception, and it runs before this gate, not instead of it).
 

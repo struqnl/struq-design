@@ -170,7 +170,8 @@ const plan = read("STRUQ.md");
 
   // Type and labels
   tell("Eyebrows and uppercase labels", /\buppercase\b|text-transform:\s*uppercase|\b(eyebrow|kicker|overline)\b/i,
-    "small uppercase labels above headings, uppercase marquees and tracked caps are AI tells. Delete the label; the heading, a hairline rule or a jump in scale does the wayfinding.");
+    "small uppercase labels above headings, uppercase marquees and tracked caps are AI tells. Delete the label; the heading, a hairline rule or a jump in scale does the wayfinding. A deliberate all-caps wordmark passes when its element carries data-wordmark.",
+    { exclude: /data-wordmark/ });
   tell("Monospace as a design face", /font-mono|monospace|_Mono\b|\bMono\(|JetBrains|Fira_Code|Space_Mono/,
     "mono is for literal code only. Labels, stats and dates use the text face with tabular-nums.", { exclude: /<(code|pre)\b/ });
   tell("Default faces", /(next\/font|font-family|--font-|--face-|import\s*\{)[^\n]*\b(Inter|Roboto|Arial|Helvetica|Open[ _]Sans|Poppins|Montserrat|Lato|Geist|Space[ _]Grotesk)\b/,

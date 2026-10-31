@@ -38,10 +38,10 @@ Copy this block into `STRUQ.md` in the project root (under the short plan, step 
 ```
 ## Build checklist
 - [ ] 1 Project: Next.js App Router + Tailwind v4 in place (scaffolded if the folder was empty)
-- [ ] 2 Plan: the short plan above is written; the plan message is sent; building on without waiting
+- [ ] 2 Plan and approval: palette, pairing, design system and pack picked from the canon (canon.mjs list); STRUQ.md written; the one stop for approval sent and answered
 - [ ] 3 Recipes: node <skill-dir>/scripts/recipes.mjs printed "OK recipes ready"
-- [ ] 4 Canon: palette, pairing and design system picked from the Struq canon by mood and sector; canon.mjs wrote the tokens and fonts; Palette:, Type:, System: recorded in STRUQ.md
-- [ ] 5 Images: beeldbank pack picked by sector; images.mjs printed "OK"; Images: recorded in STRUQ.md; title and lang set in app/layout.tsx
+- [ ] 4 Canon: canon.mjs palette and canon.mjs type wrote the tokens and the fonts of the approved picks
+- [ ] 5 Images: images.mjs printed "OK" for the approved pack; title and lang set in app/layout.tsx
 - [ ] 6 Hero: HeroCanvas layer, SplitHeadline h1, one line of lead, MagneticButton CTA, the hero photo
 - [ ] 7 Sections: 5 to 7 sections on the arc, every image in a MediaFrame, text groups in Reveal, two grid breaks
 - [ ] 8 Showpiece: one HorizontalGallery or PinnedZoom at the act break
@@ -55,15 +55,15 @@ Copy this block into `STRUQ.md` in the project root (under the short plan, step 
 
 Empty folder: `npx create-next-app@latest . --ts --tailwind --app --eslint --yes`. Existing project: read `package.json`; when the installed version's types disagree with a recipe, the installed version wins (adapt the recipe, keep its intent). Vite: translate each step through [references/stack-targets.md](references/stack-targets.md).
 
-### Step 2: Plan (five minutes, not fifty)
+### Step 2: Plan, then the one stop for approval
 
-Write this at the top of `STRUQ.md`, then the checklist under it:
+Run `node <skill-dir>/scripts/canon.mjs list` (it reads the canon and changes nothing) and pick the palette, the pairing, the design system and the beeldbank pack as step 4 and step 5 describe. Then write this at the top of `STRUQ.md`, with the checklist under it:
 
 ```
 # STRUQ.md: <name>
 Brief: <one line: what it is, for whom, where>
 Idea: <the one idea the site is about, and the one visual motif that carries it>
-Palette: <canon palette slug> (<its mood>)            (step 4 prints this line)
+Palette: <canon palette slug> (<its mood>)
 Type: <canon pairing slug>: <display face> + <text face>
 System: <canon design system slug> (<its section order>)
 Images: pack <slug> (or: the client's photos, then pack <slug>)
@@ -74,7 +74,11 @@ Assumptions: <every drafted line and every fact left out>
 Verify: <filled in at step 11>
 ```
 
-Then send **one plan message**: the plan in five lines, and "Building with these choices now. Veto anything, or send a logo, photos or real numbers, and I will swap them in." **Do not wait for an answer**; keep building. Stop to ask first only when the brief does not say what the business is. When the user does answer later, swap what they veto or send.
+Then **stop, once**: send the plan in five lines (idea, palette, type, pack, arc with the showpiece) and the materials request, in the user's language:
+
+> Akkoord? Heb je een logo, foto's of echte cijfers, stuur ze nu.
+
+(English: "Approve? If you have a logo, photos or real numbers, send them now.") Wait for the answer. Any yes, or "bouw maar" with nothing attached, builds with the canon picks as planned; what the user sends replaces the matching pick or pack images; a veto changes only what it names. **This is the only stop: never ask a second time**, not for permission to download the images (they are free and CC0) and not to confirm a build step. Only a brief that does not say what the business is gets one question before the plan, instead of this stop.
 
 ### Step 3: Recipes
 
@@ -115,6 +119,8 @@ Each command prints the line to paste into STRUQ.md (`Palette:`, `Type:`, `Syste
 | `curl -s "https://struq.nl/api/assets?filter=typography"` | `items[].slug`, `items[].data.display.name`, `items[].data.body.name`, their `stack`, `items[].data.intent` |
 | `curl -s "https://struq.nl/api/assets?filter=design_system"` | `items[].slug`, `items[].data.silhouette.sectionOrder`, `items[].data.paletteRef`, `items[].data.typographyRef` |
 | `curl -s "https://struq.nl/api/media/packs"` | `packs[].slug`, `packs[].description` (step 5) |
+
+Testing only: `STRUQ_API_BASE=https://staging.struq.nl` points `canon.mjs` and `images.mjs` (API and image downloads) at another Struq environment. Users never set it.
 
 **How to pick.** Palette by the brief's mood first (`data.mood` and the `sfeer:` tags), then by sector: a restaurant by a wood fire reads `frontier-olea-flour-terracotta` or `frontier-lumen-firelit-flour`; an architect `graphite-ivory` or `midnight-brass`; a mobility launch `frontier-aperture-technical-dark` or `frontier-velar-graphite-scarlet`; care `frontier-thuispost-oat-petrol` or `frontier-stillwater-oat-sage`; fashion `frontier-seve-bone-oxblood`. A palette whose accent is blue or purple (`canon.mjs list` marks it) only when the brand is that colour, declared in STRUQ.md as `Cool hue: declared because <the brand colour>`. The brand's own colours, when the brief gives them, beat the canon: write them into the same token names.
 
@@ -236,7 +242,7 @@ For craft (layout, type, motion, Lenis, SplitText, reveals, pinned and horizonta
 5. **Never an empty frame.** deck-design allows a graded placeholder frame; Struq fills every slot from the beeldbank, or a generated fallback plate.
 6. **The cinematic floor is mandatory, not "when the page calls for it":** Lenis on one GSAP clock, a SplitText hero, masked reveals, one showpiece, a WebGL hero layer with poster, a magnetic CTA, on every marketing site.
 7. **No Inter anywhere,** including the two canon pairings that name it (`canon.mjs` swaps it), and no commercial face without a licence (its free stand-in instead).
-8. **The plan does not block.** One plan message and keep building; deck-design's longer planning stays available in [references/direction.md](references/direction.md) for an interactive session.
+8. **Exactly one stop.** The plan stops once for approval with the materials request, and never again; the canon picks are the defaults when the answer is a plain yes. deck-design's longer planning stays available in [references/direction.md](references/direction.md) for a long interactive session.
 
 ## When something goes wrong
 
@@ -248,4 +254,4 @@ For craft (layout, type, motion, Lenis, SplitText, reveals, pinned and horizonta
 
 ## Depth, when a step needs it
 
-Typography [typography.md](references/typography.md) · palettes and presets [vibe-presets.md](references/vibe-presets.md) · page arc and footer [page-architecture.md](references/page-architecture.md) · composition [composition.md](references/composition.md), on phones [mobile-composition.md](references/mobile-composition.md) · imagery and grading [imagery.md](references/imagery.md), the beeldbank [struq-imagery.md](references/struq-imagery.md) · reveals [scroll-reveals.md](references/scroll-reveals.md) · more showpieces [showcase.md](references/showcase.md), [pinning-scrub.md](references/pinning-scrub.md) · the feel layer [feel-layer.md](references/feel-layer.md) · nav and menus [nav-header.md](references/nav-header.md) · route transitions [route-transitions.md](references/route-transitions.md), loaders [loaders.md](references/loaders.md) · SVG motion [svg-motion.md](references/svg-motion.md) · pointer [micro-interactions.md](references/micro-interactions.md) · WebGL beyond the hero [webgl-r3f.md](references/webgl-r3f.md), [webgl-scenes.md](references/webgl-scenes.md), hero scenes [hero-scenes.md](references/hero-scenes.md) · brand from nothing [brand.md](references/brand.md) · SEO [seo.md](references/seo.md) · performance [performance.md](references/performance.md) · a long, interactive planning session [direction.md](references/direction.md).
+Per client type (tension, type, palette fallback, motion, arc, the niche tells, the pack) [niche-packets.md](references/niche-packets.md) · Typography [typography.md](references/typography.md) · palettes and presets [vibe-presets.md](references/vibe-presets.md) · page arc and footer [page-architecture.md](references/page-architecture.md) · composition [composition.md](references/composition.md), on phones [mobile-composition.md](references/mobile-composition.md) · imagery and grading [imagery.md](references/imagery.md), the beeldbank [struq-imagery.md](references/struq-imagery.md) · reveals [scroll-reveals.md](references/scroll-reveals.md) · more showpieces [showcase.md](references/showcase.md), [pinning-scrub.md](references/pinning-scrub.md) · the feel layer [feel-layer.md](references/feel-layer.md) · nav and menus [nav-header.md](references/nav-header.md) · route transitions [route-transitions.md](references/route-transitions.md), loaders [loaders.md](references/loaders.md) · SVG motion [svg-motion.md](references/svg-motion.md) · pointer [micro-interactions.md](references/micro-interactions.md) · WebGL beyond the hero [webgl-r3f.md](references/webgl-r3f.md), [webgl-scenes.md](references/webgl-scenes.md), hero scenes [hero-scenes.md](references/hero-scenes.md) · brand from nothing [brand.md](references/brand.md) · SEO [seo.md](references/seo.md) · performance [performance.md](references/performance.md) · a long, interactive planning session [direction.md](references/direction.md).

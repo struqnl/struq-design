@@ -1,10 +1,10 @@
 # The Minimal Baseline: rationale + standalone paste block
 
-**The canonical baseline block lives in [SKILL.md](../SKILL.md).** This file does two jobs. It explains **why each rule earns its place** (the rationale below), and it carries the one **standalone copy-paste block** for agents that do not load Struq as a skill: the canonical block plus two role-priming lines.
+**SKILL.md carries the short form of this baseline ("The taste baseline") and the Build checklist that enforces it.** This file does two jobs. It explains **why each rule earns its place** (the rationale below), and it carries the one **standalone copy-paste block** for agents that do not load Struq as a skill.
 
-<!-- GENERATED FROM SKILL.md: the block below is a copy of the canonical baseline block, with two role-priming lines above its title and one blank line between them. Do not edit it here. Edit SKILL.md, then re-copy the block and keep the two role-priming lines. -->
+<!-- The paste block below must agree with SKILL.md ("The taste baseline" and "Three rules that never bend"). When a rule changes there, change it here in the same commit. -->
 
-## The paste block (generated, for any LLM, any stack)
+## The paste block (for any LLM, any stack)
 
 Paste this at the top of any project prompt to lift the output into the top tier. Include the rationale section only when the agent has room.
 
@@ -28,10 +28,11 @@ about half that. Body 1rem to 1.0625rem at 400, leading 1.6+, 55 to 75ch;
 emphasis 500, never 700. Hierarchy from scale contrast, not medium sizes.
 ROLES: every string takes a role token, never text-xs, text-lg or text-5xl:
 font-display text-display, font-display text-h2, type-h3 text-h3,
-text-lead, text-body, text-small, eyebrow text-eyebrow, font-ui text-ui,
+text-lead, text-body, text-small, meta text-meta, font-ui text-ui,
 stat text-stat, and font-display text-statement for the one Orient line
-or manifesto. Eyebrows: uppercase 0.75rem (the 12px floor), tracked 0.12
-to 0.18em per face, ink-muted, one per section, never ink-faint.
+or manifesto. NO EYEBROWS: no small uppercase tracked label above a
+heading, no uppercase marquee. The heading, a hairline and scale do the
+wayfinding; captions and dates are meta in sentence case, ink-muted.
 FLOOR: body at least 1rem, muted at least 0.875rem, nothing under 12px.
 CONTRAST: body at least 4.5:1, large text at least 3:1. ink-faint is never
 text: hairlines and disabled states only.
@@ -65,8 +66,10 @@ flat gray hex. Shadows only for true floating elements, then large, soft and fai
 COLOR: One accent, used sparingly (links, the key CTA, one highlight per
 viewport). Neutrals are temperature-shifted (warm cream and off-black, or cool
 charcoal), never pure #FFF and #000 with gray-500 text. A second accent is a
-declared genre choice with its own token and the same budget. No blue to
-purple gradients, no gradient text, no glassmorphism cards.
+declared genre choice with its own token and the same budget. NO gradients
+of any kind, no gradient text, no glass, no tinted translucent fills (a
+flat black scrim over a photo is the one exception), no pills, no pulsing
+dots. No blue or purple unless the brand is that colour.
 
 MOTION: Lenis smooth scroll (lerp 0.09 to 0.11) on one gsap.ticker clock,
 unless the genre calls for native scroll. Every entrance animates opacity AND
@@ -90,20 +93,21 @@ ink-colored. Never emoji, never the AI-cliche icons (Sparkles, Rocket, Zap),
 never icons in colored chips. Animated icons run under 500ms on click and
 never loop in standard UI.
 
-DETAILS THAT SELL IT: Real running copy. Tracked uppercase eyebrows as
-wayfinding, not 01/02/03 stamped on every section (one deliberate oversized
-numeral is fine). The footer is designed as hard as the hero. Custom
+DETAILS THAT SELL IT: Real running copy, never invented facts. Never
+01/02/03 stamped on every section (one deliberate oversized numeral is
+fine). Never an empty image frame. The footer is designed as hard as the
+hero. Custom
 ::selection color. Visible, designed focus-visible states. Every route change
 is a designed transition, not a hard cut.
 ```
 
-The block is the floor, not the ceiling. For the full recipe stack (two-face type system, the Lenis + GSAP single clock, showpieces, route transitions, WebGL) start from [direction.md](direction.md), which turns a brief into one contract file, `STRUQ.md`, that cites the other reference files.
+The block is the floor, not the ceiling. For the full recipe stack (Struq's canon, the beeldbank, the Lenis + GSAP single clock, the SplitText hero, a showpiece, the WebGL hero layer) run the Build checklist in [SKILL.md](../SKILL.md).
 
 ## Why each rule matters
 
 **Spacing asymmetry.** Uniform `py-16` is the single most reliable template tell. Real art direction treats vertical rhythm as pacing: a hero breathes, a feature block is dense, a manifesto line sits in 20rem of air. Varying section padding by role is free and reads instantly as "someone decided this." The "too empty" instruction exists because LLMs systematically under-use whitespace; what feels wasteful in code feels expensive in the browser.
 
-**Type scale contrast.** Templates use five sizes between 16 and 36px, so nothing leads. Agencies compress hierarchy into two extremes: enormous display type (it is the visual, not decoration around the visual) and small, quiet everything else. Negative tracking matters because text faces are spaced for 16px, and at 96px+ the gaps look broken; how much depends on the face (a geometric sans takes about -0.03em, a hairline serif about -0.01em), which is why tracking lives in the pairing row and not in one `tracking-tight`. The tracked-uppercase eyebrow replaces the "medium subhead" that flattens hierarchy. Role tokens (`text-display`, `text-h2`, `eyebrow text-eyebrow`) exist so no component improvises a size, and the one signature move exists so two Struq sites never open the same way. The deeper type system (Signature pairings, roles, fluid scale, SplitText typography) lives in [typography.md](typography.md).
+**Type scale contrast.** Templates use five sizes between 16 and 36px, so nothing leads. Agencies compress hierarchy into two extremes: enormous display type (it is the visual, not decoration around the visual) and small, quiet everything else. Negative tracking matters because text faces are spaced for 16px, and at 96px+ the gaps look broken; how much depends on the face (a geometric sans takes about -0.03em, a hairline serif about -0.01em), which is why tracking lives in the pairing row and not in one `tracking-tight`. The fix for the "medium subhead" that flattens hierarchy is not a tracked-uppercase eyebrow (that is a tell of its own) but a bigger gap between display and body. Role tokens (`text-display`, `text-h2`, `meta text-meta`) exist so no component improvises a size, and the one signature move exists so two Struq sites never open the same way. The deeper type system (Signature pairings, roles, fluid scale, SplitText typography) lives in [typography.md](typography.md).
 
 **Tonal elevation.** Drop shadows on light cards are the Bootstrap-era elevation model; design-led products (Linear, Vercel, Arc) moved to tonal ladders, where closer surfaces are lighter (dark mode) or distinguished by hairline borders and a subtle tone step (light mode). The light-mode direction is a preset decision: editorial/luxury pages are the lightest layer with panels stepping deeper; brutalist pages are toned with white panels lifting off them. One step per layer keeps depth legible either way. When you do shadow a floating element, the large/soft/low-opacity recipe reads as ambient light, while `shadow-lg` reads as a 2015 component library.
 
@@ -115,4 +119,4 @@ The block is the floor, not the ceiling. For the full recipe stack (two-face typ
 
 **Grid-breaking.** A layout where every element respects the container communicates "theme." Bleed, overlap, and stickiness communicate "art direction" because they require coordinating elements across section boundaries, which is exactly what templates cannot do. Twice per page is the floor; it should look intentional, not chaotic.
 
-**Details.** Real copy forces real layout decisions (lorem hides widow/orphan and width problems). Tracked eyebrow labels give long pages an editorial spine. Note what is *removed* here: stamping `01/02/03` on every section/feature/row is one of the most reliable AI tells. It is reflexive wayfinding that no editor would apply uniformly. One deliberate oversized numeral can be a strong accent; sequencing the whole page is filler. (Ordinal numbering *inside* one genuinely stepped component, such as a pinned phase sequence or a numbered process, is legitimate; page-wide stamping is the tell.) The same logic bans two other reflexes: **monospace as flavor** (it is the look of a code editor, not a designed page, and belongs only around literal code) and the **cliché icon set** (`Sparkles`/`Rocket`/`Zap` and their emoji forms 🚀✨💡 are the visual signature of generated UI). The footer is where everyone quits, so finishing it signals the whole build is finished. Selection color and focus states are tiny, but they are the difference between "surface-level styling" and "someone touched every state."
+**Details.** Real copy forces real layout decisions (lorem hides widow/orphan and width problems). Long pages get their editorial spine from hairline rules, surface steps and headings that say something, never from tracked eyebrow labels. Note what is *removed* here: stamping `01/02/03` on every section/feature/row is one of the most reliable AI tells. It is reflexive wayfinding that no editor would apply uniformly. One deliberate oversized numeral can be a strong accent; sequencing the whole page is filler. (Ordinal numbering *inside* one genuinely stepped component, such as a pinned phase sequence or a numbered process, is legitimate; page-wide stamping is the tell.) The same logic bans two other reflexes: **monospace as flavor** (it is the look of a code editor, not a designed page, and belongs only around literal code) and the **cliché icon set** (`Sparkles`/`Rocket`/`Zap` and their emoji forms 🚀✨💡 are the visual signature of generated UI). The footer is where everyone quits, so finishing it signals the whole build is finished. Selection color and focus states are tiny, but they are the difference between "surface-level styling" and "someone touched every state."

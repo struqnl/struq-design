@@ -17,7 +17,12 @@
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 
-const API = "https://struq.nl/api/media/packs";
+// STRUQ_API_BASE points a test run at another Struq environment (for example https://staging.struq.nl).
+// Real users never set it: the default is production.
+const BASE = (process.env.STRUQ_API_BASE || "https://struq.nl").replace(/\/+$/, "");
+const API = `${BASE}/api/media/packs`;
+/** The download URL, on the same base as the API (directPath), falling back to the absolute publicUrl. */
+const imageUrl = (img) => (img.directPath ? `${BASE}${img.directPath}` : img.publicUrl);
 const SLOTS = ["hero", "band", "card", "column", "detail", "backdrop"];
 const FALLBACK_COUNTS = { hero: 3, band: 2, card: 8, column: 4, detail: 4, backdrop: 3 };
 const FALLBACK_SIZE = {
@@ -233,7 +238,7 @@ async function main() {
       while (cursor < jobs.length) {
         const job = jobs[cursor++];
         const target = join(outDir, `${job.name}.webp`);
-        const ok = fileIsImage(target) || (await download(job.img.publicUrl, target));
+        const ok = fileIsImage(target) || (await download(imageUrl(job.img), target));
         if (ok) {
           real++;
           entries.push({
@@ -246,7 +251,7 @@ async function main() {
             ratio: job.img.aspectRatio ?? "",
             description: job.img.description ?? "",
           });
-          manifest.push({ file: `public/images/${job.name}.webp`, id: job.img.id, slot: job.img.slot, source: job.img.publicUrl });
+          manifest.push({ file: `public/images/${job.name}.webp`, id: job.img.id, slot: job.img.slot, source: imageUrl(job.img) });
         } else {
           plates++;
           const size = [job.img.width ?? FALLBACK_SIZE[job.img.slot][0], job.img.height ?? FALLBACK_SIZE[job.img.slot][1]];
