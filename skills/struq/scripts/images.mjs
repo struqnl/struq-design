@@ -1,0 +1,309 @@
+#!/usr/bin/env node
+// Struq imagery: download one beeldbank pack into the project.
+//
+//   node <skill-dir>/scripts/images.mjs <pack-slug>          run from the project root
+//   node <skill-dir>/scripts/images.mjs <pack-slug> --dir ./my-site
+//   node <skill-dir>/scripts/images.mjs --list                every pack, with what it shows
+//
+// What it does, in order:
+// 1. Reads the pack from https://struq.nl/api/media/packs/<slug> (public, no key, CC0 images).
+// 2. Downloads all 24 images to public/images/<slot>-<n>.webp and checks each one is a real image.
+// 3. Writes lib/struq-images.ts (src/lib/ when the project uses src/): every image with its alt,
+//    size and description, grouped by slot, plus the credit line. Components import from it.
+// 4. If struq.nl cannot be reached, or a file fails its check, it writes a graded fallback plate
+//    in the site palette for that slot instead, so no frame is ever empty, and says so.
+//
+// Node 18 or later, no dependencies. Safe to run again: valid files are kept.
+import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { join, resolve } from "node:path";
+
+const API = "https://struq.nl/api/media/packs";
+const SLOTS = ["hero", "band", "card", "column", "detail", "backdrop"];
+const FALLBACK_COUNTS = { hero: 3, band: 2, card: 8, column: 4, detail: 4, backdrop: 3 };
+const FALLBACK_SIZE = {
+  hero: [2048, 1152],
+  band: [2352, 1008],
+  card: [2048, 1365],
+  column: [1600, 2000],
+  detail: [1600, 1600],
+  backdrop: [2048, 1152],
+};
+
+const args = process.argv.slice(2);
+const flag = (name) => {
+  const i = args.indexOf(name);
+  return i >= 0 ? args[i + 1] : undefined;
+};
+const root = resolve(flag("--dir") ?? process.cwd());
+const slug = args.find((a, i) => !a.startsWith("--") && args[i - 1] !== "--dir");
+
+async function getJson(url) {
+  const res = await fetch(url, { signal: AbortSignal.timeout(20000), headers: { accept: "application/json" } });
+  if (!res.ok) throw new Error(`${url} answered ${res.status}`);
+  return res.json();
+}
+
+function isImage(buf) {
+  if (!buf || buf.length < 8000) return false;
+  const ascii = (a, b) => buf.subarray(a, b).toString("latin1");
+  if (ascii(0, 4) === "RIFF" && ascii(8, 12) === "WEBP") return true;
+  if (buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return true;
+  if (buf[0] === 0x89 && ascii(1, 4) === "PNG") return true;
+  if (ascii(4, 12) === "ftypavif") return true;
+  return false;
+}
+
+function fileIsImage(path) {
+  try {
+    return statSync(path).size > 8000 && isImage(readFileSync(path));
+  } catch {
+    return false;
+  }
+}
+
+async function download(url, path) {
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const res = await fetch(url, { signal: AbortSignal.timeout(30000) });
+      if (!res.ok) continue;
+      const buf = Buffer.from(await res.arrayBuffer());
+      if (!isImage(buf)) continue;
+      writeFileSync(path, buf);
+      return true;
+    } catch {
+      // retry once, then fall back
+    }
+  }
+  return false;
+}
+
+function readPalette() {
+  const palette = { s0: "#f5efe6", s1: "#ede4d6", s2: "#e1d4bf", s3: "#cdbb9f", ink: "#1e1a15", accent: "#8a3b22" };
+  for (const file of ["app/globals.css", "src/app/globals.css", "src/styles/globals.css", "styles/globals.css"]) {
+    const path = join(root, file);
+    if (!existsSync(path)) continue;
+    const css = readFileSync(path, "utf8");
+    const pick = (name) => css.match(new RegExp(`--${name}\\s*:\\s*(#[0-9a-fA-F]{3,8})`))?.[1];
+    palette.s0 = pick("surface-0") ?? palette.s0;
+    palette.s1 = pick("surface-1") ?? palette.s1;
+    palette.s2 = pick("surface-2") ?? palette.s2;
+    palette.s3 = pick("surface-3") ?? palette.s3;
+    palette.ink = pick("ink") ?? palette.ink;
+    palette.accent = pick("accent") ?? palette.accent;
+    break;
+  }
+  return palette;
+}
+
+// A graded plate in the site palette: two planes of light, a horizon hairline, film grain.
+// Not a photo, but never an empty box: it reads as a deliberate abstract image.
+function fallbackSvg(slot, n, [w, h], p) {
+  let seed = (slot.length * 977 + n * 131) % 2147483647;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const x1 = Math.round(w * (0.15 + rnd() * 0.4));
+  const x2 = Math.round(x1 + w * (0.25 + rnd() * 0.25));
+  const tilt = Math.round(w * (0.08 + rnd() * 0.12));
+  const horizon = Math.round(h * (0.55 + rnd() * 0.2));
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+  <filter id="g"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.22 0"/></filter>
+  <filter id="soft"><feGaussianBlur stdDeviation="${Math.round(w / 60)}"/></filter>
+  <rect width="${w}" height="${h}" fill="${p.s2}"/>
+  <polygon filter="url(#soft)" points="${x1},0 ${x2},0 ${x2 + tilt},${h} ${x1 + tilt},${h}" fill="${p.s0}" opacity="0.85"/>
+  <polygon filter="url(#soft)" points="${x2 + w * 0.05},0 ${x2 + w * 0.12},0 ${x2 + w * 0.12 + tilt},${h} ${x2 + w * 0.05 + tilt},${h}" fill="${p.s1}" opacity="0.7"/>
+  <rect y="${horizon}" width="${w}" height="${h - horizon}" fill="${p.s3}" opacity="0.55"/>
+  <rect y="${horizon}" width="${w}" height="2" fill="${p.ink}" opacity="0.35"/>
+  <rect width="${w}" height="${h}" filter="url(#g)"/>
+</svg>
+`;
+}
+
+function libDir() {
+  return existsSync(join(root, "src", "app")) ? join(root, "src", "lib") : join(root, "lib");
+}
+
+function writeModule(entries, packSlug, fallback) {
+  const dir = libDir();
+  mkdirSync(dir, { recursive: true });
+  const grouped = Object.fromEntries(SLOTS.map((s) => [s, entries.filter((e) => e.slot === s)]));
+  const body = SLOTS.map((s) => {
+    const rows = grouped[s]
+      .map((e) => {
+        const fields = [
+          `src: ${JSON.stringify(e.src)}`,
+          `alt: ${JSON.stringify(e.alt)}`,
+          `width: ${e.width}`,
+          `height: ${e.height}`,
+          `ratio: ${JSON.stringify(e.ratio)}`,
+          `description: ${JSON.stringify(e.description)}`,
+        ];
+        if (e.unoptimized) fields.push("unoptimized: true");
+        return `    { ${fields.join(", ")} },`;
+      })
+      .join("\n");
+    return `  ${s}: [\n${rows}\n  ],`;
+  }).join("\n");
+  const source = `// Written by the Struq skill (scripts/images.mjs). Do not hand-edit the list: run the script again
+// to change pack. Pack: ${packSlug}${fallback ? " (FALLBACK PLATES: struq.nl was unreachable, run the script again when online)" : ""}.
+// Beeldbank images are CC0. Translate the alt texts when the site is not in Dutch.
+
+export type StruqImage = {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  /** "16:9", "21:9", "3:2", "4:5" or "1:1" */
+  ratio: string;
+  /** What the photo shows, in more words than the alt: read it to choose the right slot. */
+  description: string;
+  /** Set on fallback plates (SVG), which next/image must not optimise. */
+  unoptimized?: boolean;
+};
+
+export type ImageSlot = ${SLOTS.map((s) => JSON.stringify(s)).join(" | ")};
+
+export const imagePack = ${JSON.stringify(packSlug)};
+
+/** The credit line for the footer: one quiet text-small link, never a badge. */
+export const imageCredit = { label: "Beeld: Struq", href: "https://struq.nl/beeldbank" };
+
+export const images: Record<ImageSlot, StruqImage[]> = {
+${body}
+};
+`;
+  const file = join(dir, "struq-images.ts");
+  writeFileSync(file, source);
+  return file;
+}
+
+async function list() {
+  const index = await getJson(API);
+  console.log(`${index.packCount} packs, ${index.totalImages} images, ${index.license}\n`);
+  for (const p of index.packs) console.log(`${p.slug.padEnd(10)} ${p.description}`);
+}
+
+async function main() {
+  if (args.includes("--list")) return list();
+  if (!slug) {
+    console.error("Usage: node images.mjs <pack-slug> [--dir <project>]   (or --list)");
+    process.exit(2);
+  }
+  if (!existsSync(join(root, "package.json"))) {
+    console.error(`No package.json in ${root}. Run this from the project root, or pass --dir.`);
+    process.exit(2);
+  }
+  const outDir = join(root, "public", "images");
+  mkdirSync(outDir, { recursive: true });
+  const palette = readPalette();
+
+  let pack = null;
+  try {
+    pack = await getJson(`${API}/${encodeURIComponent(slug)}`);
+    if (!Array.isArray(pack?.images) || pack.images.length === 0) throw new Error("pack has no images");
+  } catch (error) {
+    try {
+      const index = await getJson(API);
+      const known = index.packs.map((p) => p.slug);
+      if (!known.includes(slug)) {
+        console.error(`Unknown pack "${slug}". Packs: ${known.join(", ")}`);
+        process.exit(2);
+      }
+    } catch {
+      // the API itself is down: fall through to the plates
+    }
+    console.warn(`WARN struq.nl unreachable (${error.message}). Writing graded fallback plates instead.`);
+    pack = null;
+  }
+
+  const entries = [];
+  const manifest = [];
+  let real = 0;
+  let plates = 0;
+
+  if (pack) {
+    const counters = Object.fromEntries(SLOTS.map((s) => [s, 0]));
+    const jobs = pack.images
+      .filter((img) => SLOTS.includes(img.slot))
+      .map((img) => {
+        const n = ++counters[img.slot];
+        return { img, n, name: `${img.slot}-${n}` };
+      });
+    let cursor = 0;
+    const worker = async () => {
+      while (cursor < jobs.length) {
+        const job = jobs[cursor++];
+        const target = join(outDir, `${job.name}.webp`);
+        const ok = fileIsImage(target) || (await download(job.img.publicUrl, target));
+        if (ok) {
+          real++;
+          entries.push({
+            slot: job.img.slot,
+            order: job.n,
+            src: `/images/${job.name}.webp`,
+            alt: job.img.alt ?? "",
+            width: job.img.width ?? FALLBACK_SIZE[job.img.slot][0],
+            height: job.img.height ?? FALLBACK_SIZE[job.img.slot][1],
+            ratio: job.img.aspectRatio ?? "",
+            description: job.img.description ?? "",
+          });
+          manifest.push({ file: `public/images/${job.name}.webp`, id: job.img.id, slot: job.img.slot, source: job.img.publicUrl });
+        } else {
+          plates++;
+          const size = [job.img.width ?? FALLBACK_SIZE[job.img.slot][0], job.img.height ?? FALLBACK_SIZE[job.img.slot][1]];
+          writeFileSync(join(outDir, `${job.name}.svg`), fallbackSvg(job.img.slot, job.n, size, palette));
+          entries.push({
+            slot: job.img.slot,
+            order: job.n,
+            src: `/images/${job.name}.svg`,
+            alt: job.img.alt ?? "",
+            width: size[0],
+            height: size[1],
+            ratio: job.img.aspectRatio ?? "",
+            description: `Fallback plate (download failed). Planned: ${job.img.description ?? ""}`,
+            unoptimized: true,
+          });
+          manifest.push({ file: `public/images/${job.name}.svg`, id: job.img.id, slot: job.img.slot, source: "fallback" });
+        }
+      }
+    };
+    await Promise.all([worker(), worker(), worker(), worker()]);
+  } else {
+    for (const slot of SLOTS) {
+      for (let n = 1; n <= FALLBACK_COUNTS[slot]; n++) {
+        plates++;
+        const size = FALLBACK_SIZE[slot];
+        writeFileSync(join(outDir, `${slot}-${n}.svg`), fallbackSvg(slot, n, size, palette));
+        entries.push({
+          slot,
+          order: n,
+          src: `/images/${slot}-${n}.svg`,
+          alt: "",
+          width: size[0],
+          height: size[1],
+          ratio: `${size[0]}:${size[1]}`,
+          description: "Fallback plate in the site palette (struq.nl was unreachable).",
+          unoptimized: true,
+        });
+        manifest.push({ file: `public/images/${slot}-${n}.svg`, id: null, slot, source: "fallback" });
+      }
+    }
+  }
+
+  entries.sort((a, b) => SLOTS.indexOf(a.slot) - SLOTS.indexOf(b.slot) || a.order - b.order);
+  writeFileSync(join(outDir, "struq-pack.json"), JSON.stringify({ pack: slug, images: manifest }, null, 2) + "\n");
+  const module = writeModule(entries, slug, !pack);
+
+  console.log(`\nPack ${slug}: ${real} images downloaded and verified, ${plates} fallback plates.`);
+  console.log(`Module: ${module.replace(root, ".")}  (import { images, imageCredit } from "@/lib/struq-images")\n`);
+  for (const e of entries) {
+    console.log(`${`images.${e.slot}[${e.order - 1}]`.padEnd(18)} ${e.ratio.padEnd(5)} ${e.description.slice(0, 110)}`);
+  }
+  if (plates > 0) {
+    console.log(`\nWARN ${plates} slot(s) use fallback plates. Run this script again when struq.nl answers.`);
+  }
+  console.log(real > 0 ? "\nOK images ready" : "\nOK fallback plates ready (no frame is empty)");
+}
+
+main().catch((error) => {
+  console.error(`FAIL ${error.message}`);
+  process.exit(1);
+});
