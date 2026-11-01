@@ -16,10 +16,12 @@ type Props = {
   className?: string;
   /** "solid" is the accent button; "line" is ink on a hairline. */
   variant?: "solid" | "line";
+  /** "lg" for the hero opener: a confident rectangle, never a pill. */
+  size?: "md" | "lg";
   strength?: number;
 };
 
-export function MagneticButton({ children, href, onClick, className = "", variant = "solid", strength = 0.3 }: Props) {
+export function MagneticButton({ children, href, onClick, className = "", variant = "solid", size = "md", strength = 0.3 }: Props) {
   const ref = useRef<HTMLElement>(null);
 
   useGSAP(
@@ -73,7 +75,7 @@ export function MagneticButton({ children, href, onClick, className = "", varian
       </span>
     </>
   );
-  const base = `group relative inline-flex items-center overflow-hidden px-8 py-4 text-small font-medium ${look} ${className}`;
+  const base = `group relative inline-flex items-center overflow-hidden ${size === "lg" ? "px-10 py-5 text-lead md:px-12 md:py-6" : "px-8 py-4 text-small"} font-medium ${look} ${className}`;
 
   if (href) {
     return (

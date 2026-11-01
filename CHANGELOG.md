@@ -27,6 +27,11 @@ The skill is rebuilt around one critical path a small model can follow: a Build 
 - The cursor becomes a round accent label ("Bekijk") over anything marked `data-cursor`.
 - images.mjs reads Dutch compounds in the alt (meelsporen, broodkorst) when it leaves out off-subject photos.
 
+### The opener and the contrast scene
+- toonstuk-hero-opener: the first screen is the beeldbank photo edge to edge (the ripple layer in it, a flat scrim), with the display line at 16 to 19vw across it or as a split wordmark, one short lead and a large rectangular CTA. On scroll it pins, scales down and darkens while the next section slides over it.
+- Every site has one contrast scene, at most two: scene-inverse or scene-field remaps the tokens inside a section. canon.mjs writes the palette's inverse and field roles, or swaps text and ground until the canon has them.
+- check.mjs fails a hand-built hero line under 10vw, and a site with no contrast scene or more than two.
+
 ### Rules and the check
 - One combined tell list (Struq's tells 1.2.0, the slop audit, Roy's rules), with `check.mjs` as its executable form: eyebrows and uppercase labels, gradients, tinted fills, pills and live dots, mono, default faces, blue and purple, dashes, Struq's generic CTAs ("Neem contact op", "Meer informatie", "Aan de slag" and the rest) stat rows (20+, 51+, 99%) and more.
 - The hero carries a pack photo; the WebGL field is atmosphere beside or behind the copy, held by the quiet zone; every page has a header wordmark (`data-wordmark`); the client's product is never modelled from primitives. `check.mjs` fails each.

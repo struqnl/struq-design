@@ -101,3 +101,28 @@ test('stat banners (20+, 51+, 99%) fail', () => {
   const stats = 'export const S = () => <div><span>20+</span><span>51+</span><span> 99% </span></div>;\n';
   assert.ok(fails(run(fixture({ extra: { 'components/Stats.tsx': stats } })), 'Stat rows'));
 });
+
+test('the hero display line runs at 10vw or more on desktop', () => {
+  const big = HERO_OK.replace('<SplitHeadline as="h1">', '<SplitHeadline as="h1" className="text-[19vw] md:text-[16vw]">');
+  assert.ok(!fails(run(fixture({ hero: big })), 'Hero display line'));
+  const small = HERO_OK.replace('<SplitHeadline as="h1">', '<SplitHeadline as="h1" className="font-display text-display">');
+  assert.ok(fails(run(fixture({ hero: small })), 'Hero display line'));
+  const opener = 'import { HeroOpener } from "@/components/struq/showpieces/toonstuk-hero-opener";\nimport { images } from "@/lib/struq-images";\nexport const H = () => <><header><a data-wordmark="">Vuur</a></header><HeroOpener image={images.hero[0]} title="Koken op" lead="x" cta={{ href: "#r", label: "Reserveer een tafel" }} /></>;\n';
+  assert.ok(!fails(run(fixture({ hero: opener })), 'Hero display line'));
+  assert.ok(!fails(run(fixture({ hero: opener })), 'Hero without a photo'));
+  // The opener carries the split h1 itself.
+  assert.ok(!fails(run(fixture({ hero: opener })), 'No h1'));
+  assert.ok(!fails(run(fixture({ hero: opener })), 'not split'));
+});
+
+test('every site has one contrast scene, at most two', () => {
+  const none = run(fixture());
+  assert.ok(fails(none, 'contrast scene'));
+  const one = 'export const S = () => <section className="scene-inverse">x</section>;\n';
+  assert.ok(!fails(run(fixture({ extra: { 'components/Scene.tsx': one } })), 'contrast scene'));
+  // The scene classes defined in globals.css are not scenes on the page.
+  const css = ['.scene-inverse { --ink: white; }', '.scene-field { --ink: white; }', '/* scene-inverse or scene-field */', ''].join('\n');
+  assert.ok(!fails(run(fixture({ extra: { 'components/Scene.tsx': one, 'app/globals.css': css } })), 'contrast scene'));
+  const three = 'export const S = () => <><section className="scene-inverse" /><section className="scene-field" /><section className="scene-inverse" /></>;\n';
+  assert.ok(fails(run(fixture({ extra: { 'components/Scene.tsx': three } })), 'contrast scene'));
+});

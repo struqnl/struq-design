@@ -15,6 +15,10 @@
   --accent-ink: #fbf6ee; /* text on the accent */
   --line: rgb(30 26 21 / 0.12); /* hairlines: the ink at low alpha, never a grey hex */
   --on-photo: #f7f3ec; /* type set over a photo or the ripple hero, on light and dark presets alike */
+  --inverse: #1e1a15; /* the contrast scene's ground: the palette's inverse role, else the ink */
+  --on-inverse: #f5efe6; /* type on it: else the page ground */
+  --field: #8a3b22; /* a full-strength colour field: the palette's field role, else the accent */
+  --on-field: #fbf6ee; /* type on it */
   --display-weight: 300; /* light display: 300, or 400 for a face without a 300 */
 }
 
@@ -29,6 +33,10 @@
   --color-accent-ink: var(--accent-ink);
   --color-line: var(--line);
   --color-on-photo: var(--on-photo);
+  --color-inverse: var(--inverse);
+  --color-on-inverse: var(--on-inverse);
+  --color-field: var(--field);
+  --color-on-field: var(--on-field);
   --font-display: var(--face-display), ui-serif, Georgia, serif;
   --font-body: var(--face-body), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--face-body), ui-sans-serif, system-ui, sans-serif;
@@ -54,7 +62,44 @@
   --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
 }
 
+/* ==========================================================================
+   THE CONTRAST SCENE. Every site has one, at most two: wrap a section in scene-inverse (the
+   palette's dark ground with light type) or scene-field (a full-strength colour field). The tokens
+   are remapped inside, so every recipe in it turns with it.
+   ========================================================================== */
+.scene-inverse {
+  --surface-0: var(--inverse);
+  --surface-1: color-mix(in oklch, var(--inverse), var(--on-inverse) 6%);
+  --surface-2: color-mix(in oklch, var(--inverse), var(--on-inverse) 12%);
+  --surface-3: color-mix(in oklch, var(--inverse), var(--on-inverse) 22%);
+  --ink: var(--on-inverse);
+  --ink-muted: color-mix(in oklch, var(--on-inverse) 72%, var(--inverse));
+  --line: color-mix(in oklch, var(--on-inverse) 18%, transparent);
+  background-color: var(--surface-0);
+  color: var(--ink);
+}
+.scene-field {
+  --surface-0: var(--field);
+  --surface-1: color-mix(in oklch, var(--field), var(--on-field) 8%);
+  --surface-2: color-mix(in oklch, var(--field), var(--on-field) 14%);
+  --surface-3: color-mix(in oklch, var(--field), var(--on-field) 24%);
+  --ink: var(--on-field);
+  --ink-muted: color-mix(in oklch, var(--on-field) 78%, var(--field));
+  --line: color-mix(in oklch, var(--on-field) 22%, transparent);
+  --accent: var(--on-field);
+  --accent-ink: var(--field);
+  background-color: var(--surface-0);
+  color: var(--ink);
+}
+
 @layer base {
+  /* The hero opener's handover: the section after it slides up over the pinned opener. */
+  [data-showpiece="hero-opener"] + *,
+  .pin-spacer:has(> [data-showpiece="hero-opener"]) + * {
+    position: relative;
+    z-index: 2;
+    background-color: var(--surface-0);
+  }
   /* The one scaling knob: 16px at 390, about 17.6px at 1440, 18px from about 1640. */
   html {
     font-size: clamp(1rem, 0.92rem + 0.2vw, 1.125rem);

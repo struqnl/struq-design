@@ -45,8 +45,8 @@ Rule: keep STRUQ-LOG.md at every step: node <skill-dir>/scripts/log.mjs "Step N 
 - [ ] 3 Recipes: node <skill-dir>/scripts/recipes.mjs printed "OK recipes ready"
 - [ ] 4 Canon: canon.mjs palette and canon.mjs type wrote the tokens and the fonts of the approved picks
 - [ ] 5 Images: images.mjs --brief printed "OK"; only photos whose alt fits the client are used, captions written from the alts; title and lang set in app/layout.tsx
-- [ ] 6 Hero: a header with the wordmark (data-wordmark), a pack hero photo, the HeroCanvas field beside or behind the copy and held by the quiet zone, SplitHeadline h1, one line of lead, MagneticButton CTA
-- [ ] 7 Sections: 5 to 7 sections on the arc, every image in a MediaFrame, text groups in Reveal, two grid breaks
+- [ ] 6 Hero: the full-bleed HeroOpener (photo edge to edge, line at 14 to 20vw, lead, large CTA, header with the data-wordmark name), or a hand-built hero under the same rules
+- [ ] 7 Sections: 5 to 7 sections on the arc, every image in a MediaFrame, text groups in Reveal, two grid breaks; one contrast scene (scene-inverse or scene-field), at most two
 - [ ] 8 Showpieces: the lead toonstuk from the picker (or the one the user named) and at most one supporting move
 - [ ] 9 Footer: toonstuk-wordmark-finale, with the image credit
 - [ ] 10 Build: npm run build passes
@@ -174,29 +174,34 @@ The pack rule, the same one Struq's MCP uses (`scripts/packs.mjs`): a sector wor
 
 The table reads the photos, never the API's `sector` field: production still carries old labels that do not match the pictures (`vessel` is wellness, not kitchen; `datum` is architecture, not data), so the skill never chooses by that field. Nothing fits closely: take the pack whose light matches the palette (warm and light `linen`, warm and dark `forge`, cool and dark `halide`, cool and light `datum`). Never skip images. One pack per site. Translate the alts in `lib/struq-images.ts` when the site is not Dutch. Then set the title, description and `lang` in `app/layout.tsx`.
 
-### Step 6: The hero
+### Step 6: The hero: a full-bleed cinematic opener
+
+The first screen is the photo, edge to edge, with giant type set across it. Not a text block beside a picture. Use `toonstuk-hero-opener` (copied to `components/struq/showpieces/`):
 
 ```tsx
-<section className="relative flex min-h-svh flex-col justify-end overflow-hidden px-6 pb-16 pt-40 md:px-[8vw]">
-  <HeroCanvas scene="ripple" image={images.hero[0]} scrim={0.35} priority />
-  <div className="relative z-10 grid gap-10 text-on-photo md:grid-cols-12">
-    <SplitHeadline as="h1" className="font-display text-display md:col-span-9">Vis en groente, van het seizoen.</SplitHeadline>
-    <Reveal on="load" delay={0.5} className="flex flex-col gap-8 md:col-span-4 md:col-start-9">
-      <p className="text-lead">Veertig plekken in Amsterdam-Noord. Reserveren kost een minuut.</p>
-      <div><MagneticButton href="#reserveren">Reserveer een tafel</MagneticButton></div>
-    </Reveal>
-  </div>
-</section>
+<HeroOpener
+  image={images.hero[0]}
+  title="Koken op"
+  accent="vuur."
+  lead="Een houtoven, een wijnbar en een zaal aan het water."
+  cta={{ href: "#reserveren", label: "Reserveer een tafel" }}
+  header={<SiteHeader />}
+/>
+// or the name split to both edges with the photo between:
+<HeroOpener image={images.hero[0]} split={["Vuur", "Noord"]} lead="..." cta={{ href: "#reserveren", label: "Reserveer een tafel" }} header={<SiteHeader />} />
 ```
 
-- **The hero carries a photo.** Every pack has hero images, so the hero shows one: `ripple` makes the photo itself the field; with `contours` or `dots` the photo sits in a `MediaFrame` beside the copy (the copy on the left, the photo on the right two fifths). `check.mjs` fails a HeroCanvas hero without a photo.
-- **The field is atmosphere, never the picture and never under the headline's box.** It runs behind or beside the copy and the quiet zone holds it down there. Pick the scene: `ripple` when one strong photo carries the brand (food, hospitality, hotels, fashion, wellness); `contours` for calm and precise (architecture, studios, consultancy, nature, research); `dots` for movement and scale (mobility, logistics, tech, sport, energy).
-- **Never model the client's product from primitives** (boxes, cylinders and tori for a bike): use the shared scenes and the product photography. `check.mjs` fails hand-built geometry.
-- **Every page has a header with the wordmark,** the name in the display face marked `data-wordmark` (references/sections.md, Header). For a portfolio brief ("laat ons werk zien"), the work is in the first screen: a project photo in the hero, not text alone.
-- Type over a photo (`ripple`, `PinnedZoom`, a full-bleed band) is `text-on-photo` with `scrim={0.3}` to `0.45`; type over `contours` or `dots` is the normal `text-ink`. The headline must read at 4.5:1.
-- The h1 is the site's promise in 8 words or fewer, set large and light. No label above it.
-- The canvas hushes behind the copy: the `SplitHeadline` h1 marks itself, add `data-quiet` to the lead line (at most four elements). Keep the copy on the left or on a third and let the scene carry the right: every shipped scene is composed that way.
-- Phones and reduced motion get one composed still frame of the scene, never the loop.
+- **The photo fills the viewport,** the ripple WebGL layer living in it, with a flat scrim at a fixed opacity so the copy reads at 4.5:1. Never a gradient.
+- **The display line runs at 14 to 20vw** (the opener sets 19vw on phones, 16vw on desktop) along the held-clear bottom, or as a split wordmark. Eight words at most; one word may be the italic accent. `check.mjs` fails a hand-built hero line under 10vw.
+- **One short lead and one confident rectangular CTA** above the line (`MagneticButton size="lg"`), never a pill.
+- **The handover is a move:** on scroll the opener pins, scales down and darkens while the next section slides up over it. The section after it needs nothing extra: globals.css gives it a ground and the layer above.
+- **The header** with the wordmark (`data-wordmark`) goes in the `header` prop, set over the photo in `text-on-photo`.
+- **Never model the client's product from primitives:** a launch uses the `vitrine` product photography in the opener. For a portfolio brief ("laat ons werk zien"), the opener photo is a real project of the client.
+- Phones and reduced motion get the composed still: the same full-bleed photo and line, no pin.
+
+A hand-built hero is allowed when the brief needs something the opener does not do, under the same rules: a pack photo in the hero (`check.mjs` fails one without), the copy marked `data-quiet` (the `SplitHeadline` h1 marks itself), the line at 10vw or more, a header with the wordmark.
+
+**One contrast scene.** Every site has one dark or full-colour scene, at most two, so the page does not stay on one ground: wrap one section in `scene-inverse` (the palette's dark ground with light type) or `scene-field` (a full-strength colour field). The tokens turn inside, so any recipe in it follows. Good places: the agency's scrub connector, the services rows, the project stack, the invitation. `canon.mjs palette` writes the `inverse` and `field` roles from the canon palette when it has them, and swaps text and ground when it does not. `check.mjs` fails a site with none, or with more than two.
 
 ### Step 7: Sections on the arc
 

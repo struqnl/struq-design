@@ -118,12 +118,21 @@ async function palette(slug) {
   --accent-2: ${c.accentAlt ?? c.surface}; /* a second ground, never a second highlight colour */
   --line: color-mix(in oklch, var(--ink) 13%, transparent); /* hairlines */
   --on-photo: ${dark ? c.text : c.background}; /* type over a photo, with a scrim */
+  /* the contrast scene: the palette's inverse and field roles when it has them, else text and ground swapped */
+  --inverse: ${c.inverse ?? (dark ? c.surface : c.text)};
+  --on-inverse: ${c.onInverse ?? c.inverseText ?? (dark ? c.text : c.background)};
+  --field: ${c.field ?? c.accent};
+  --on-field: ${c.onField ?? c.fieldText ?? accentInk};
   --display-weight: ${weight};
 }`;
   const re = /(STRUQ TOKENS[\s\S]*?\*\/\s*):root\s*\{[\s\S]*?\n\}/;
   if (!re.test(css)) throw new Error(`No STRUQ TOKENS block in ${cssPath}. Run recipes.mjs, or merge the block from recipes/app/globals.css.`);
   css = css.replace(re, `$1${block}`);
   if (!css.includes("--color-accent-2")) css = css.replace("  --color-line: var(--line);", "  --color-line: var(--line);\n  --color-accent-2: var(--accent-2);");
+  // Projects started before the contrast scene existed get its colour tokens too.
+  if (!css.includes("--color-inverse")) {
+    css = css.replace("  --color-line: var(--line);", "  --color-line: var(--line);\n  --color-inverse: var(--inverse);\n  --color-on-inverse: var(--on-inverse);\n  --color-field: var(--field);\n  --color-on-field: var(--on-field);");
+  }
   writeFileSync(cssPath, css);
   console.log(`Wrote palette ${p.slug} to ${cssPath.replace(root, ".")}`);
   if (isCool(c.accent)) console.log('NOTE blue or purple accent: write "Cool hue: declared because <the brand colour>" in STRUQ.md, or pick a warmer palette.');

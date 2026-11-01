@@ -273,7 +273,7 @@ const plan = read("STRUQ.md");
   if (lenis && mounted) add(G, "PASS", "Lenis smooth scroll on the GSAP ticker, mounted in the layout");
   else add(G, "FAIL", lenis ? "Lenis is not mounted: wrap {children} in <SmoothScroll> in app/layout.tsx." : "No Lenis on gsap.ticker: run recipes.mjs and mount <SmoothScroll> in app/layout.tsx.");
 
-  if (uses(/<SplitHeadline\b|SplitText\.create|new SplitText/)) add(G, "PASS", "SplitText on the headline");
+  if (uses(/<SplitHeadline\b|<HeroOpener\b|SplitText\.create|new SplitText/)) add(G, "PASS", "SplitText on the headline");
   else add(G, "FAIL", "The hero headline is not split: set it with <SplitHeadline as=\"h1\">.");
 
   // Text reveals: Reveal groups, and the showpieces that reveal their own text on scroll.
@@ -286,7 +286,7 @@ const plan = read("STRUQ.md");
   else add(G, "FAIL", "No showpiece: place the lead toonstuk from the SKILL.md picker (or HorizontalGallery or PinnedZoom) at the act break.");
 
   const ownGl = own.filter((f) => /WebGLRenderer|<Canvas\b/.test(f.text));
-  if (uses(/<HeroCanvas\b/)) add(G, "PASS", "WebGL hero layer (HeroCanvas: poster, DPR cap, reduced motion, pause offscreen)");
+  if (uses(/<HeroCanvas\b|<HeroOpener\b/)) add(G, "PASS", "WebGL hero layer (HeroCanvas: poster, DPR cap, reduced motion, pause offscreen)");
   else if (ownGl.length) {
     const t = ownGl.map((f) => f.text).join("\n");
     const gaps = [];
@@ -334,7 +334,8 @@ const plan = read("STRUQ.md");
   if (/--text-display/.test(css) && uses(/text-display/)) add(G, "PASS", "Display role token in use");
   else add(G, "FAIL", "The headline does not use the display role: font-display text-display.");
 
-  const h1 = own.reduce((n, f) => n + (f.text.match(/<h1\b|<SplitHeadline(?![^>]*as=["'](h2|h3|p)["'])[^>]*>/g) ?? []).length, 0);
+  // The hero opener sets the page's h1 itself.
+  const h1 = own.reduce((n, f) => n + (f.text.match(/<h1\b|<HeroOpener\b|<SplitHeadline(?![^>]*as=["'](h2|h3|p)["'])[^>]*>/g) ?? []).length, 0);
   if (h1 >= 1) add(G, "PASS", "The page has its h1");
   else add(G, "FAIL", "No h1 on the page.");
 }
@@ -358,22 +359,42 @@ const plan = read("STRUQ.md");
 /* -------------------------------------------------------------------- HERO */
 {
   const G = "HERO";
-  const heroFiles = own.filter((f) => /<HeroCanvas\b/.test(f.text));
-  // The hero is the section around HeroCanvas: from the section that opens before it to the first
-  // </section> after it. Photos further down the page do not count for the hero.
+  // The hero opener (toonstuk-hero-opener) carries its own photo, WebGL layer, quiet zones and line.
+  const heroFiles = own.filter((f) => /<HeroCanvas\b|<HeroOpener\b/.test(f.text));
+  // The hero is the section around HeroCanvas (or the HeroOpener tag): from the section that opens
+  // before it to the first </section> after it. Photos further down the page do not count.
   const heroSlice = (text) => {
-    const at = text.indexOf("<HeroCanvas");
+    const opener = text.indexOf("<HeroOpener");
+    const at = opener >= 0 ? opener : text.indexOf("<HeroCanvas");
+    if (opener >= 0) return text.slice(at, text.indexOf("/>", at) + 2 || text.length);
     const open = text.lastIndexOf("<section", at);
     const close = text.indexOf("</section>", at);
     return text.slice(open >= 0 ? open : at, close >= 0 ? close : text.length);
   };
   const bare = heroFiles.filter((f) => !/images\.hero\b|<MediaFrame\b|\bimage=\{/.test(heroSlice(f.text)));
-  if (bare.length) add(G, "FAIL", "Hero without a photo: every pack has hero images, so the hero shows one (HeroCanvas scene=\"ripple\" image={images.hero[0]}, or a MediaFrame beside the copy). The WebGL field is an atmosphere layer, not the picture.", bare.map((f) => f.rel));
+  if (bare.length) add(G, "FAIL", "Hero without a photo: every pack has hero images, so the hero shows one (HeroOpener, HeroCanvas scene=\"ripple\" image={images.hero[0]}, or a MediaFrame beside the copy). The WebGL field is an atmosphere layer, not the picture.", bare.map((f) => f.rel));
   else if (heroFiles.length) add(G, "PASS", "The hero carries a photo");
-  const quietless = heroFiles.filter((f) => !/data-quiet|<SplitHeadline\b/.test(f.text));
+  const quietless = heroFiles.filter((f) => !/data-quiet|<SplitHeadline\b|<HeroOpener\b/.test(f.text));
   if (quietless.length) add(G, "FAIL", "The hero copy is not marked: put data-quiet on the headline and the lead (SplitHeadline marks the h1 itself), so the field hushes behind them.", quietless.map((f) => f.rel));
+  // The display line: the opener sets it at 16vw; a hand-built hero needs 10vw or more on desktop.
+  const small = heroFiles.filter((f) => {
+    if (/<HeroOpener\b/.test(f.text)) return false;
+    const slice = heroSlice(f.text);
+    const h1 = slice.match(/<(?:h1|SplitHeadline)\b[^>]*>/g)?.find((tag) => tag.startsWith("<h1") || !/as=["'](h2|h3|p)["']/.test(tag));
+    if (!h1) return false;
+    const vw = [...h1.matchAll(/text-\[(\d+(?:\.\d+)?)vw\]/g)].map((m) => Number(m[1]));
+    return !vw.length || Math.max(...vw) < 10;
+  });
+  if (small.length) add(G, "FAIL", "Hero display line under 10vw: the opener's line runs at 14 to 20vw (text-[19vw] md:text-[16vw]), set across the photo. Use HeroOpener, or size the h1 yourself.", small.map((f) => f.rel));
+  else if (heroFiles.length) add(G, "PASS", "The hero display line runs at poster size");
   if (own.some((f) => /data-wordmark/.test(f.text))) add(G, "PASS", "A header wordmark (data-wordmark)");
   else add(G, "FAIL", "No header wordmark: every page has a header with the name as wordmark, marked data-wordmark (references/sections.md, Header).");
+  // The contrast scene: one, at most two, sections on the inverse ground or a full colour field.
+  // Scenes on the page: the class in markup, not its definition in the stylesheet.
+  const scenes = own.filter((f) => !f.rel.endsWith(".css")).reduce((n, f) => n + (f.text.match(/\bscene-(inverse|field)\b/g) ?? []).length, 0);
+  if (scenes === 0) add(G, "FAIL", "No contrast scene: wrap one section (the showpiece, the services, the invitation) in scene-inverse or scene-field, so the page does not stay on one ground.");
+  else if (scenes > 2) add(G, "FAIL", `${scenes} contrast scenes: one, at most two, or the contrast stops being a moment.`);
+  else add(G, "PASS", `${scenes} contrast scene${scenes > 1 ? "s" : ""}`);
   // Custom hero scenes live beside the shipped ones; only the shipped files are trusted.
   const customScenes = files.filter((f) => f.rel.includes("components/struq/scenes/") && !/[/](contours|ripple|dots|types)[.]ts$/.test(f.rel));
   const geometry = hits(/new\s+THREE\.(Box|Cylinder|Torus|Sphere|Capsule|Cone|Tube|Lathe|Extrude|Tetrahedron|Octahedron|Icosahedron)Geometry\b|<(box|cylinder|torus|sphere|capsule|cone|tube|lathe|extrude)Geometry\b/, { scope: [...own, ...customScenes] });
