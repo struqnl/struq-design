@@ -11,6 +11,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative, resolve, sep } from "node:path";
 import { appendLog } from "./log.mjs";
+import { altFitsBrief, packSignalForBrief } from "./packs.mjs";
 
 const args = process.argv.slice(2);
 const dirFlag = args.indexOf("--dir");
@@ -111,27 +112,63 @@ const plan = read("STRUQ.md");
   const realPhotos = all.filter((p) => !p.endsWith(".svg") && isImageFile(p));
   const brokenPhotos = all.filter((p) => !p.endsWith(".svg") && !isImageFile(p));
 
+  const mod = libFile ? read(libFile) : "";
+  const imageFit = mod.match(/imageFit[^=]*=\s*"(full|partial|none)"/)?.[1] ?? "full";
+  // The photos per slot in the pack module, for references that point past what was downloaded.
+  const slotCount = Object.fromEntries(
+    ["hero", "band", "card", "column", "detail", "backdrop"].map((s) => [s, (mod.match(new RegExp(`\\b${s}:\\s*\\[([^\\]]*)\\]`))?.[1].match(/src:/g) ?? []).length]),
+  );
   if (libFile) {
-    const mod = read(libFile);
     const srcs = [...mod.matchAll(/src: "([^"]+)"/g)].map((m) => m[1]);
     const missing = srcs.filter((s) => !existsSync(join(pub, s)));
     const plates = srcs.filter((s) => s.endsWith(".svg"));
     const pack = mod.match(/imagePack = "([^"]+)"/)?.[1] ?? "?";
-    if (missing.length) add(G, "FAIL", `${missing.length} image(s) in ${libFile} are not on disk. Run images.mjs ${pack} again.`, missing);
+    if (imageFit === "none" && !srcs.length) add(G, "PASS", `No photo of pack "${pack}" fits this brief (imageFit none): the opener carries the first screen, and the approval stop asks for photos`);
+    else if (missing.length) add(G, "FAIL", `${missing.length} image(s) in ${libFile} are not on disk. Run images.mjs ${pack} again.`, missing);
     else if (plates.length === srcs.length) add(G, "WARN", `struq.nl was unreachable: all ${srcs.length} images are fallback plates. Run images.mjs ${pack} again when online.`);
     else if (plates.length) add(G, "WARN", `${plates.length} fallback plate(s) among the pack images. Run images.mjs ${pack} again when online.`, plates);
     else add(G, "PASS", `${srcs.length} beeldbank images from pack "${pack}", each a verified image file`);
+    // An off-topic photo is worse than no photo: a pack the brief does not point at must show
+    // something the brief is about in at least one alt.
+    const brief = plan.match(/^Brief:\s*(.+)$/m)?.[1];
+    if (brief && srcs.length && packSignalForBrief(brief) !== pack) {
+      const alts = [...mod.matchAll(/alt: "([^"]*)"/g)].map((m) => m[1]);
+      if (!alts.some((alt) => altFitsBrief(alt, brief))) {
+        add(G, "FAIL", `Off-topic photos: none of the "${pack}" photos shows anything the brief is about. Run images.mjs --brief "<the brief>" (it leaves them out) and let the opener carry the first screen.`, alts.slice(0, 4));
+      }
+    }
   } else if (realPhotos.length >= 3) {
     add(G, "PASS", `${realPhotos.length} image files of the project's own in public/`);
   } else {
-    add(G, "FAIL", "No images. Run: node <skill-dir>/scripts/images.mjs <pack-slug> (the pack table is in SKILL.md). The images are free and CC0: no permission needed.");
+    add(G, "FAIL", "No images. Run: node <skill-dir>/scripts/images.mjs --brief \"<the brief>\" (the pack table is in SKILL.md). The images are free and CC0: no permission needed.");
   }
   if (brokenPhotos.length) add(G, "FAIL", "These image files are not real images (an error page saved as .webp?). Delete them and run images.mjs again.", brokenPhotos.map(rel));
 
   // Each pack reference (images.card[2], images.card.slice(0, 5)) or own image tag counts once.
   const used = own.reduce((n, f) => n + (f.text.match(/images\.(hero|band|card|column|detail|backdrop)\b|<img\b|src=["'{`]\/images\//g) ?? []).length, 0);
-  if (used >= 4) add(G, "PASS", `${used} image placements in the page code`);
+  const total = Object.values(slotCount).reduce((a, b) => a + b, 0);
+  const floor = libFile ? Math.min(4, total) : 4;
+  if (libFile && imageFit !== "full" && total === 0) add(G, "PASS", "No image placements needed: no pack photo fits");
+  else if (used >= floor) add(G, "PASS", `${used} image placements in the page code`);
   else add(G, "FAIL", `Only ${used} image placement(s). A Struq site carries a hero image and at least three more: use <MediaFrame image={images.card[0]} />.`);
+  // References past what the pack holds render as empty swatches (an inline manifesto image, a card).
+  if (libFile) {
+    const past = [];
+    for (const f of own) {
+      for (const m of f.text.matchAll(/images\.(hero|band|card|column|detail|backdrop)\[(\d+)\]/g)) {
+        if (Number(m[2]) >= slotCount[m[1]]) past.push(`${f.rel}  images.${m[1]}[${m[2]}] (the pack holds ${slotCount[m[1]]})`);
+      }
+    }
+    if (past.length) add(G, "FAIL", "Image references past the pack: they render as empty swatches. Use only the photos lib/struq-images.ts lists.", past);
+  }
+  // Inline manifesto photos are a word's size: a texture (detail, backdrop) reads as a grey swatch.
+  const textures = [];
+  for (const f of own) {
+    for (const m of f.text.matchAll(/<ManifestoScrub\b[\s\S]*?\/>/g)) {
+      if (/images\.(detail|backdrop)\[/.test(m[0])) textures.push(`${f.rel}:${f.text.slice(0, m.index).split("\n").length}`);
+    }
+  }
+  if (textures.length) add(G, "FAIL", "Inline manifesto photo is a texture: at word size a detail or backdrop photo reads as a grey swatch. Use photos with a subject (card, column, hero).", textures);
 
   const localSrc = [];
   for (const f of own) {
@@ -172,13 +209,44 @@ const plan = read("STRUQ.md");
   // Type and labels
   tell("Eyebrows and uppercase labels", /\buppercase\b|text-transform:\s*uppercase|\b(eyebrow|kicker|overline)\b/i,
     "small uppercase labels above headings, uppercase marquees and tracked caps are AI tells. Delete the label; the heading, a hairline rule or a jump in scale does the wayfinding. A deliberate all-caps wordmark passes when its element carries data-wordmark.",
-    { exclude: /data-wordmark/ });
+    { exclude: /data-wordmark|<figcaption\b|data-caption/ });
   tell("Monospace as a design face", /font-mono|monospace|_Mono\b|\bMono\(|JetBrains|Fira_Code|Space_Mono/,
     "mono is for literal code only. Labels, stats and dates use the text face with tabular-nums.", { exclude: /<(code|pre)\b/ });
   tell("Default faces", /(next\/font|font-family|--font-|--face-|import\s*\{)[^\n]*\b(Inter|Roboto|Arial|Helvetica|Open[ _]Sans|Poppins|Montserrat|Lato|Geist|Space[ _]Grotesk)\b/,
     "set a canon or SKILL.md pairing with canon.mjs type (Inter, Roboto, Arial, Geist and friends read as nobody chose).");
   tell("Heavy display", /(<h1|<h2|font-display|text-display|text-h2|SplitHeadline)[^\n]*font-(bold|extrabold|black|semibold)|font-(bold|extrabold|black|semibold)[^\n]*(<h1|<h2|font-display|text-display|text-h2)/,
     "display runs light (300 to 400); hierarchy from scale, not weight.");
+  // A display heading cut off by a clipping box (overflow hidden on it or on its direct parent).
+  {
+    const DISPLAY = /font-display|text-display|text-h2|text-\[\d+(?:\.\d+)?vw\]/;
+    const clipped = [];
+    for (const f of own.filter((x) => !x.rel.endsWith(".css"))) {
+      for (const m of f.text.matchAll(/<(h1|h2)\b[^>]*>/g)) {
+        const tag = m[0];
+        const before = f.text.slice(0, m.index);
+        const parent = before.slice(before.lastIndexOf("<")).replace(/\s+$/, "");
+        const parentClips = /overflow-hidden/.test(parent) && parent.endsWith(">") && !parent.startsWith("</");
+        if (DISPLAY.test(tag) && (/overflow-hidden/.test(tag) || parentClips)) {
+          clipped.push(`${f.rel}:${before.split("\n").length}  ${tag.slice(0, 100)}`);
+        }
+      }
+    }
+    // A long display word in a narrow column runs out of it, under the image beside it.
+    for (const f of own.filter((x) => !x.rel.endsWith(".css"))) {
+      for (const m of f.text.matchAll(/<(h1|h2|SplitHeadline)\b([^>]*)>([^<]*)</g)) {
+        if (!DISPLAY.test(m[2])) continue;
+        const before = f.text.slice(Math.max(0, m.index - 400), m.index);
+        const span = [...before.matchAll(/col-span-(\d+)/g)].pop();
+        const longest = Math.max(0, ...m[3].split(/\s+/).map((w) => w.length));
+        const after = f.text.slice(m.index, m.index + 700);
+        const lifted = /\bz-(10|20|30)\b[^>]*>[\s\S]{0,200}<(MediaFrame|Image|img)\b/.test(after);
+        if (span && Number(span[1]) <= 4 && (longest >= 11 || lifted)) {
+          clipped.push(`${f.rel}:${f.text.slice(0, m.index).split("\n").length}  "${m[3].trim().slice(0, 40)}" in col-span-${span[1]}${lifted ? " beside a lifted image" : ""}`);
+        }
+      }
+    }
+    if (clipped.length) add(G, "FAIL", "Display heading clipped: a large heading sits in an overflow-hidden box (or on top of an image box) and loses its letters. Give it its own grid cell beside the image, never under or behind it.", clipped);
+  }
   tell("Numbered sections", />\s*0[1-9]\s*[<./]|['"`]0[1-9]['"`]|`0\$\{/,
     "01, 02, 03 stamped on sections or rows is a tell; keep at most one deliberate oversized numeral.", ownOnly);
   tell("Stat rows", />\s*\d{1,4}\s*[+%]\s*</,
@@ -316,7 +384,10 @@ const plan = read("STRUQ.md");
       for (const m of f.text.matchAll(/(\w+)\s*=\s*localFont\(/g)) fams.add(`local:${m[1]}`);
     }
   }
+  // A canon pairing may add one italic accent face (--face-accent, italic only).
+  const accentFace = files.some((f) => /--face-accent/.test(f.text) && /style:\s*\[\s*"italic"\s*\]/.test(f.text));
   if (fams.size === 2) add(G, "PASS", `Two faces: ${[...fams].join(" + ")}`);
+  else if (fams.size === 3 && accentFace) add(G, "PASS", `Two faces and one italic accent: ${[...fams].join(" + ")}`);
   else if (fams.size === 1) add(G, "WARN", `One face (${[...fams][0]}). Two faces (display and text) unless STRUQ.md declares a one-family system.`);
   else if (fams.size === 0) add(G, "FAIL", "No web fonts loaded: set the pairing in app/fonts.ts with next/font.");
   else add(G, "FAIL", `${fams.size} faces loaded (${[...fams].join(", ")}). Exactly two: one display, one text.`);
@@ -371,7 +442,9 @@ const plan = read("STRUQ.md");
     const close = text.indexOf("</section>", at);
     return text.slice(open >= 0 ? open : at, close >= 0 ? close : text.length);
   };
-  const bare = heroFiles.filter((f) => !/images\.hero\b|<MediaFrame\b|\bimage=\{/.test(heroSlice(f.text)));
+  // With no fitting pack photo (imageFit none) the opener is typographic or WebGL on purpose.
+  const noFit = /imageFit[^=]*=\s*"none"/.test(read("lib/struq-images.ts") + read("src/lib/struq-images.ts"));
+  const bare = noFit ? [] : heroFiles.filter((f) => !/images\.hero\b|<MediaFrame\b|\bimage=\{/.test(heroSlice(f.text)));
   if (bare.length) add(G, "FAIL", "Hero without a photo: every pack has hero images, so the hero shows one (HeroOpener, HeroCanvas scene=\"ripple\" image={images.hero[0]}, or a MediaFrame beside the copy). The WebGL field is an atmosphere layer, not the picture.", bare.map((f) => f.rel));
   else if (heroFiles.length) add(G, "PASS", "The hero carries a photo");
   const quietless = heroFiles.filter((f) => !/data-quiet|<SplitHeadline\b|<HeroOpener\b/.test(f.text));

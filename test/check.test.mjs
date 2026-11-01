@@ -126,3 +126,51 @@ test('every site has one contrast scene, at most two', () => {
   const three = 'export const S = () => <><section className="scene-inverse" /><section className="scene-field" /><section className="scene-inverse" /></>;\n';
   assert.ok(fails(run(fixture({ extra: { 'components/Scene.tsx': three } })), 'contrast scene'));
 });
+
+const moduleWith = (fit, entries) => `export const imagePack = "vitrine";\nexport const imageFit = "${fit}";\nexport const images = {\n  hero: [\n${entries.map((e) => `    { src: "${e.src}", alt: "${e.alt}", width: 10, height: 10, ratio: "16:9", description: "" },`).join("\n")}\n  ],\n  band: [], card: [], column: [], detail: [], backdrop: [],\n};\n`;
+
+test('with no fitting photo the typographic opener passes, and off-topic photos fail', () => {
+  const opener = 'export const H = () => <><header><a data-wordmark="">Bakfiets</a></header><HeroOpener title="Alles mee" lead="x" cta={{ href: "#r", label: "Reserveer een proefrit" }} /></>;\n';
+  const none = run(fixture({ hero: opener, extra: { 'lib/struq-images.ts': moduleWith('none', []) } }));
+  assert.ok(!fails(none, 'Hero without a photo'));
+  assert.ok(!fails(none, 'image placement'));
+  const plan = '# STRUQ.md: b\nBrief: lancering van een elektrische bakfiets in Utrecht\nPalette: x\nType: x\nSystem: x\nImages: pack vitrine\n\n## Build checklist\n- [x] 1 Project\n- [x] 2 Plan and approval\n';
+  const off = run(fixture({ extra: { 'STRUQ.md': plan, 'lib/struq-images.ts': moduleWith('full', [{ src: '/images/hero-1.webp', alt: 'Ongeglazuurde vaas op kalksteen' }]) } }));
+  assert.ok(fails(off, 'Off-topic photos'));
+  const on = run(fixture({ extra: { 'STRUQ.md': plan, 'lib/struq-images.ts': moduleWith('full', [{ src: '/images/hero-1.webp', alt: 'Bakfiets op een natte straat in Utrecht' }]) } }));
+  assert.ok(!fails(on, 'Off-topic photos'));
+});
+
+test('a display heading never sits in an overflow-hidden box', () => {
+  const clipped = 'export const S = () => <div className="relative overflow-hidden"><h2 className="font-display text-h2">Fabriekspanden</h2></div>;\n';
+  assert.ok(fails(run(fixture({ extra: { 'components/Clip.tsx': clipped } })), 'Display heading clipped'));
+  const same = 'export const S = () => <h2 className="font-display text-h2 overflow-hidden">Fabriekspanden</h2>;\n';
+  assert.ok(fails(run(fixture({ extra: { 'components/Clip.tsx': same } })), 'Display heading clipped'));
+  assert.ok(!fails(run(fixture()), 'Display heading clipped'));
+});
+
+test('an image reference past the pack fails', () => {
+  const mod = moduleWith('partial', [{ src: '/images/hero-1.webp', alt: 'Bakfiets in de stad' }]);
+  const past = 'import { images } from "@/lib/struq-images";\nexport const M = () => <ManifestoScrub text="a {0} b" images={[images.hero[0], images.card[3]]} />;\n';
+  assert.ok(fails(run(fixture({ extra: { 'lib/struq-images.ts': mod, 'components/M.tsx': past } })), 'past the pack'));
+});
+
+test('media captions may be small caps; section eyebrows may not', () => {
+  const caption = 'export const F = () => <figure><img src="/x.webp" alt="" /><figcaption className="text-small uppercase tracking-[0.14em]">Klant · Woningbouw · 2025</figcaption></figure>;\n';
+  assert.ok(!fails(run(fixture({ extra: { 'components/Cap.tsx': caption } })), 'Eyebrows'));
+  const onFrame = 'export const F = () => <div><MediaFrame image={x} /><p data-caption="" className="uppercase tracking-widest">Spinnerij, 2025</p></div>;\n';
+  assert.ok(!fails(run(fixture({ extra: { 'components/Cap.tsx': onFrame } })), 'Eyebrows'));
+  const eyebrow = 'export const E = () => <><p className="text-small uppercase tracking-[0.14em]">Onze diensten</p><h2>Wat we doen</h2></>;\n';
+  assert.ok(fails(run(fixture({ extra: { 'components/Eye.tsx': eyebrow } })), 'Eyebrows'));
+});
+
+test('a long display word in a narrow column beside a lifted image fails; manifesto chips are no textures', () => {
+  const narrow = 'export const S = () => <div className="grid md:grid-cols-12"><div className="md:col-span-4"><SplitHeadline as="h2" on="scroll" className="font-display text-h2">Fabriekspanden</SplitHeadline></div><figure className="md:col-span-8 md:relative md:z-10"><MediaFrame image={images.hero[0]} /></figure></div>;\n';
+  assert.ok(fails(run(fixture({ extra: { 'components/N.tsx': narrow } })), 'Display heading clipped'));
+  const wide = narrow.replace('md:col-span-4', 'md:col-span-7').replace('md:col-span-8', 'md:col-span-5');
+  assert.ok(!fails(run(fixture({ extra: { 'components/N.tsx': wide } })), 'Display heading clipped'));
+  const texture = 'export const M = () => <ManifestoScrub text="a {0} b" images={[images.detail[0], images.card[1]]} />;\n';
+  assert.ok(fails(run(fixture({ extra: { 'components/M.tsx': texture } })), 'Inline manifesto photo'));
+  const scene = 'export const M = () => <ManifestoScrub text="a {0} b" images={[images.card[0], images.column[1]]} />;\n';
+  assert.ok(!fails(run(fixture({ extra: { 'components/M.tsx': scene } })), 'Inline manifesto photo'));
+});

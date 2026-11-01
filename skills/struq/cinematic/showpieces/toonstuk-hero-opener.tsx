@@ -20,7 +20,8 @@ import { gsap, useGSAP } from "@/lib/gsap";
 import type { StruqImage } from "@/lib/struq-images";
 
 type Props = {
-  image: StruqImage;
+  /** The beeldbank or client photo. Without one (imageFit "none"), the opener is typographic on the inverse ground over the dots scene. */
+  image?: StruqImage;
   /** The poster line ("across"). */
   title?: string;
   /** One word in the display face's italic, after the title. */
@@ -44,7 +45,7 @@ type Props = {
 export function HeroOpener({ image, title, accent, split, lead, cta, header, scrim = 0.34, calm, className = "" }: Props) {
   // The lead goes on the photo's calm side; the CTA takes the other. Over a busy frame (no calm
   // side known) the lead gets a flat backing at a fixed opacity and is set a step larger.
-  const side = calm ?? (image.negativeSpace === "left" || image.negativeSpace === "right" ? image.negativeSpace : "none");
+  const side = calm ?? (image?.negativeSpace === "left" || image?.negativeSpace === "right" ? image.negativeSpace : image ? "none" : "left");
   const stage = useRef<HTMLElement>(null);
 
   useGSAP(
@@ -76,10 +77,10 @@ export function HeroOpener({ image, title, accent, split, lead, cta, header, scr
   // word spacing in em keeps the gap in step with the size for any face.
   const poster = "font-display block text-[19vw] leading-[0.92] tracking-[-0.045em] [word-spacing:0.09em] md:text-[16vw]";
   return (
-    <section ref={stage} data-showpiece="hero-opener" className={`relative h-svh overflow-hidden bg-black text-on-photo ${className}`}>
+    <section ref={stage} data-showpiece="hero-opener" className={`relative h-svh overflow-hidden ${image ? "bg-black text-on-photo" : "scene-inverse"} ${className}`}>
       <div data-opener-inner="" className="absolute inset-0 origin-top">
-        <HeroCanvas scene="ripple" image={image} grade={0.15} priority />
-        <div aria-hidden className="absolute inset-0 bg-black" style={{ opacity: scrim }} />
+        {image ? <HeroCanvas scene="ripple" image={image} grade={0.15} priority /> : <HeroCanvas scene="dots" />}
+        {image ? <div aria-hidden className="absolute inset-0 bg-black" style={{ opacity: scrim }} /> : null}
         <div data-opener-dim="" aria-hidden className="absolute inset-0 bg-black opacity-0" />
         {header ? <div className="absolute inset-x-0 top-0 z-20">{header}</div> : null}
         {split ? (
@@ -115,7 +116,7 @@ export function HeroOpener({ image, title, accent, split, lead, cta, header, scr
               {accent ? (
                 <>
                   {" "}
-                  <em className="font-display font-light italic tracking-[-0.02em] [word-spacing:0.09em]">{accent}</em>
+                  <em className="font-accent font-light italic tracking-[-0.02em] [word-spacing:0.09em]">{accent}</em>
                 </>
               ) : null}
             </SplitHeadline>

@@ -32,6 +32,13 @@ The skill is rebuilt around one critical path a small model can follow: a Build 
 - Every site has one contrast scene, at most two: scene-inverse or scene-field remaps the tokens inside a section. canon.mjs writes the palette's inverse and field roles, or swaps text and ground until the canon has them.
 - check.mjs fails a hand-built hero line under 10vw, and a site with no contrast scene or more than two.
 
+### Round two fixes
+- canon.mjs resolves every staging pairing: a canon face Google lists under its family ("Big Shoulders Display" as "Big Shoulders") is found, and a pairing's italic accent face loads as the third face (italic only). fontVariables carries every face to the layout.
+- No photos that pretend: when the brief's sector words point at no pack, images.mjs keeps only the photos whose alt names something the brief is about, writes imageFit, and the opener goes typographic over the WebGL scene when none fit. The approval stop asks for the client's photos. check.mjs fails off-topic photos.
+- check.mjs fails a display heading in an overflow-hidden box and an image reference past the pack; media captions (figcaption, data-caption) may be small and tracked, section eyebrows still may not.
+- The scrub connector sizes its words and bar with one clamp(), no breakpoint ladder and no px.
+- A long display word in a narrow column beside a lifted image is flagged as clipped; manifesto chips load eagerly and must show a subject, not a texture.
+
 ### Rules and the check
 - One combined tell list (Struq's tells 1.2.0, the slop audit, Roy's rules), with `check.mjs` as its executable form: eyebrows and uppercase labels, gradients, tinted fills, pills and live dots, mono, default faces, blue and purple, dashes, Struq's generic CTAs ("Neem contact op", "Meer informatie", "Aan de slag" and the rest) stat rows (20+, 51+, 99%) and more.
 - The hero carries a pack photo; the WebGL field is atmosphere beside or behind the copy, held by the quiet zone; every page has a header wordmark (`data-wordmark`); the client's product is never modelled from primitives. `check.mjs` fails each.

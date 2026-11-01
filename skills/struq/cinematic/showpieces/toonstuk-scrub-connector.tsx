@@ -50,15 +50,22 @@ export function ScrubConnector({ left, right, leftText, rightText, className = "
     { scope: stage },
   );
 
-  const word = "font-display block text-[12vw] leading-[0.9] tracking-[-0.03em] md:text-[8vw]";
+  // One fluid size, no breakpoint ladder and no px: the words scale with clamp(), and the bar's
+  // thickness and its line-up with the words follow the same size, so they stay in step at any width.
+  const word = "font-display block text-[length:var(--connector-word)] leading-[0.9] tracking-[-0.03em]";
   return (
-    <section ref={stage} data-showpiece="scrub-connector" className={`relative flex items-center overflow-hidden bg-surface-0 px-6 py-24 md:h-svh md:px-[5vw] md:py-0 ${className}`}>
+    <section
+      ref={stage}
+      data-showpiece="scrub-connector"
+      style={{ "--connector-word": "clamp(2.75rem, 1.2rem + 7vw, 9.5rem)" } as React.CSSProperties}
+      className={`relative flex items-center overflow-hidden bg-surface-0 px-6 py-24 md:h-svh md:px-[5vw] md:py-0 ${className}`}
+    >
       <div className="relative grid w-full grid-cols-[auto_1fr_auto] items-start gap-4">
         <div className="flex flex-col gap-4">
           <span className={`${word} text-accent`}>{left}</span>
           {leftText ? <p data-word-text="" className="max-w-[24ch] text-small text-ink-muted">{leftText}</p> : null}
         </div>
-        <div className="relative mt-[5.2vw] h-[1.4vw] min-h-[8px] md:mt-[3.3vw]">
+        <div className="relative mt-[calc(var(--connector-word)*0.42)] h-[calc(var(--connector-word)*0.16)] min-h-2">
           <div data-bar="" aria-hidden className="absolute inset-0 origin-center bg-ink" />
         </div>
         <div className="flex flex-col items-end gap-4 text-right">

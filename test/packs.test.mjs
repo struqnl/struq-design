@@ -42,3 +42,24 @@ test('a bakery keeps them, and brief words rank the best fit first', () => {
   assert.equal(keep.length, proofImages.length);
   assert.equal(keep.filter((i) => i.slot === 'hero')[0].alt, proofImages[1].alt);
 });
+
+const vitrineImages = [
+  { slot: 'hero', alt: 'Glad stenen object op een egaal verlopend studiodecor', description: 'Geschikt voor een webshop voor interieur.' },
+  { slot: 'card', alt: 'Ongeglazuurde keramieken vaas op kalksteen', description: '' },
+  { slot: 'card', alt: 'Stalen fietsframe tegen een betonnen wand in de stad', description: '' },
+];
+
+test('a pack the brief does not point at only keeps photos whose alt shares the brief', () => {
+  const brief = 'Lancering van een elektrische bakfiets voor gezinnen in de stad Utrecht';
+  const { keep, fit } = fitImages('vitrine', brief, vitrineImages);
+  assert.deepEqual(keep.map((i) => i.alt), [vitrineImages[2].alt]); // the street and the frame, not the vase
+  assert.equal(fit, 'partial');
+  const none = fitImages('vitrine', 'Lancering van een elektrische bakfiets', vitrineImages.slice(0, 2));
+  assert.equal(none.keep.length, 0);
+  assert.equal(none.fit, 'none');
+});
+
+test('a sector pack keeps its photos as before', () => {
+  const { fit } = fitImages('proof', 'Zout, een visrestaurant', proofImages);
+  assert.equal(fit, 'full');
+});

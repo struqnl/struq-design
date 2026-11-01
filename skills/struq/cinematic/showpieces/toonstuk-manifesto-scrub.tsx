@@ -3,6 +3,8 @@
 // One large statement paragraph that fills word by word as it scrolls through the screen, from a
 // faint ink to full ink, with small photos set into the line that open as their place is reached.
 // Write the text with {0}, {1} where a photo goes: "We koken {0} wat de markt brengt en {1} niets meer."
+// The inline photos are a word's size, so they need a subject (card, column, hero photos): a texture
+// (detail, backdrop) reads as a grey swatch at that size, and check.mjs fails it.
 // Lead for editorial sites; the supporting move for restaurants and hospitality.
 //
 // <ManifestoScrub text="Wij koken {0} met wat de zee en het land die week geven, {1} en verder niets." images={[images.detail[3], images.card[1]]} />
@@ -61,7 +63,7 @@ export function ManifestoScrub({ text, images = [], className = "" }: Props) {
                 data-inline=""
                 className="relative mx-[0.12em] inline-block h-[0.82em] w-[1.9em] translate-y-[0.08em] overflow-hidden align-baseline"
               >
-                <Image src={image.src} alt={image.alt} fill sizes="12vw" unoptimized={image.unoptimized} className="object-cover" />
+                <Image src={image.src} alt={image.alt} fill sizes="12vw" loading="eager" unoptimized={image.unoptimized} className="object-cover" />
               </span>
             );
           }

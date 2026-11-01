@@ -57,10 +57,10 @@ type Props = {
  * color-mix(). The browser resolves the variable on a probe element, a 2D canvas turns the result
  * into sRGB bytes.
  */
-function pick(name: string, fallback: string) {
+function pick(name: string, fallback: string, host: HTMLElement) {
   const probe = document.createElement("span");
   probe.style.color = `var(${name}, ${fallback})`;
-  document.body.appendChild(probe);
+  host.appendChild(probe); // resolved where the canvas sits, so a contrast scene recolours it
   const computed = getComputedStyle(probe).color;
   probe.remove();
   const ctx = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
@@ -78,12 +78,12 @@ function luminance(rgb: string) {
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 
-function readPalette(): Palette {
+function readPalette(host: HTMLElement): Palette {
   return {
-    surface: pick("--surface-0", "#f4efe6"),
-    surface2: pick("--surface-2", "#e2d7c4"),
-    ink: pick("--ink", "#1c1a17"),
-    accent: pick("--accent", "#8a3b22"),
+    surface: pick("--surface-0", "#f4efe6", host),
+    surface2: pick("--surface-2", "#e2d7c4", host),
+    ink: pick("--ink", "#1c1a17", host),
+    accent: pick("--accent", "#8a3b22", host),
   };
 }
 
@@ -120,7 +120,7 @@ export function HeroCanvas({ scene, image, grade = 0.25, scrim = 0, className = 
       canvas.setAttribute("aria-hidden", "true");
       slot.appendChild(canvas);
 
-      const palette = readPalette();
+      const palette = readPalette(el);
       let hero: Awaited<ReturnType<CreateScene>>;
       try {
         hero = await createScene({

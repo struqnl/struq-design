@@ -136,7 +136,7 @@ function libDir() {
   return existsSync(join(root, "src", "app")) ? join(root, "src", "lib") : join(root, "lib");
 }
 
-function writeModule(entries, packSlug, fallback) {
+function writeModule(entries, packSlug, fallback, imageFit = "full") {
   const dir = libDir();
   mkdirSync(dir, { recursive: true });
   const grouped = Object.fromEntries(SLOTS.map((s) => [s, entries.filter((e) => e.slot === s)]));
@@ -181,6 +181,14 @@ export type ImageSlot = ${SLOTS.map((s) => JSON.stringify(s)).join(" | ")};
 
 export const imagePack = ${JSON.stringify(packSlug)};
 
+/**
+ * "full": the pack shows this client's world. "partial": only the photos whose alt names something
+ * the brief is about are here. "none": no photo fits, so the first screen is typographic or the
+ * WebGL scene, and the approval stop asks the client for photos. Never fill a frame with an
+ * off-topic photo.
+ */
+export const imageFit: "full" | "partial" | "none" = ${JSON.stringify(imageFit)};
+
 /** The credit line for the footer: one quiet text-small link, never a badge. */
 export const imageCredit = { label: "Beeld: Struq", href: "https://struq.nl/beeldbank" };
 
@@ -215,6 +223,7 @@ async function main() {
 
   let pack = null;
   let droppedImages = [];
+  let imageFit = "full";
   try {
     pack = await getJson(`${API}/${encodeURIComponent(slug)}`);
     if (!Array.isArray(pack?.images) || pack.images.length === 0) throw new Error("pack has no images");
@@ -244,6 +253,7 @@ async function main() {
       const fit = fitImages(slug, brief, pack.images);
       pack.images = fit.keep;
       droppedImages = fit.dropped;
+      imageFit = fit.fit;
     } else {
       console.warn('WARN no --brief: every photo of the pack is used. Pass --brief so photos of subjects this client does not do are left out.');
     }
@@ -317,11 +327,17 @@ async function main() {
 
   entries.sort((a, b) => SLOTS.indexOf(a.slot) - SLOTS.indexOf(b.slot) || a.order - b.order);
   writeFileSync(join(outDir, "struq-pack.json"), JSON.stringify({ pack: slug, images: manifest }, null, 2) + "\n");
-  const module = writeModule(entries, slug, !pack);
+  const module = writeModule(entries, slug, !pack, imageFit);
 
   console.log(`\nPack ${slug} (${why}): ${real} images downloaded and verified, ${plates} fallback plates.`);
   if (droppedImages.length) console.log(`Left out ${droppedImages.length} photos that do not fit this client (${[...new Set(droppedImages.map((d) => d.reason))].join("; ")}).`);
   console.log("Captions: write them from each photo's alt below. Never name a subject the photo does not show.");
+  if (imageFit === "none") {
+    console.log("NONE of this pack's photos fits the brief. Do not use photos: the opener is typographic or the WebGL scene (HeroOpener without image).");
+    console.log("Say so at the approval stop: \"Ik heb geen foto's van je <product>: stuur ze, dan komen ze in de hero.\"");
+  } else if (imageFit === "partial") {
+    console.log(`Only ${entries.length} photo(s) fit: use them where their alt fits (the material, the city, the street), and nowhere else.`);
+  }
   console.log(`Module: ${module.replace(root, ".")}  (import { images, imageCredit } from "@/lib/struq-images")\n`);
   for (const e of entries) {
     console.log(`${`images.${e.slot}[${e.order - 1}]`.padEnd(18)} ${e.ratio.padEnd(5)} ${e.description.slice(0, 110)}`);
@@ -332,9 +348,10 @@ async function main() {
   appendLog(root, "Step 5 Images", [
     `images.mjs: pack ${slug} (${why}), ${real} images downloaded and verified, ${plates} fallback plates.`,
     ...(droppedImages.length ? [`Left out ${droppedImages.length} photos that do not fit this client: ${[...new Set(droppedImages.map((d) => d.reason))].join("; ")}.`] : []),
+    ...(imageFit !== "full" ? [`Image fit: ${imageFit}${imageFit === "none" ? ", the opener is typographic or WebGL, and the approval stop asks for photos" : ""}.`] : []),
     `Files in public/images, list in ${module.replace(root, ".")}${BASE !== "https://struq.nl" ? `, from ${BASE}` : ""}.`,
   ]);
-  console.log(real > 0 ? "\nOK images ready" : "\nOK fallback plates ready (no frame is empty)");
+  console.log(imageFit === "none" ? "\nOK no fitting photos: build the opener without them" : real > 0 ? "\nOK images ready" : "\nOK fallback plates ready (no frame is empty)");
 }
 
 main().catch((error) => {

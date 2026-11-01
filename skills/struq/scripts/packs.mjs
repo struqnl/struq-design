@@ -98,12 +98,35 @@ export const IMAGE_RULES = {
 
 const words = (text) => new Set(normalize(text).split(" ").filter((w) => w.length >= 4));
 
+// Words that say nothing about a subject, in a brief or an alt.
+const STOP = new Set([
+  "voor", "naar", "door", "deze", "onze", "jouw", "maar", "ook", "wordt", "worden", "zijn", "heeft", "hebben", "alle", "meer", "veel", "waar", "wat", "welke", "tussen", "onder", "boven", "over", "zonder", "rond", "langs",
+  "with", "from", "that", "this", "your", "into", "about", "over", "under", "their", "every",
+  "lancering", "launch", "nieuwe", "nieuw", "website", "pagina", "site", "page", "landing", "landingspagina", "merk", "brand", "bedrijf", "company",
+  "elektrische", "elektrisch", "electric", "groot", "grote", "klein", "kleine", "mooi", "mooie", "spectaculair", "spectacular",
+]);
+/** The words of a text that name a subject: four letters or more, no filler. */
+export const contentWords = (text) => new Set([...words(text)].filter((w) => !STOP.has(w)));
+
+/** True when a photo's alt names something the brief is about (compounds count: stadsstraat holds stad). */
+export function altFitsBrief(alt, brief) {
+  const b = [...contentWords(brief)];
+  return [...contentWords(alt ?? "")].some((w) => b.some((x) => w === x || (x.length >= 4 && w.includes(x))));
+}
+
 /**
  * Keep the photos that fit this client, best fit first per slot.
- * images: [{ slot, alt, description, ... }]. Returns { keep, dropped } in slot order.
+ * images: [{ slot, alt, description, ... }]. Returns { keep, dropped, fit } in slot order.
+ *
+ * When the brief's own sector words point at this pack, its photos show the client's world and
+ * only off-subject ones are left out (fit "full"). When they do not (a product launch handed
+ * vitrine, a pack named by hand), a photo is kept only if its alt names something the brief is
+ * about: the material, the city, the street. Otherwise none: an off-topic photo is worse than no
+ * photo (fit "partial" or "none").
  */
 export function fitImages(pack, brief, images) {
   const b = words(brief);
+  const strict = packSignalForBrief(brief) !== pack;
   const rules = IMAGE_RULES[pack] ?? [];
   const keep = [];
   const dropped = [];
@@ -114,8 +137,10 @@ export function fitImages(pack, brief, images) {
     const names = (t) => [...altWords].some((w) => w.includes(t));
     const offSubject = rules.find((r) => r.terms.some(names) && !r.unless.some((u) => b.has(u)));
     if (offSubject) dropped.push({ ...img, reason: `shows ${offSubject.subject}, which the brief does not name` });
+    else if (strict && !altFitsBrief(img.alt, brief)) dropped.push({ ...img, reason: "shows nothing this brief is about" });
     else keep.push(img);
   }
+  const fit = !strict ? "full" : keep.length ? "partial" : "none";
   const score = (img) => {
     const w = words(`${img.alt ?? ""} ${img.description ?? ""}`);
     let n = 0;
@@ -127,5 +152,5 @@ export function fitImages(pack, brief, images) {
   for (const slot of slots) {
     order.push(...keep.filter((i) => i.slot === slot).map((img, i) => ({ img, i, s: score(img) })).sort((x, y) => y.s - x.s || x.i - y.i).map((x) => x.img));
   }
-  return { keep: order, dropped };
+  return { keep: order, dropped, fit };
 }
