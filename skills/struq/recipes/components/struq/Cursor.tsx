@@ -2,7 +2,9 @@
 // components/struq/Cursor.tsx (Struq recipe)
 // A small dot that follows the pointer exactly and a ring that trails it, inverted against
 // whatever is under it (mix-blend difference), so it reads on light and dark sections alike.
-// The ring grows over links, buttons and anything marked data-cursor. Mounted once in the layout.
+// The ring grows over links and buttons. Over anything marked data-cursor="Bekijk" (media, project
+// cards) it becomes a round label in the accent with that word: a round cursor label, never a pill.
+// Mounted once in the layout.
 // It stays hidden until a real pointer moves, and rests out of sight when the pointer rests.
 // Only on a fine pointer with motion allowed: touch screens and reduced motion keep the
 // native cursor and render nothing.
@@ -20,7 +22,9 @@ export function Cursor() {
       if (!el) return;
       const dot = el.querySelector<HTMLElement>("[data-dot]");
       const ring = el.querySelector<HTMLElement>("[data-ring]");
-      if (!dot || !ring) return;
+      const tag = el.querySelector<HTMLElement>("[data-tag]");
+      const tagText = el.querySelector<HTMLElement>("[data-tag-text]");
+      if (!dot || !ring || !tag || !tagText) return;
       const mm = gsap.matchMedia();
       mm.add("(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)", () => {
         const html = document.documentElement;
@@ -28,6 +32,10 @@ export function Cursor() {
         const dy = gsap.quickTo(dot, "y", { duration: 0.08, ease: "power2.out" });
         const rx = gsap.quickTo(ring, "x", { duration: 0.5, ease: "power3.out" });
         const ry = gsap.quickTo(ring, "y", { duration: 0.5, ease: "power3.out" });
+        const tx = gsap.quickTo(tag, "x", { duration: 0.45, ease: "power3.out" });
+        const ty = gsap.quickTo(tag, "y", { duration: 0.45, ease: "power3.out" });
+        gsap.set(tag, { scale: 0 });
+        let labelled = false;
         // Hidden until a real hand moves the pointer: a first event, a parked pointer or a
         // scripted jump never shows it. It appears after 24px of actual travel, and it fades out
         // again when the pointer rests, so a still pointer never leaves a ring mid-screen.
@@ -40,6 +48,7 @@ export function Cursor() {
           travel = 0;
           html.classList.remove("has-cursor");
           gsap.to([dot, ring], { autoAlpha: 0, duration: 0.4 });
+          gsap.to(tag, { scale: 0, autoAlpha: 0, duration: 0.3 });
         };
         const move = (e: PointerEvent) => {
           if (e.pointerType && e.pointerType !== "mouse") return;
@@ -49,17 +58,29 @@ export function Cursor() {
           dy(e.clientY);
           rx(e.clientX);
           ry(e.clientY);
+          tx(e.clientX);
+          ty(e.clientY);
           if (!shown && travel > 24) {
             shown = true;
             html.classList.add("has-cursor");
-            gsap.to([dot, ring], { autoAlpha: 1, duration: 0.3 });
+            gsap.to([dot, ring], { autoAlpha: labelled ? 0 : 1, duration: 0.3 });
+            if (labelled) gsap.to(tag, { scale: 1, autoAlpha: 1, duration: 0.5, ease: "expo.out" });
           }
           clearTimeout(rest);
           rest = setTimeout(hide, 2200);
         };
         const over = (e: PointerEvent) => {
-          const hit = (e.target as Element | null)?.closest("a, button, [data-cursor]");
-          gsap.to(ring, { scale: hit ? 1.8 : 1, duration: 0.4, ease: "power3.out" });
+          const target = e.target as Element | null;
+          const media = target?.closest<HTMLElement>("[data-cursor]");
+          const word = media?.dataset.cursor?.trim();
+          labelled = Boolean(word);
+          if (word) tagText.textContent = word;
+          if (shown) {
+            gsap.to(tag, { scale: labelled ? 1 : 0, autoAlpha: labelled ? 1 : 0, duration: labelled ? 0.5 : 0.3, ease: labelled ? "expo.out" : "power2.in" });
+            gsap.to([dot, ring], { autoAlpha: labelled ? 0 : 1, duration: 0.25 });
+          }
+          const hit = target?.closest("a, button");
+          gsap.to(ring, { scale: hit && !labelled ? 1.8 : 1, duration: 0.4, ease: "power3.out" });
         };
         const out = () => {
           clearTimeout(rest);
@@ -83,9 +104,14 @@ export function Cursor() {
   );
 
   return (
-    <div ref={root} aria-hidden className="pointer-events-none fixed inset-0 z-[90] mix-blend-difference">
-      <div data-dot="" className="invisible absolute left-0 top-0 -ml-1 -mt-1 size-2 rounded-full bg-white opacity-0" />
-      <div data-ring="" className="invisible absolute left-0 top-0 -ml-5 -mt-5 size-10 rounded-full border border-white opacity-0" />
+    <div ref={root} aria-hidden className="pointer-events-none fixed inset-0 z-[90]">
+      <div className="absolute inset-0 mix-blend-difference">
+        <div data-dot="" className="invisible absolute left-0 top-0 -ml-1 -mt-1 size-2 rounded-full bg-white opacity-0" />
+        <div data-ring="" className="invisible absolute left-0 top-0 -ml-5 -mt-5 size-10 rounded-full border border-white opacity-0" />
+      </div>
+      <div data-tag="" className="invisible absolute left-0 top-0 -ml-12 -mt-12 flex size-24 items-center justify-center rounded-full bg-accent text-small text-accent-ink opacity-0">
+        <span data-tag-text="">Bekijk</span>
+      </div>
     </div>
   );
 }

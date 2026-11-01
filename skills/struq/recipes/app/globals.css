@@ -110,6 +110,18 @@
     clip-path: inset(22% 30% 22% 30%);
   }
 }
+/* The cinematic showpieces start in their first key frame, so nothing flashes before it. */
+@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+  .js [data-showpiece="image-to-fullbleed"] [data-frame] {
+    clip-path: inset(31% 40% 31% 40%);
+  }
+  .js [data-showpiece="pixel-resolve"] canvas {
+    opacity: 1;
+    background: var(--surface-2);
+    animation: struq-unveil 0s 4s forwards;
+  }
+}
+@keyframes struq-unveil { to { opacity: 0; visibility: hidden; } }
 @keyframes struq-show { to { visibility: visible; } }
 @keyframes struq-fade { to { opacity: 1; } }
 @keyframes struq-open { to { clip-path: inset(0 0 0 0); } }

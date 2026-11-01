@@ -69,6 +69,11 @@ place(join(RECIPES, "lib", "gsap.ts"), at("lib", "gsap.ts"));
 for (const file of walk(join(RECIPES, "components", "struq"))) {
   place(file, at("components", "struq", relative(join(RECIPES, "components", "struq"), file)));
 }
+// The cinematic showpieces (toonstuk-*), one file per showpiece, named by its stable slug.
+const SHOWPIECES = join(here, "..", "cinematic", "showpieces");
+for (const file of walk(SHOWPIECES).filter((f) => f.endsWith(".tsx"))) {
+  place(file, at("components", "struq", "showpieces", relative(SHOWPIECES, file)));
+}
 
 // 2. The app shell: only over a starter file, never over work.
 const notes = [];
