@@ -194,6 +194,8 @@ The first screen is the photo, edge to edge, with giant type set across it. Not 
 - **The photo fills the viewport,** the ripple WebGL layer living in it, with a flat scrim at a fixed opacity so the copy reads at 4.5:1. Never a gradient.
 - **The display line runs at 14 to 20vw** (the opener sets 19vw on phones, 16vw on desktop) along the held-clear bottom, or as a split wordmark. Eight words at most; one word may be the italic accent. `check.mjs` fails a hand-built hero line under 10vw.
 - **One short lead and one confident rectangular CTA** above the line (`MagneticButton size="lg"`), never a pill.
+- **The lead sits on the photo's calm side.** The opener reads the photo's `negativeSpace` from the beeldbank (written into lib/struq-images.ts) and puts the lead there, the CTA on the other side; pass `calm="left"` or `calm="right"` for your own photo. Where there is no calm side, the lead gets a flat backing at a fixed opacity and is set a step larger (text-h3). Never a lead on bright, busy detail without one.
+- **Display lines get word spacing in step with their size:** 0.06 to 0.1em at poster sizes (the opener uses 0.09em), the italic accent word included, so tight tracking never runs two words into one.
 - **The handover is a move:** on scroll the opener pins, scales down and darkens while the next section slides up over it. The section after it needs nothing extra: globals.css gives it a ground and the layer above.
 - **The header** with the wordmark (`data-wordmark`) goes in the `header` prop, set over the photo in `text-on-photo`.
 - **Never model the client's product from primitives:** a launch uses the `vitrine` product photography in the opener. For a portfolio brief ("laat ons werk zien"), the opener photo is a real project of the client.

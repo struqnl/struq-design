@@ -33,10 +33,18 @@ type Props = {
   header?: React.ReactNode;
   /** 0.2 to 0.5: the flat scrim under the copy. */
   scrim?: number;
+  /**
+   * The photo's calm side, where the lead reads. Defaults to the image's own negativeSpace from the
+   * beeldbank. With no calm left or right side, the lead gets a fixed backing and a step up in size.
+   */
+  calm?: "left" | "right" | "none";
   className?: string;
 };
 
-export function HeroOpener({ image, title, accent, split, lead, cta, header, scrim = 0.34, className = "" }: Props) {
+export function HeroOpener({ image, title, accent, split, lead, cta, header, scrim = 0.34, calm, className = "" }: Props) {
+  // The lead goes on the photo's calm side; the CTA takes the other. Over a busy frame (no calm
+  // side known) the lead gets a flat backing at a fixed opacity and is set a step larger.
+  const side = calm ?? (image.negativeSpace === "left" || image.negativeSpace === "right" ? image.negativeSpace : "none");
   const stage = useRef<HTMLElement>(null);
 
   useGSAP(
@@ -64,7 +72,9 @@ export function HeroOpener({ image, title, accent, split, lead, cta, header, scr
     { scope: stage },
   );
 
-  const poster = "font-display block text-[19vw] leading-[0.92] tracking-[-0.045em] md:text-[16vw]";
+  // At poster size the words need air of their own: tight tracking pulls the letters together, and
+  // word spacing in em keeps the gap in step with the size for any face.
+  const poster = "font-display block text-[19vw] leading-[0.92] tracking-[-0.045em] [word-spacing:0.09em] md:text-[16vw]";
   return (
     <section ref={stage} data-showpiece="hero-opener" className={`relative h-svh overflow-hidden bg-black text-on-photo ${className}`}>
       <div data-opener-inner="" className="absolute inset-0 origin-top">
@@ -84,8 +94,15 @@ export function HeroOpener({ image, title, accent, split, lead, cta, header, scr
           </h1>
         ) : null}
         <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col gap-[3vh] px-6 pb-[3vh] md:px-[3vw]">
-          <div data-opener-copy="" className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-            <p data-quiet="" className="max-w-[32ch] text-lead">{lead}</p>
+          <div data-opener-copy="" className={`flex flex-col gap-6 md:flex-row md:items-end md:justify-between ${side === "right" ? "md:flex-row-reverse md:text-right" : ""}`}>
+            {side === "none" ? (
+              <p data-quiet="" className="relative isolate max-w-[30ch] text-h3">
+                <span aria-hidden className="absolute -inset-x-5 -inset-y-4 -z-10 bg-black opacity-55" />
+                {lead}
+              </p>
+            ) : (
+              <p data-quiet="" className="max-w-[32ch] text-lead">{lead}</p>
+            )}
             <div>
               <MagneticButton href={cta.href} size="lg">
                 {cta.label}
@@ -98,7 +115,7 @@ export function HeroOpener({ image, title, accent, split, lead, cta, header, scr
               {accent ? (
                 <>
                   {" "}
-                  <em className="font-display font-light italic tracking-[-0.02em]">{accent}</em>
+                  <em className="font-display font-light italic tracking-[-0.02em] [word-spacing:0.09em]">{accent}</em>
                 </>
               ) : null}
             </SplitHeadline>

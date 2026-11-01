@@ -151,6 +151,7 @@ function writeModule(entries, packSlug, fallback) {
           `ratio: ${JSON.stringify(e.ratio)}`,
           `description: ${JSON.stringify(e.description)}`,
         ];
+        if (e.negativeSpace) fields.push(`negativeSpace: ${JSON.stringify(e.negativeSpace)}`);
         if (e.unoptimized) fields.push("unoptimized: true");
         return `    { ${fields.join(", ")} },`;
       })
@@ -170,6 +171,8 @@ export type StruqImage = {
   ratio: string;
   /** What the photo shows, in more words than the alt: read it to choose the right slot. */
   description: string;
+  /** The photo's calm side ("left", "right", "top", "bottom", "center"): where copy reads over it. */
+  negativeSpace?: string;
   /** Set on fallback plates (SVG), which next/image must not optimise. */
   unoptimized?: boolean;
 };
@@ -267,6 +270,7 @@ async function main() {
             height: job.img.height ?? FALLBACK_SIZE[job.img.slot][1],
             ratio: job.img.aspectRatio ?? "",
             description: job.img.description ?? "",
+            negativeSpace: job.img.negativeSpace ?? "",
           });
           manifest.push({ file: `public/images/${job.name}.webp`, id: job.img.id, slot: job.img.slot, source: imageUrl(job.img) });
         } else {
