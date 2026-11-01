@@ -39,6 +39,11 @@ The skill is rebuilt around one critical path a small model can follow: a Build 
 - The scrub connector sizes its words and bar with one clamp(), no breakpoint ladder and no px.
 - A long display word in a narrow column beside a lifted image is flagged as clipped; manifesto chips load eagerly and must show a subject, not a texture.
 
+### The MCP build line
+- With the Struq MCP connected, SKILL.md runs an explicit build line: bouwplan, the one approval stop with the plan's needs, projectschil, motion, achtergrond, and one sectiespec per arc row before that row is written. log.mjs mcp records each call; check.mjs fails fewer sectiespec calls than arc rows, and an approval stop outside bouwplan to projectschil.
+- A pack or photos from the plan that do not fit the brief go through the same photo rule: none ship off-topic.
+- The dots and contours scenes have a visibility floor on dark grounds, so a photo-less opener still carries the screen.
+
 ### Rules and the check
 - One combined tell list (Struq's tells 1.2.0, the slop audit, Roy's rules), with `check.mjs` as its executable form: eyebrows and uppercase labels, gradients, tinted fills, pills and live dots, mono, default faces, blue and purple, dashes, Struq's generic CTAs ("Neem contact op", "Meer informatie", "Aan de slag" and the rest) stat rows (20+, 51+, 99%) and more.
 - The hero carries a pack photo; the WebGL field is atmosphere beside or behind the copy, held by the quiet zone; every page has a header wordmark (`data-wordmark`); the client's product is never modelled from primitives. `check.mjs` fails each.

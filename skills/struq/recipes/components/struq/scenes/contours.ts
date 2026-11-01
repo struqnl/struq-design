@@ -72,14 +72,16 @@ export const createScene: CreateScene = async ({ THREE, renderer, palette, dark 
     uSurface: { value: new THREE.Color(palette.surface) },
     uInk: { value: new THREE.Color(palette.ink) },
     uAccent: { value: new THREE.Color(palette.accent) },
-    uInkWeight: { value: dark ? 0.62 : 0.56 },
+    uInkWeight: { value: dark ? 0.85 : 0.56 },
+    // On a dark ground the lines need more weight and must not vanish on the copy side.
+    uLeftFloor: { value: dark ? 0.45 : 0.2 },
   };
   const drawMaterial = new THREE.ShaderMaterial({
     uniforms: drawUniforms,
     vertexShader,
     fragmentShader: /* glsl */ `
       uniform sampler2D uField; uniform vec2 uFieldRes; uniform float uCell; uniform vec2 uResPx;
-      uniform float uTime; uniform vec3 uSurface; uniform vec3 uInk; uniform vec3 uAccent; uniform float uInkWeight;
+      uniform float uTime; uniform vec3 uSurface; uniform vec3 uInk; uniform vec3 uAccent; uniform float uInkWeight; uniform float uLeftFloor;
       ${QUIET_GLSL}
       float grain(vec2 p) { p = fract(p * vec2(443.897, 441.423)); p += dot(p, p.yx + 19.19); return fract((p.x + p.y) * p.x); }
       float at(ivec2 i) {
@@ -106,7 +108,7 @@ export const createScene: CreateScene = async ({ THREE, renderer, palette, dark 
         line *= 1.0 - dense;
         float major = 1.0 - step(0.5, mod(floor(f + 0.5), 5.0));
         // Composition and depth: weighted to the right, fading toward the far horizon.
-        float right = 0.2 + 0.8 * smoothstep(0.05, 0.8, uv.x);
+        float right = uLeftFloor + (1.0 - uLeftFloor) * smoothstep(0.05, 0.8, uv.x);
         float near = 1.0 - 0.6 * smoothstep(0.3, 1.0, uv.y);
         float inkV = hush((line * (0.55 + 0.45 * major) + mist) * uInkWeight * right * near, fc);
         float accentV = hush(line * major * smoothstep(0.5, 0.95, uv.x) * near * 0.75, fc);

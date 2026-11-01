@@ -490,6 +490,26 @@ const plan = read("STRUQ.md");
     if (!approval || !/^Reply:\s*["\u201C\u2018'].+["\u201D\u2019']\s*$/m.test(approval[1])) {
       add(G, "FAIL", 'No Step 2 Approval entry with the user\'s own reply. The build request is not the approval: stop once, ask "Akkoord? Heb je een logo, foto\'s of echte cijfers, stuur ze nu.", then log the answer word for word: node <skill-dir>/scripts/log.mjs "Step 2 Approval" "Asked: Akkoord? ..." "Reply: \"<their words>\"".');
     } else add(G, "PASS", "The approval stop is logged with the user's reply");
+    // The MCP build line (struq_bouwplan, logged with log.mjs mcp): every arc row gets its
+    // struq_sectiespec, and the one approval stop sits after the bouwplan, before the projectschil.
+    const at = (re) => {
+      const m = re.exec(log);
+      return m ? m.index : -1;
+    };
+    const planAt = at(/^## Step \d+ MCP struq_bouwplan\b/m);
+    if (planAt >= 0) {
+      const planEntry = log.slice(planAt).split(/\n(?=## )/)[0];
+      const rows = Number(planEntry.match(/^Arc rows:\s*(\d+)/m)?.[1] ?? 0);
+      const specRows = new Set([...log.matchAll(/^## Step \d+ MCP struq_sectiespec\b[^\n]*\n(?:(?!## )[^\n]*\n)*?Row:\s*(\d+)/gm)].map((m) => m[1]));
+      if (rows && specRows.size < rows) {
+        add(G, "FAIL", `MCP build line incomplete: ${specRows.size} of ${rows} arc rows have their struq_sectiespec. Call struq_sectiespec for every arc row with the planToken before writing that row, and log it: node <skill-dir>/scripts/log.mjs mcp struq_sectiespec --row <n> --id <arc id>.`);
+      } else if (rows) add(G, "PASS", `MCP build line: struq_sectiespec for all ${rows} arc rows`);
+      const approvalAt = at(/^## Step 2 Approval\b/m);
+      const shellAt = at(/^## Step \d+ MCP struq_projectschil\b/m);
+      if (approvalAt >= 0 && (approvalAt < planAt || (shellAt >= 0 && approvalAt > shellAt))) {
+        add(G, "FAIL", "MCP approval stop out of place: with the MCP, stop once after struq_bouwplan and before struq_projectschil, with the plan and its needs in that one question.");
+      }
+    }
     if (missing.length) add(G, "FAIL", `STRUQ-LOG.md has no entry for ticked step(s) ${missing.join(", ")}. Add one per step with log.mjs: what was done and why.`);
     else add(G, "PASS", `STRUQ-LOG.md has ${entries} entries, one or more for every ticked step`);
   }

@@ -37,7 +37,11 @@ export const createScene: CreateScene = async ({ THREE, renderer, palette, dark 
     uDpr: { value: renderer.getPixelRatio() },
     uInk: { value: new THREE.Color(palette.ink) },
     uAccent: { value: new THREE.Color(palette.accent) },
-    uInkWeight: { value: dark ? 0.85 : 0.8 },
+    uInkWeight: { value: dark ? 1.0 : 0.8 },
+    // On a dark ground light points read smaller and fainter: bigger points and a visibility floor,
+    // so a photo-less opener on the inverse ground still carries the screen.
+    uSize: { value: dark ? 62 : 44 },
+    uFloor: { value: dark ? 0.38 : 0 },
   };
 
   const material = new THREE.ShaderMaterial({
@@ -45,7 +49,7 @@ export const createScene: CreateScene = async ({ THREE, renderer, palette, dark 
     transparent: true,
     depthWrite: false,
     vertexShader: /* glsl */ `
-      uniform float uTime; uniform vec2 uPointer; uniform float uPresence; uniform float uScroll; uniform float uDpr;
+      uniform float uTime; uniform vec2 uPointer; uniform float uPresence; uniform float uScroll; uniform float uDpr; uniform float uSize;
       varying float vH; varying float vFade;
       ${NOISE_GLSL}
       void main() {
@@ -62,18 +66,18 @@ export const createScene: CreateScene = async ({ THREE, renderer, palette, dark 
         vec4 mv = modelViewMatrix * vec4(p, 1.0);
         vFade = smoothstep(46.0, 14.0, -mv.z) * smoothstep(0.5, 4.0, -mv.z);
         gl_Position = projectionMatrix * mv;
-        gl_PointSize = max(1.5 * uDpr, uDpr * 44.0 / -mv.z);
+        gl_PointSize = max(1.5 * uDpr, uDpr * uSize / -mv.z);
       }
     `,
     fragmentShader: /* glsl */ `
-      uniform vec3 uInk; uniform vec3 uAccent; uniform float uInkWeight;
+      uniform vec3 uInk; uniform vec3 uAccent; uniform float uInkWeight; uniform float uFloor;
       varying float vH; varying float vFade;
       ${QUIET_GLSL}
       void main() {
         float d = length(gl_PointCoord - 0.5);
         float disc = smoothstep(0.5, 0.3, d);
         float crest = smoothstep(0.68, 0.95, vH);
-        float v = hush((0.3 + 0.7 * vH) * vFade * uInkWeight, gl_FragCoord.xy);
+        float v = hush(max((0.3 + 0.7 * vH) * uInkWeight, uFloor) * vFade, gl_FragCoord.xy);
         vec3 col = mix(uInk, uAccent, crest * 0.85);
         gl_FragColor = vec4(col, disc * v);
         #include <colorspace_fragment>

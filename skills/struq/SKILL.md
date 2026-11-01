@@ -33,6 +33,8 @@ Register: this is for marketing, landing, portfolio and narrative sites. For das
 
 ## The Build checklist
 
+**Struq MCP connected (`struq_*` tools)?** Then the MCP build line (see "With the Struq MCP" below) replaces steps 2, 4 and 7: bouwplan, the one stop, projectschil, motion, achtergrond, and one sectiespec per arc row. Copy its block into STRUQ.md too.
+
 Copy this block into `STRUQ.md` in the project root (under the short plan, step 2) and tick each line (`- [x]`) as you finish it. `check.mjs` fails while any line is open.
 
 **The site log.** Every site also keeps `STRUQ-LOG.md` in the project root, from the first step on: append only, one entry per step, a heading with the step name and the local time, then two to five short lines of what and why. Log the brief received, the canon picks and why, the approval asked and the answer, each section built (files, recipe), every check run, every fix after a failure, every deviation and assumption, and the final state. `canon.mjs`, `images.mjs`, `recipes.mjs` and `check.mjs` append their own entries; you add the rest with `log.mjs`. `check.mjs` fails when the log is missing or a ticked step has no entry. STRUQ.md stays the plan; the log is what happened. Do not report the build as done until every line is ticked and `check.mjs` prints `RESULT: PASS`.
@@ -271,9 +273,31 @@ Never two pinned showpieces back to back: put a breathing section between them. 
 - **Look**, when you have a browser tool: serve the production build (`npx next start -p 4321`), screenshot 390 and 1440, scroll the page once top to bottom. Check: the headline reads, no frame is blank after its reveal, the showpiece engages and releases without a jump, nothing overflows sideways at 390. No browser tool: write `Verify: not seen, no browser` in STRUQ.md. Never claim you saw what you did not.
 - **Check**: `node <skill-dir>/scripts/check.mjs`. Fix every FAIL at its file and line, run it again, and repeat until `RESULT: PASS`. Then tick line 12 and report.
 
-## With the Struq MCP (Pro)
+## With the Struq MCP (Pro): the build line
 
-When the `struq_*` tools are connected, their plan wins for palette, type, arc, copy budget and motion values: write what they return into the short plan and build it with these recipes. The floor in this file still holds on top of it: images from the beeldbank pack the plan names (the plan's pack, or the table above), one showpiece at least, the hero canvas, every check passing.
+When the `struq_*` tools are connected, the build runs on Struq's build line, and this checklist replaces steps 2, 4 and 7 of the Build checklist (the others stay). Every call is logged with `log.mjs mcp`; `check.mjs` fails a build whose log shows a bouwplan but fewer sectiespec calls than the plan's arc rows, and an approval stop that is not between the bouwplan and the projectschil.
+
+```
+## MCP build line
+- [ ] M1 struq_bouwplan with the brief; keep its planToken; count its arc rows
+      node <skill-dir>/scripts/log.mjs mcp struq_bouwplan --rows <arc rows> --token <planToken>
+- [ ] M2 The one approval stop: show the plan (palette, type, arc, showpiece) and stop once with
+      "Akkoord? Heb je een logo, foto's of echte cijfers, stuur ze nu." The plan's own needs (its
+      `needs` questions, missing photos) go into that same question. Log the reply as Step 2 Approval.
+- [ ] M3 struq_projectschil with the planToken: build the files it returns
+      node <skill-dir>/scripts/log.mjs mcp struq_projectschil --token <planToken>
+- [ ] M4 struq_motion with the planToken (a marketing site)
+      node <skill-dir>/scripts/log.mjs mcp struq_motion --token <planToken>
+- [ ] M5 struq_achtergrond: build the background it returns as the hero scene (below)
+      node <skill-dir>/scripts/log.mjs mcp struq_achtergrond --token <planToken>
+- [ ] M6 For EVERY arc row, in order: struq_sectiespec with the planToken and the row, then write
+      that row's code from the spec, then log it. Never write a row without its spec.
+      node <skill-dir>/scripts/log.mjs mcp struq_sectiespec --row <n> --id <arc id> --token <planToken>
+```
+
+The plan wins for palette, type, arc, copy budget and motion values. The floor in this file still holds on top of it: the hero opener, one showpiece at least, the contrast scene, every check passing. A refusal from `struq_sectiespec` names the step that comes first: do that step, never work around it.
+
+**Photos: the skill's rule wins.** When the plan names a pack or photos that do not fit the brief (a cargo bike handed product shots of vases), run `images.mjs <that pack> --brief "<the brief>"` anyway: it keeps only the photos whose alt names the brief, and none when nothing fits. No off-topic photo ever ships because a plan named it; the opener then goes typographic over the WebGL scene, and the approval stop asks the client for photos.
 
 **When `struq_achtergrond` returns a background, build that one.** It is the hero layer. Write it as `components/struq/scenes/<name>.ts` with the same `createScene` contract as the three shipped scenes ([references/hero-scenes.md](references/hero-scenes.md)), take its colours from the palette passed in (so it is recoloured to the site's tokens), add it to the `SCENES` map in `HeroCanvas.tsx`, and use `<HeroCanvas scene="<name>" />`. Never skip it because it is hard to check without a browser: HeroCanvas keeps the poster when the scene fails, so building it can never leave the hero empty.
 

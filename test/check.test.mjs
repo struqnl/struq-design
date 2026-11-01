@@ -174,3 +174,20 @@ test('a long display word in a narrow column beside a lifted image fails; manife
   const scene = 'export const M = () => <ManifestoScrub text="a {0} b" images={[images.card[0], images.column[1]]} />;\n';
   assert.ok(!fails(run(fixture({ extra: { 'components/M.tsx': scene } })), 'Inline manifesto photo'));
 });
+
+test('with the MCP, every arc row gets its sectiespec and the approval sits after the bouwplan', () => {
+  const mcpLog = (specRows, approvalFirst = false) => {
+    const approval = '\n## Step 2 Approval (1 Nov 2026, 10:02)\nAsked: Akkoord?\nReply: "akkoord"\n';
+    const plan = '\n## Step 2 MCP struq_bouwplan (1 Nov 2026, 10:01)\nArc rows: 3\nPlan token: plan_x\n';
+    const shell = '\n## Step 3 MCP struq_projectschil (1 Nov 2026, 10:03)\nPlan token: plan_x\n';
+    const specs = specRows.map((r) => `\n## Step 7 MCP struq_sectiespec (1 Nov 2026, 10:1${r})\nRow: ${r} (row${r})\nPlan token: plan_x\n`).join('');
+    const head = '# STRUQ-LOG.md: f\n\n## Step 1 Project (1 Nov 2026, 10:00)\nBrief received.\n\n## Step 2 Plan (1 Nov 2026, 10:00)\nPlan.\n';
+    return head + (approvalFirst ? approval + plan : plan + approval) + shell + specs;
+  };
+  assert.ok(!fails(run(fixture({ log: mcpLog([1, 2, 3]) })), 'sectiespec'));
+  assert.ok(fails(run(fixture({ log: mcpLog([1]) })), 'sectiespec'));
+  assert.ok(!fails(run(fixture({ log: mcpLog([1, 2, 3]) })), 'MCP approval'));
+  assert.ok(fails(run(fixture({ log: mcpLog([1, 2, 3], true) })), 'MCP approval'));
+  // Without the MCP the rule stays silent.
+  assert.ok(!fails(run(fixture()), 'sectiespec'));
+});

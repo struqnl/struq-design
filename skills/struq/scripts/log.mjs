@@ -52,6 +52,36 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   const i = args.indexOf("--dir");
   const root = resolve(i >= 0 ? args[i + 1] : process.cwd());
   const rest = i >= 0 ? args.filter((_, j) => j !== i && j !== i + 1) : args;
+  // MCP calls: node log.mjs mcp <tool> [--rows <arc rows>] [--token <planToken>] [--row <n>] [--id <arc id>] [--note "<text>"]
+  if (rest[0] === "mcp") {
+    const tool = rest[1];
+    const opt = (name) => {
+      const k = rest.indexOf(name);
+      return k >= 0 ? rest[k + 1] : undefined;
+    };
+    const STEP = { struq_bouwplan: 2, struq_projectschil: 3, struq_motion: 3, struq_achtergrond: 3, struq_sectiespec: 7 };
+    if (!tool || !/^struq_/.test(tool)) {
+      console.error("Usage: node log.mjs mcp <struq_tool> [--rows <n>] [--token <planToken>] [--row <n>] [--id <arc id>] [--note \"<text>\"]");
+      process.exit(2);
+    }
+    if (tool === "struq_bouwplan" && !opt("--rows")) {
+      console.error("Log the bouwplan with its arc length: --rows <number of arc rows>, so the check can count the sectiespec calls.");
+      process.exit(2);
+    }
+    if (tool === "struq_sectiespec" && !opt("--row")) {
+      console.error("Log each sectiespec with the arc row it is for: --row <arc index> --id <arc id>.");
+      process.exit(2);
+    }
+    const lines = [
+      opt("--rows") ? `Arc rows: ${opt("--rows")}` : null,
+      opt("--row") ? `Row: ${opt("--row")}${opt("--id") ? ` (${opt("--id")})` : ""}` : null,
+      opt("--token") ? `Plan token: ${opt("--token")}` : null,
+      opt("--note") ?? (tool === "struq_bouwplan" ? "The plan; the one approval stop comes next, before struq_projectschil." : "Called."),
+    ].filter(Boolean);
+    const file = appendLog(root, `Step ${STEP[tool] ?? 7} MCP ${tool}`, lines);
+    console.log(`Logged ${tool} in ${file}`);
+    process.exit(0);
+  }
   const [step, ...lines] = rest;
   if (!step || !lines.length || !/^Step [0-9]+/.test(step)) {
     console.error('Usage: node log.mjs "Step <N> <Name>" "<what>" ["<why>" ...]   [--dir <project>]. The step starts with Step and its checklist number.');
