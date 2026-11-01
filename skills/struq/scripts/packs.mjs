@@ -109,7 +109,10 @@ export function fitImages(pack, brief, images) {
   const dropped = [];
   for (const img of images) {
     const altWords = words(img.alt ?? "");
-    const offSubject = rules.find((r) => r.terms.some((t) => altWords.has(t)) && !r.unless.some((u) => b.has(u)));
+    // Dutch compounds carry the subject inside them (meelsporen, broodkorst), so a term counts
+    // when an alt word contains it; the brief's own words still have to match whole.
+    const names = (t) => [...altWords].some((w) => w.includes(t));
+    const offSubject = rules.find((r) => r.terms.some(names) && !r.unless.some((u) => b.has(u)));
     if (offSubject) dropped.push({ ...img, reason: `shows ${offSubject.subject}, which the brief does not name` });
     else keep.push(img);
   }

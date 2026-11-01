@@ -25,15 +25,16 @@ test('anything else falls back to halide', () => {
 const proofImages = [
   { slot: 'hero', alt: 'Lege eetzaal met gedekte tafels voor aanvang', description: '' },
   { slot: 'hero', alt: 'Houten werkbank bestoven met meel en rustend deeg', description: '' },
-  { slot: 'card', alt: 'Linnen schort met meelafdrukken aan een haak', description: '' },
+  { slot: 'card', alt: 'Linnen schort met meelsporen hangend aan de deur', description: '' },
+  { slot: 'detail', alt: 'Geblakerde broodkorst met fijne scheuren van dichtbij', description: '' },
   { slot: 'card', alt: 'Zwartgeblakerde ovengroenten op een handgemaakt bord', description: '' },
   { slot: 'detail', alt: 'Grove zeezoutkristallen op donker keramiek', description: '' },
 ];
 
 test('a fish restaurant does not get the bakery photos of the proof pack', () => {
   const { keep, dropped } = fitImages('proof', 'Zout, een visrestaurant met vis en groente van het seizoen', proofImages);
-  assert.deepEqual(keep.map((i) => i.alt).sort(), [proofImages[0].alt, proofImages[3].alt, proofImages[4].alt].sort());
-  assert.equal(dropped.length, 2);
+  assert.deepEqual(keep.map((i) => i.alt).sort(), [proofImages[0].alt, proofImages[4].alt, proofImages[5].alt].sort());
+  assert.equal(dropped.length, 3); // compounds count: meelsporen, broodkorst
 });
 
 test('a bakery keeps them, and brief words rank the best fit first', () => {

@@ -21,7 +21,13 @@ The skill is rebuilt around one critical path a small model can follow: a Build 
 - HeroCanvas with three scenes (contours, ripple, dots) at the ambient-backdrop bar: quiet zones behind `[data-quiet]` copy, pointer presence, a slow clock, a DPR cap and pixel budget, a still frame on phones and under reduced motion. Contours runs two passes and drifts at Vapor's pace.
 - The cursor stays hidden until a real pointer travels, rests out of sight when the pointer rests, and never shows on touch or under reduced motion.
 
+### Showpieces (toonstuk)
+- Eight award-tier showpieces in `cinematic/showpieces/`, named by stable slug: image-to-fullbleed, panel-wipe, scrub-connector, project-stack, manifesto-scrub, fill-rows, wordmark-finale and pixel-resolve. Each pins and scrubs on the one clock, holds on its key frames, and has a composed still for phones and reduced motion.
+- SKILL.md picks one lead showpiece and at most one supporting move by the kind of client, honours a showpiece the user names, and closes every site with the wordmark finale. The direction rules: two or three full-strength canon colours, display type at 12 to 20vw, one italic accent, full-bleed photography, one idea per screen, scale, mask and clip transitions.
+- The cursor becomes a round accent label ("Bekijk") over anything marked `data-cursor`.
+- images.mjs reads Dutch compounds in the alt (meelsporen, broodkorst) when it leaves out off-subject photos.
+
 ### Rules and the check
-- One combined tell list (Struq's tells 1.2.0, the slop audit, Roy's rules), with `check.mjs` as its executable form: eyebrows and uppercase labels, gradients, tinted fills, pills and live dots, mono, default faces, blue and purple, dashes, Struq's generic CTAs ("Neem contact op", "Meer informatie", "Aan de slag" and the rest) and more.
+- One combined tell list (Struq's tells 1.2.0, the slop audit, Roy's rules), with `check.mjs` as its executable form: eyebrows and uppercase labels, gradients, tinted fills, pills and live dots, mono, default faces, blue and purple, dashes, Struq's generic CTAs ("Neem contact op", "Meer informatie", "Aan de slag" and the rest) stat rows (20+, 51+, 99%) and more.
 - The hero carries a pack photo; the WebGL field is atmosphere beside or behind the copy, held by the quiet zone; every page has a header wordmark (`data-wordmark`); the client's product is never modelled from primitives. `check.mjs` fails each.
 - No eyebrows anywhere in the references; the niche packets are back from deck-design with Struq's overrides.

@@ -181,6 +181,8 @@ const plan = read("STRUQ.md");
     "display runs light (300 to 400); hierarchy from scale, not weight.");
   tell("Numbered sections", />\s*0[1-9]\s*[<./]|['"`]0[1-9]['"`]|`0\$\{/,
     "01, 02, 03 stamped on sections or rows is a tell; keep at most one deliberate oversized numeral.", ownOnly);
+  tell("Stat rows", />\s*\d{1,4}\s*[+%]\s*</,
+    "a banner of big numbers (20+, 51+, 99%) is a template tell, and usually invented. A real figure from the brief goes inside a sentence.", ownOnly);
   tell("Raw text sizes", /\btext-(xs|sm|base|lg|xl|[2-9]xl)\b/, "use the role tokens: text-display, text-h2, text-h3, text-lead, text-body, text-small.", { ...ownOnly, warn: true, quietPass: true });
   tell("Breakpoint size ladders", /text-\w+\s+md:text-\w+\s+lg:text-\w+|p[xy]-\d+\s+md:p[xy]-\d+\s+lg:p[xy]-\d+/, "one fluid root-rem knob; breakpoints change layout, never size.", { ...ownOnly, warn: true, quietPass: true });
 
@@ -274,13 +276,14 @@ const plan = read("STRUQ.md");
   if (uses(/<SplitHeadline\b|SplitText\.create|new SplitText/)) add(G, "PASS", "SplitText on the headline");
   else add(G, "FAIL", "The hero headline is not split: set it with <SplitHeadline as=\"h1\">.");
 
-  const reveals = own.reduce((n, f) => n + (f.text.match(/<Reveal\b/g) ?? []).length, 0);
-  const masks = uses(/<MediaFrame\b|clipPath|clip-path:\s*inset/);
+  // Text reveals: Reveal groups, and the showpieces that reveal their own text on scroll.
+  const reveals = own.reduce((n, f) => n + (f.text.match(/<Reveal\b|<ManifestoScrub\b|<FillRows\b|<ScrubConnector\b|<SplitHeadline\b[^>]*on="scroll"/g) ?? []).length, 0);
+  const masks = uses(/<MediaFrame\b|<ImageToFullbleed\b|<PanelWipe\b|<ProjectStack\b|clipPath|clip-path:\s*inset/);
   if (reveals >= 2 && masks) add(G, "PASS", `Masked image reveals and ${reveals} staggered text reveals`);
   else add(G, "FAIL", `Scroll reveals below the floor (${reveals} <Reveal>, masked images: ${masks ? "yes" : "no"}). Wrap text groups in <Reveal> and every image in <MediaFrame>.`);
 
-  if (uses(/<HorizontalGallery\b|<PinnedZoom\b/) || own.some((f) => /pin:\s*(true|[a-zA-Z"'])/.test(f.text) && /scrub/.test(f.text))) add(G, "PASS", "A pinned or horizontal showpiece");
-  else add(G, "FAIL", "No showpiece: place one <HorizontalGallery> or <PinnedZoom> at the act break.");
+  if (uses(/<HorizontalGallery\b|<PinnedZoom\b|<ImageToFullbleed\b|<PanelWipe\b|<ScrubConnector\b|<ProjectStack\b|<ManifestoScrub\b/) || own.some((f) => /pin:\s*(true|[a-zA-Z"'])/.test(f.text) && /scrub/.test(f.text))) add(G, "PASS", "A pinned or horizontal showpiece");
+  else add(G, "FAIL", "No showpiece: place the lead toonstuk from the SKILL.md picker (or HorizontalGallery or PinnedZoom) at the act break.");
 
   const ownGl = own.filter((f) => /WebGLRenderer|<Canvas\b/.test(f.text));
   if (uses(/<HeroCanvas\b/)) add(G, "PASS", "WebGL hero layer (HeroCanvas: poster, DPR cap, reduced motion, pause offscreen)");

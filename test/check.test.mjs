@@ -95,3 +95,9 @@ test('generic CTAs from Struq tells 1.2.0 fail', () => {
   const cta = 'export const C = () => <a href="#contact">Neem contact op</a>;\nexport const D = () => <a href="#m">Meer informatie</a>;\n';
   assert.ok(fails(run(fixture({ extra: { 'components/Cta.tsx': cta } })), 'Generic CTAs'));
 });
+
+test('stat banners (20+, 51+, 99%) fail', () => {
+  assert.ok(!fails(run(fixture()), 'Stat rows'));
+  const stats = 'export const S = () => <div><span>20+</span><span>51+</span><span> 99% </span></div>;\n';
+  assert.ok(fails(run(fixture({ extra: { 'components/Stats.tsx': stats } })), 'Stat rows'));
+});

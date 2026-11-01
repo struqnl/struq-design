@@ -47,8 +47,8 @@ Rule: keep STRUQ-LOG.md at every step: node <skill-dir>/scripts/log.mjs "Step N 
 - [ ] 5 Images: images.mjs --brief printed "OK"; only photos whose alt fits the client are used, captions written from the alts; title and lang set in app/layout.tsx
 - [ ] 6 Hero: a header with the wordmark (data-wordmark), a pack hero photo, the HeroCanvas field beside or behind the copy and held by the quiet zone, SplitHeadline h1, one line of lead, MagneticButton CTA
 - [ ] 7 Sections: 5 to 7 sections on the arc, every image in a MediaFrame, text groups in Reveal, two grid breaks
-- [ ] 8 Showpiece: one HorizontalGallery or PinnedZoom at the act break
-- [ ] 9 Footer: designed as hard as the hero, with the image credit
+- [ ] 8 Showpieces: the lead toonstuk from the picker (or the one the user named) and at most one supporting move
+- [ ] 9 Footer: toonstuk-wordmark-finale, with the image credit
 - [ ] 10 Build: npm run build passes
 - [ ] 11 Look: screenshots at 390 and 1440 and one full scroll, fixes made (or "not seen: no browser" written under Verify)
 - [ ] 12 Check: node <skill-dir>/scripts/check.mjs prints RESULT: PASS
@@ -209,13 +209,50 @@ Five to seven sections after the hero, in this order of beats: **orient** (what 
 - Section padding varies by role: dense 6 to 8rem, breathers 12 to 20rem. One section should feel too empty by SaaS standards.
 - Wayfinding without eyebrows: the heading itself, a hairline rule (`border-t border-line`), a change of surface step, a jump in scale.
 
-### Step 8: The showpiece
+### Step 8: The showpieces (toonstuk)
 
-One per site, at the act break (after the proof, before the invitation). `HorizontalGallery` when there is a set of things (dishes, projects, rooms, products); `PinnedZoom` when there is one moment (the room, the place, the material). Never two pins back to back. The Struq MCP or a brief may budget more; never fewer than one.
+Struq builds impressive agency, brand, product and company sites, not simple conversion pages. The showpieces are what make them so: directed, pinned, scroll-scrubbed scenes on the one clock. `recipes.mjs` copies them to `components/struq/showpieces/`, one file per stable slug; each has a composed still for phones and reduced motion built in.
+
+**Pick one lead showpiece and at most one supporting move,** from this table, by the kind of client. Do not improvise a third. When the user names one in the brief ("met de project-stack", "with the panel wipe"), use that one as the lead, whatever the table says.
+
+| The client is | Lead showpiece | Supporting move (at most one) |
+|---|---|---|
+| Architect, studio or portfolio with real project photos | `toonstuk-project-stack` | `toonstuk-image-to-fullbleed` |
+| Architect, studio or portfolio without project photos | `toonstuk-image-to-fullbleed` | `toonstuk-manifesto-scrub` |
+| Product launch | `toonstuk-image-to-fullbleed`, with the hero scene carrying the product | `toonstuk-pixel-resolve` in the hero |
+| Restaurant, hospitality, hotel | `toonstuk-panel-wipe` | `toonstuk-manifesto-scrub` |
+| Agency or creative brand | `toonstuk-scrub-connector` | `toonstuk-fill-rows` for the services |
+| Editorial, a writer, a publication | `toonstuk-manifesto-scrub` | `toonstuk-image-to-fullbleed` |
+| Anything else | `toonstuk-image-to-fullbleed` | none |
+
+Every site closes with `toonstuk-wordmark-finale` as its footer; it does not count as the supporting move.
+
+| Slug | Component | What it does |
+|---|---|---|
+| `toonstuk-image-to-fullbleed` | `ImageToFullbleed` | A small centred photo unclips to the full viewport while pinned, the name split to either side and travelling off the edges, one line rising over the open photo. |
+| `toonstuk-panel-wipe` | `PanelWipe` | Two ground-colour panels, each carrying one word, part to reveal a full-bleed photo and close again over it, carrying the headline into the next scene. |
+| `toonstuk-scrub-connector` | `ScrubConnector` | One accent bar rotates, stretches and travels across a pinned stretch until it lands as a level line between two words. |
+| `toonstuk-project-stack` | `ProjectStack` | Pinned full-bleed project cards slide over each other, the one beneath receding; the cursor becomes a round "Bekijk" label over them. Only with the client's own project photos. |
+| `toonstuk-manifesto-scrub` | `ManifestoScrub` | One large statement fills word by word on scroll, with small photos opening inside the line (`{0}`, `{1}` in the text). |
+| `toonstuk-fill-rows` | `FillRows` | Large hairline rows of services or chapters; on hover and focus a row floods with the accent and its detail slides in. |
+| `toonstuk-wordmark-finale` | `WordmarkFinale` | The footer: the name fitted edge to edge, letters rising out of a mask, one closing line and a live local clock. |
+| `toonstuk-pixel-resolve` | `PixelResolve` | The hero photo arrives as coarse pixels and resolves to sharp in held steps, then the plain image stays. |
+
+**The direction these showpieces need** (they look cheap without it):
+- Two or three colours from the canon palette, at full strength: the ground, the ink, the accent. No tints.
+- Display type at 12 to 20vw against small body copy. The display type is the composition, not a heading above it.
+- One italic serif accent at most, on one word.
+- Full-bleed beeldbank photography (or the client's own), never framed small in a box when a scene can carry it.
+- One idea per screen. Hold on it.
+- Transitions are scale, mask and clip moves between full-bleed scenes, never fades between boxes.
+- SplitText on display lines, long eases, holds on every key frame; nothing bounces.
+- Struq's rules still win over any reference: no eyebrow or dot labels, no pills (the round cursor label is not a pill), no stat rows ("20+", "51+"), no three identical cards, no numbered sections, no mono flavour, no Inter, no dashes, no blue or purple by default, and never a reference's layout, copy or images.
+
+Never two pinned showpieces back to back: put a breathing section between them. The Struq MCP or a brief may budget more; never fewer than one lead.
 
 ### Step 9: The footer
 
-Designed as hard as the hero: the name set huge in the display face (it may crop at the edge), the one CTA, the contact facts the brief gave (and only those), a hairline, the image credit as one quiet `text-small` link: `<a href={imageCredit.href}>{imageCredit.label}</a>`.
+`<WordmarkFinale name="<the name>" line="<one closing line>" place="<the city>" timeZone="Europe/Amsterdam">` with the one CTA, the contact facts the brief gave (and only those) and the image credit as children: `<a href={imageCredit.href}>{imageCredit.label}</a>`. The name is fitted to the full width and marked `data-wordmark`.
 
 ### Steps 10 to 12: Build, look, check
 
