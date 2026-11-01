@@ -39,6 +39,7 @@
   --color-on-field: var(--on-field);
   --font-display: var(--face-display), ui-serif, Georgia, serif;
   --font-body: var(--face-body), ui-sans-serif, system-ui, sans-serif;
+  --font-accent: var(--face-accent, var(--face-display)), ui-serif, Georgia, serif;
   --font-sans: var(--face-body), ui-sans-serif, system-ui, sans-serif;
 }
 

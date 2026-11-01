@@ -14,6 +14,7 @@
 // project's own next/font data); faces that are not on Google come from Fontshare as local woff2.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
+import { googleName } from "./font-names.mjs";
 import { appendLog } from "./log.mjs";
 
 // STRUQ_API_BASE points a test run at another Struq environment (for example https://staging.struq.nl).
@@ -25,7 +26,7 @@ const opt = (name) => {
   return i >= 0 ? args[i + 1] : undefined;
 };
 const root = resolve(opt("--dir") ?? process.cwd());
-const [cmd, slugArg] = args.filter((a, i) => !a.startsWith("--") && !["--dir", "--display", "--body"].includes(args[i - 1]));
+const [cmd, slugArg] = args.filter((a, i) => !a.startsWith("--") && !["--dir", "--display", "--body", "--accent"].includes(args[i - 1]));
 
 // Struq's own rules win over a canon entry: these faces never ship (SKILL.md, the tell list).
 const BANNED = new Set(["Inter", "Roboto", "Arial", "Helvetica", "Open Sans", "Poppins", "Montserrat", "Lato", "Geist", "Space Grotesk", "Geist Mono", "JetBrains Mono", "Space Mono", "IBM Plex Mono", "Roboto Mono"]);
@@ -187,26 +188,33 @@ async function fontshare(name, weights) {
   return src.length ? src : null;
 }
 
-async function faceCode(name, role, google) {
-  const variable = role === "display" ? "--face-display" : "--face-body";
-  const id = role === "display" ? "display" : "body";
+async function faceCode(canonName, role, google) {
+  const variable = `--face-${role}`;
+  const id = role;
+  // The canon's name ("Big Shoulders Display") may be listed by Google under its family ("Big Shoulders").
+  const name = googleName(canonName, google) ?? canonName;
   const g = google?.[name];
   if (g) {
     const ident = name.replace(/\s+/g, "_");
     const parts = [`subsets: ["latin"]`];
-    if (!g.weights.includes("variable")) parts.push(`weight: ${JSON.stringify(g.weights.filter((w) => ["300", "400", "500"].includes(w)))}`);
+    const italicOnly = role === "accent";
+    if (!g.weights.includes("variable")) {
+      const wanted = g.weights.filter((w) => ["300", "400", "500"].includes(w));
+      parts.push(`weight: ${JSON.stringify(wanted.length ? wanted : [g.weights[0]])}`);
+    }
     const axes = (g.axes ?? []).map((a) => a.tag).filter((t) => ["opsz", "SOFT"].includes(t));
     if (axes.length && g.weights.includes("variable")) parts.push(`axes: ${JSON.stringify(axes)}`);
-    if (role === "display" && g.styles.includes("italic")) parts.push(`style: ["normal", "italic"]`);
+    if (italicOnly && g.styles.includes("italic")) parts.push(`style: ["italic"]`);
+    else if (role === "display" && g.styles.includes("italic")) parts.push(`style: ["normal", "italic"]`);
     parts.push(`variable: "${variable}"`, `display: "swap"`);
     const light = g.weights.includes("300") ? 300 : g.axes?.find((a) => a.tag === "wght")?.min <= 300 ? 300 : 400;
-    return { kind: "google", ident, code: `export const ${id} = ${ident}({ ${parts.join(", ")} });`, light };
+    return { kind: "google", id, ident, family: name, code: `export const ${id} = ${ident}({ ${parts.join(", ")} });`, light };
   }
-  const local = await fontshare(name, ["300", "400", "500"]);
+  const local = await fontshare(canonName, role === "accent" ? ["400"] : ["300", "400", "500"]);
   if (local) {
     const light = local.some((s) => s.weight === "300") ? 300 : 400;
     const src = local.map((s) => `{ path: "${s.path}", weight: "${s.weight}", style: "${s.style}" }`).join(", ");
-    return { kind: "local", code: `export const ${id} = localFont({ src: [${src}], variable: "${variable}", display: "swap" });`, light };
+    return { kind: "local", id, family: canonName, code: `export const ${id} = localFont({ src: [${src}], variable: "${variable}", display: "swap" });`, light };
   }
   return null;
 }
@@ -214,6 +222,7 @@ async function faceCode(name, role, google) {
 async function type(slug) {
   let display = opt("--display");
   let body = opt("--body");
+  let accent = opt("--accent");
   let label = "custom";
   if (slug) {
     const items = await canon("typography");
@@ -221,9 +230,10 @@ async function type(slug) {
     if (!t) throw new Error(`Unknown pairing "${slug}". Run: canon.mjs list`);
     display = t.data.display.name;
     body = t.data.body.name;
+    accent = t.data.accent?.name;
     label = t.slug;
   }
-  if (!display || !body) throw new Error('Usage: canon.mjs type <slug>, or type --display "Name" --body "Name"');
+  if (!display || !body) throw new Error('Usage: canon.mjs type <slug>, or type --display "Name" --body "Name" [--accent "Name"]');
   const plan = planType(display, body);
   for (const n of plan.notes) console.log(`NOTE ${n}`);
   if (!plan.ok) throw new Error("The display face is off the Struq list. Pick another pairing (canon.mjs list).");
@@ -232,31 +242,42 @@ async function type(slug) {
   const d = await faceCode(plan.display, "display", google);
   const b = await faceCode(plan.body, "body", google);
   if (!d || !b) throw new Error(`Could not load ${!d ? plan.display : plan.body} from Google Fonts or Fontshare. Pick another pairing.`);
+  // The italic accent: its own face when the canon names one apart from display and body; the
+  // display face's italic otherwise (font-accent falls back to it in globals.css).
+  const accentName = accent && !BANNED.has(accent) && accent !== plan.display && accent !== plan.body ? accent : null;
+  const a = accentName ? await faceCode(accentName, "accent", google) : null;
+  if (accentName && !a) console.log(`NOTE the accent face ${accentName} could not be loaded; the display italic carries the accent word.`);
+  const faces = [d, b, a].filter(Boolean);
   const imports = [];
-  const gIdents = [d, b].filter((f) => f.kind === "google").map((f) => f.ident);
+  const gIdents = faces.filter((f) => f.kind === "google").map((f) => f.ident);
   if (gIdents.length) imports.push(`import { ${[...new Set(gIdents)].join(", ")} } from "next/font/google";`);
-  if ([d, b].some((f) => f.kind === "local")) imports.push(`import localFont from "next/font/local";`);
+  if (faces.some((f) => f.kind === "local")) imports.push(`import localFont from "next/font/local";`);
   const file = join(root, existsSync(join(root, "src", "app")) ? "src/app" : "app", "fonts.ts");
   writeFileSync(
     file,
-    `// app/fonts.ts: written by the Struq skill (scripts/canon.mjs type). Pairing: ${label}, ${plan.display} + ${plan.body}.
-// Two faces only. globals.css maps --face-display to font-display and --face-body to font-body.
+    `// app/fonts.ts: written by the Struq skill (scripts/canon.mjs type). Pairing: ${label}, ${d.family} + ${b.family}${a ? `, accent ${a.family} italic` : ""}.
+// Display and body, plus at most the one italic accent face. globals.css maps --face-display to
+// font-display, --face-body to font-body and --face-accent to font-accent (the display italic when absent).
 ${imports.join("\n")}
 
-${d.code}
+${faces.map((f) => f.code).join("\n\n")}
 
-${b.code}
+/** Every face's CSS variable, for the <html> className in app/layout.tsx. */
+export const fontVariables = [${faces.map((f) => f.id).join(", ")}].map((f) => f.variable).join(" ");
 `,
   );
   const cssPath = ["app/globals.css", "src/app/globals.css"].map((f) => join(root, f)).find(existsSync);
   if (cssPath) {
-    const css = readFileSync(cssPath, "utf8").replace(/--display-weight:\s*\d{3}/, `--display-weight: ${d.light}`);
+    let css = readFileSync(cssPath, "utf8").replace(/--display-weight:\s*\d{3}/, `--display-weight: ${d.light}`);
+    if (!css.includes("--font-accent")) {
+      css = css.replace(/(\s*--font-body:[^\n]*\n)/, `$1  --font-accent: var(--face-accent, var(--face-display)), ui-serif, Georgia, serif;\n`);
+    }
     writeFileSync(cssPath, css);
   }
-  console.log(`Wrote ${file.replace(root, ".")}: ${plan.display} (${d.kind}) + ${plan.body} (${b.kind}), display weight ${d.light}`);
-  console.log(`STRUQ.md line:  Type: ${label}: ${plan.display} + ${plan.body}`);
+  console.log(`Wrote ${file.replace(root, ".")}: ${d.family} (${d.kind}) + ${b.family} (${b.kind})${a ? ` + accent ${a.family} italic (${a.kind})` : ""}, display weight ${d.light}`);
+  console.log(`STRUQ.md line:  Type: ${label}: ${d.family} + ${b.family}${a ? `, accent ${a.family}` : ""}`);
   appendLog(root, "Step 4 Canon type", [
-    `canon.mjs wrote app/fonts.ts: ${plan.display} (${d.kind}) over ${plan.body} (${b.kind}), pairing ${label}.`,
+    `canon.mjs wrote app/fonts.ts: ${d.family} (${d.kind}) over ${b.family} (${b.kind})${a ? `, accent ${a.family} italic` : ""}, pairing ${label}.`,
     `Display weight ${d.light}.${plan.notes.length ? ` Overrides: ${plan.notes.join("; ")}.` : ""}`,
   ]);
   console.log("OK type written");

@@ -5,7 +5,7 @@
 import type { Metadata } from "next";
 import { Cursor } from "@/components/struq/Cursor";
 import { SmoothScroll } from "@/components/struq/SmoothScroll";
-import { body, display } from "./fonts";
+import { fontVariables } from "./fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="nl" className={`${display.variable} ${body.variable}`} suppressHydrationWarning>
+    <html lang="nl" className={fontVariables} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
       </head>

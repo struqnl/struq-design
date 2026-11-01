@@ -17,3 +17,6 @@ export const body = Urbanist({
   variable: "--face-body",
   display: "swap",
 });
+
+/** Every face's CSS variable, for the <html> className in app/layout.tsx. */
+export const fontVariables = [display, body].map((f) => f.variable).join(" ");
